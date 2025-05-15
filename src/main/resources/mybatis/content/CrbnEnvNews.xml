@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ilmare.carbonbank.mapper.content.CrbnEnvNewsMapper">
+    <select id="selectAdmList" resultType="com.ilmare.carbonbank.model.content.CrbnEnvNewsModel">
+        SELECT 
+        	*
+        FROM (
+         	SELECT
+              	doc_seq, doc_title
+              	, doc_from, doc_url, doc_read, doc_rcmnd, doc_like, doc_sad, doc_angry
+                , doc_stat, DATE_FORMAT(reg_dtm,'%Y-%m-%d %H:%i:%s') AS reg_dtm, DATE_FORMAT(show_dtm,'%Y-%m-%d %H:%i:%s') AS show_dtm
+                , DATE_FORMAT(cancel_dtm,'%Y-%m-%d %H:%i:%s') AS cancel_dtm, DATE_FORMAT(del_dtm,'%Y-%m-%d %H:%i:%s') AS del_dtm
+            FROM CRBN_ENV_NEWS
+            ORDER BY DOC_SEQ DESC
+		) A
+    </select>
+    
+    <insert id="insert" parameterType="com.ilmare.carbonbank.model.content.CrbnEnvNewsModel">
+		/*
+        	1. ID: insert
+            2. 업무명: 컨텐츠
+            3. 업무설명:  등록
+		*/
+        INSERT INTO TB_NEWS_KOR (
+			party_cd, doc_title, img_src_nm, img_nail_nm, doc_info, doc_from, doc_url, reg_id
+
+		) VALUES (
+			#{partyCd}, #{docTitle}, #{imgSrcNm}, #{imgNm}, #{docInfo}, #{docFrom}, #{docUrl}
+			, #{regId}
+		)
+    </insert>
+
+    
+</mapper>

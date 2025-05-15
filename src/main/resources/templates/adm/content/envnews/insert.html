@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/admlayour}">
+	<th:block th:replace="adm/layout/admhead :: head"></th:block>
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		//var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+		var regex = new RegExp("(.*?)\.(jpg|jpeg|png|bmp)$");
+		var maxSize = 5242880; //5MB
+
+		function checkExtenstion(fileName, fileSize){
+
+		    if(fileSize >= maxSize){
+		        alert("파일 사이즈 초과");
+		        return false;
+		    }
+		    if(!regex.test(fileName)){
+		        alert("해당 종류의 파일은 업로드할 수 없습니다.");
+		        return false;
+		    }
+		    return true;
+		}		
+		//조회버튼 클릭
+        $('#docSave').on('click', function(event) {
+        	
+			console.log("start docSave");//순수한 태그
+        	//파일데이터 추출
+			var file=$("#img_src_nm");
+			var files = file[0].files;
+			console.log(files);
+			var formData = new FormData();
+    		for(var i =0;i<files.length;i++){
+    			console.log(files[i].name);//순수한 태그
+    			if(!checkExtenstion(files[i].name, files[i].size)){
+    		           return false;
+    		    }    			
+    			formData.append("imgFile", files[i]);
+    		}
+
+    		var param = {
+                    "docTitle" : $('#doc_title').val() 
+                    , "docInfo" : $('#doc_info').val() 
+                    , "docFrom" : $('#doc_from').val() 
+                    , "docUrl" : $('#doc_url').val() 
+            };        
+            
+    		formData.append("request", new Blob([JSON.stringify(param)], {type: "application/json"}));
+            alert("before  $.ajax({  param=" + param);
+
+            $.ajax({
+                url : '/adm/content/EnvNewsInsProc'
+                , type : 'POST'
+                , data:formData //보내는데이터 form
+    			, contentType:false //보내는데이터타입 false->"multipart/form-data"로 선언됩니다.
+    			, processData:false //폼데이터가 name=값&name=값 형식으로 자동변경되는 것을 막아줍니다.
+                , beforeSend : function( xhr, settings ) { 
+					alert("전");
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/EnvNewsMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+        
+    });
+</script>
+
+<body>
+<div class="wrap">
+	<th:block layout:fragment="header" th:include="~{@{/adm/layout/admheader}}"></th:block>
+	
+<div layout:fragment="content">
+	<div class="container">
+		
+		<div class="lnb">
+<!--		
+			<ul class="adminlnb">
+				<li><a href="#" ><i class="material-icons">reorder</i>서블릿 관리</a></li>
+				<li><a href="#"><i class="material-icons">lock_outline</i>권한 관리</a></li>
+				<li><a href="#"><i class="material-icons">perm_contact_calendar</i>어드민 아이디 관리</a></li>
+				<li><a href="#"><i class="material-icons">settings</i>어드민 메뉴관리</a></li>
+			</ul>
+ -->			
+			<ul class="menulnb">
+				<li><a href="/adm/content/AdmNoticeList.do" class="current"><i class="material-icons">assignment</i>공지사항</a></li>  <!--현재상태 메뉴일때 current -->
+				<li><a href="/adm/content/AdmfrqntlAskList.do"><i class="material-icons">description</i>자주하는 질문</a></li>
+				<li><a href="/adm/content/AdmNtlEnvNewsList.do"><i class="material-icons">list</i>환경뉴스 관리</a></li>
+				<li><a href="/adm/content/AdmEnentList.do"><i class="material-icons">public</i>이벤트 관리</a></li>
+				<li><a href="/adm/content/AdmQnaList.do"><i class="material-icons">queue_music</i>문의 및 제안</a></li>
+				<li><a href="/adm/content/AdmWinnerList.do"><i class="material-icons">toys</i>당첨자 관리</a></li>
+				<li><a href="/adm/content/AdmHotNewsList.do"><i class="material-icons">radio</i>기관 핫뉴스  관리</a></li>
+				<li><a href="/adm/content/AdmAdvertisingList.do"><i class="material-icons">shopping_cart</i>광고 관리</a></li>
+			</ul>
+		</div><!-- //lnb -->
+
+		<div class="content">
+			<h2>환경 뉴스</h2>
+			<div class="board_view">
+				<table>
+					<colgroup>
+						<col style="width:15%;" />
+						<col />
+					</colgroup>
+					<tbody>
+						<tr>
+							<th>기사제목</th>
+							<td><input type="text" class="w100"  id="doc_title"/></td>
+						</tr>
+						<tr>
+							<th>기사 대표 이미지</th>
+							<td><input type="file" size="40" style="border:0; background-color:#fff;padding-left:0;"   id="img_src_nm" accept=".jpg,.png,.gif"/></td>
+						</tr>
+						<tr>
+							<th>기사내용</th>
+							<td>
+								<textarea rows="15" style="width:100%"  id="doc_info"> 내용. </textarea>
+							</td>
+						</tr>
+						<tr>
+							<th>기사 출처</th>
+							<td><input type="text" class="w100"  id="doc_from" /></td>
+						</tr>
+						<tr>
+							<th>기사 링크</th>
+							<td><input type="text" class="w100"  id="doc_url" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="mT20 align_center">
+				<button class="btn_type2" id="docSave">저장</button>
+				<button class="btn_type2" id="docCancel">취소</button>
+			</div>
+		</div><!-- //content -->
+	
+	</div><!-- //container -->
+ <script src="/adm/js/login.js"></script>
+</div>
+</div><!-- //wrap -->
+</body>
+</html>

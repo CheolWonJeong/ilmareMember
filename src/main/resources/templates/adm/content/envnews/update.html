@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/admlayour}">
+	<th:block layout:fragment="head" data-th-include="~{@{/adm/layout/admhead}}"></th:block>
+<script type="text/javascript">
+	$(function(){ 
+	});
+
+	$(document).ready(function(){
+    	
+		//저장버튼 클릭
+        $('#docSave').on('click', function(event) {
+        	
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+                     ,"docTitle" : $('#docTitle').val() 
+                     , "docInfo" : $('#docInfo').val() 
+               };        
+            $.ajax({
+                url : '/adm/content/NoticeUptProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/NoticeMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+        
+		//게시버튼 클릭
+        $('#docView').on('click', function(event) {
+        	alert("게시 클릭 docSeq= " + $('#docSeq').val());
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/NoticeViewProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/NoticeMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+		//게시취소버튼 클릭
+        $('#docCancelView').on('click', function(event) {
+        	
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/NoticeCancelProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/NoticeMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+		//삭제버튼 클릭
+        $('#docDelete').on('click', function(event) {
+        	
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/NoticeDelProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/NoticeMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+    });
+</script>
+
+<body>
+<div class="wrap">
+	<th:block layout:fragment="header" th:include="~{@{/adm/layout/admheader}}"></th:block>
+	
+<div layout:fragment="content">
+	<div class="container">
+		
+		<div class="lnb">
+<!--		
+			<ul class="adminlnb">
+				<li><a href="#" ><i class="material-icons">reorder</i>서블릿 관리</a></li>
+				<li><a href="#"><i class="material-icons">lock_outline</i>권한 관리</a></li>
+				<li><a href="#"><i class="material-icons">perm_contact_calendar</i>어드민 아이디 관리</a></li>
+				<li><a href="#"><i class="material-icons">settings</i>어드민 메뉴관리</a></li>
+			</ul>
+ -->			
+			<ul class="menulnb">
+				<li><a href="/adm/content/AdmNoticeList.do" class="current"><i class="material-icons">assignment</i>공지사항</a></li>  <!--현재상태 메뉴일때 current -->
+				<li><a href="/adm/content/AdmfrqntlAskList.do"><i class="material-icons">description</i>자주하는 질문</a></li>
+				<li><a href="/adm/content/AdmNtlEnvNewsList.do"><i class="material-icons">list</i>환경뉴스 관리</a></li>
+				<li><a href="/adm/content/AdmEnentList.do"><i class="material-icons">public</i>이벤트 관리</a></li>
+				<li><a href="/adm/content/AdmQnaList.do"><i class="material-icons">queue_music</i>문의 및 제안</a></li>
+				<li><a href="/adm/content/AdmWinnerList.do"><i class="material-icons">toys</i>당첨자 관리</a></li>
+				<li><a href="/adm/content/AdmHotNewsList.do"><i class="material-icons">radio</i>기관 핫뉴스  관리</a></li>
+				<li><a href="/adm/content/AdmAdvertisingList.do"><i class="material-icons">shopping_cart</i>광고 관리</a></li>
+			</ul>
+		</div><!-- //lnb -->
+
+		<div class="content">
+			<h2>공지사항</h2>
+			<div class="board_view">
+				<table>
+					<colgroup>
+						<col style="width:15%;" />
+						<col />
+					</colgroup>
+					<tbody>
+						<input id="docSeq" type="hidden" th:value="${ docview.docSeq }">
+						<tr>
+							<th>제목</th>
+							<td><input type="text" class="w100" id="docTitle" th:value="${ docview.docTitle }"/></td>
+						</tr>
+						<tr>
+							<th>기사내용</th>
+							<td>
+								<textarea rows="15" style="width:100%" id="docInfo"  th:text="${ docview.docInfo }">  </textarea>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="mT20 align_center">
+				<button class="btn_type2" id="docSave">저장</button>
+				<button class="btn_type2" id="docView">게시</button>
+				<button class="btn_type2" id="docCancelView">게시취소</button>
+				<button class="btn_type2" id="docDelete">삭제</button>
+			</div>
+		</div><!-- //content -->
+	
+	</div><!-- //container -->
+ <script src="/adm/js/login.js"></script>
+</div>
+</div><!-- //wrap -->
+</body>
+</html>

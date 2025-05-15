@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/default_layout}">
+    
+    <th:block layout:fragment="head"  th:include="@{/adm/layout/head}">    </th:block>
+   	<title>Spring Boot Test</title>
+    <body class="sb-nav-fixed">
+        <th:block layout:fragment="header" th:include="@{/adm/layout/header}"></th:block>
+		
+        <div layout:fragment="content" class="content">
+        </div>
+        
+        <th:block layout:fragment="footer" th:include="@{/adm/layout/footer}"></th:block>	
+    </body>
+
+</html>
+
