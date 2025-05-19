@@ -19,3 +19,5 @@ http://localhost:8200/adm/content/NoticeMainList.do
 프론트 메인 : 
 http://localhost:8100/main/cbMain.do
 
+
+정부장님 수정
