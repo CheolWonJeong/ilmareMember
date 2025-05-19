@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=1240, user-scalable=1" name="viewport"/>
+<title>중한통 관리자</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+
+	<!-- header  -->
+	<div class="header">
+		<h1><img src="images/admin_ci.png" alt="중한통관리자" /></h1>
+		<div class="admin_infor">
+			<i class="material-icons">account_circle</i> 홍길동AA 님 반갑습니다
+			<button class="btn_type1 mL10">로그아웃</button>
+		</div>
+	</div><!-- //header -->
+
+	<div class="container">
+		
+		<div class="lnb">
+			<ul class="adminlnb">
+				<li><a href="#" ><i class="material-icons">reorder</i>서블릿 관리</a></li>
+				<li><a href="#"><i class="material-icons">lock_outline</i>권한 관리</a></li>
+				<li><a href="#"><i class="material-icons">perm_contact_calendar</i>어드민 아이디 관리</a></li>
+				<li><a href="#"><i class="material-icons">settings</i>어드민 메뉴관리</a></li>
+			</ul>
+			<ul class="menulnb">
+				<li><a href="#"><i class="material-icons">assignment</i>프론트 메뉴(카테고리) 관리</a></li>
+				<li><a href="#"><i class="material-icons">description</i>홈기사 관리</a></li>
+				<li><a href="#" class="current"><i class="material-icons">list</i>뉴스 관리</a></li>  <!--현재상태 메뉴일때 current -->
+				<li><a href="#"><i class="material-icons">public</i>관광 관리</a></li>
+				<li><a href="#"><i class="material-icons">queue_music</i>뮤직 관리</a></li>
+				<li><a href="#"><i class="material-icons">toys</i>문화 관리</a></li>
+				<li><a href="#"><i class="material-icons">photo_camera</i>포토&동영상 관리</a></li>
+				<li><a href="#"><i class="material-icons">radio</i>라디오관리</a></li>
+				<li><a href="#"><i class="material-icons">shopping_cart</i>쇼핑 상품 관리</a></li>
+			</ul>
+		</div><!-- //lnb -->
+
+		<div class="content">
+			<h2>뉴스 관리 </h2>
+			<div class="board_view">
+				<table>
+					<colgroup>
+						<col style="width:15%;" />
+						<col />
+					</colgroup>
+					<tbody>
+						<tr>
+							<th>기사제목</th>
+							<td><input type="text" class="w100" /></td>
+						</tr>
+						<tr>
+							<th>기사 대표 이미지</th>
+							<td><input type="file" size="40" style="border:0; background-color:#fff;padding-left:0;"   /></td>
+						</tr>
+						<tr>
+							<th>기사 출처</th>
+							<td><input type="text" class="w100" /></td>
+						</tr>
+						<tr>
+							<th>기사내용</th>
+							<td>
+								<textarea rows="15" style="width:100%"> 내용. </textarea>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="mT20 align_center">
+				<button class="btn_type2">저장</button>
+				<button class="btn_type2">취소</button>
+			</div>
+		
+		</div><!-- //content -->
+	</div><!-- //container -->
+</div><!-- //wrap -->
+</body>
+</html>

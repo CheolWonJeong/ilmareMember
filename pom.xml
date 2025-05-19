@@ -12,6 +12,7 @@
 	<artifactId>carbonbankAdmin</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>carbonbankAdmin</name>
+	<packaging>war</packaging>
 	<description>carbonbank project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -109,6 +110,14 @@
 		    <artifactId>thumbnailator</artifactId>
 		    <version>0.4.20</version>
 		</dependency>
+
+		<!-- war 파일 생성시 톰캣 라이브러리를 포함하지 않도록 추가 --> 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
 
 	</dependencies>
 

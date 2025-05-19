@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ilmare.carbonbank.mapper.content.CrbnNoticeMapper">
+
+    <select id="selectAdmDesc" parameterType="com.ilmare.carbonbank.cmn.vo.CommonVo" resultType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+    <![CDATA[
+            /*
+            1. ID: selectDesc
+            2. 업무명: 관리자의 상세보기
+            3. 업무설명:
+            */
+        select
+			doc_seq
+			,party_cd
+			,doc_title
+			,doc_info
+			,doc_stat
+			,doc_read
+			,audit_id
+			,cre_dtm
+			,show_id
+			,show_dtm
+			,cancel_id
+			,cancel_dtm
+			,del_yn
+			,del_id
+			,del_dtm
+        from CRBN_NOTICE
+            WHERE doc_seq = #{docSeq}
+     ]]>
+    </select>
+    
+    <select id="selectBeforeAfter" parameterType="com.ilmare.carbonbank.cmn.vo.CommonVo" resultType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+    <![CDATA[
+            /*
+            1. ID: selectBeforeAfter
+            2. 업무명: 이전, 이후 seq 구함
+            3. 업무설명:
+            */
+		select 'preSeq' doc_title, IFNULL(max(doc_seq),0) doc_seq from CRBN_NOTICE where doc_seq < #{docSeq} and doc_stat = 'V'
+		union all
+		select 'sufSeq' doc_title, IFNULL(min(doc_seq),0) doc_seq from CRBN_NOTICE where doc_seq > #{docSeq} and doc_stat = 'V'
+     ]]>
+    </select>
+
+    <select id="selectAdmList" parameterType="com.ilmare.carbonbank.cmn.vo.CommonVo" resultType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+        <![CDATA[
+            /*
+            1. ID: selectAdmList
+            2. 업무명: 관리자의 리스트
+            3. 업무설명:
+            */
+            SELECT *
+              FROM (
+                    SELECT
+						doc_seq
+						,party_cd
+						,doc_title
+						,doc_info
+						,doc_stat
+						,doc_read
+						,audit_id
+						,IF(cre_dtm IS NOT NULL, DATE_FORMAT(cre_dtm, '%Y-%m-%d'), '') AS cre_dtm
+						,IFNULL(show_id, '')
+						,IF(show_dtm IS NOT NULL, DATE_FORMAT(show_dtm, '%Y-%m-%d'), '') AS show_dtm
+						,IFNULL(cancel_id, '')
+						,IF(cancel_dtm IS NOT NULL, DATE_FORMAT(cancel_dtm, '%Y-%m-%d'), '') AS cancel_dtm
+						,del_yn
+						,del_id
+						,IF(del_dtm IS NOT NULL, DATE_FORMAT(del_dtm, '%Y-%m-%d'), '') AS del_dtm
+                    from CRBN_NOTICE
+         ]]>
+                <if test="searchValue != null and searchValue != '' " >
+                    <if test="searchType != null and searchType != '' " >
+                        <if test='searchType == "TITLE"'>
+                            <![CDATA[       
+                                where doc_title like CONCAT('%',#{searchValue},'%')
+                             ]]>
+                        </if>
+                        <if test='searchType == "INFO"'>
+                            <![CDATA[       
+                                where doc_info like CONCAT('%',#{searchValue},'%')
+                            ]]>
+                        </if>
+                    </if>
+                </if>
+                     ORDER BY doc_seq DESC
+                   ) A
+             LIMIT #{pageNo}, #{listSize}
+    </select>
+ 
+    <select id="selectAdmListCount" parameterType="com.ilmare.carbonbank.cmn.vo.CommonVo" resultType="String">
+        <![CDATA[
+            /*
+                1. ID: selectAdmListCount
+                2. 업무명: 뉴스
+                3. 업무설명: 관리자 뉴스 리스트 총갯수
+            */
+        
+            SELECT
+                COUNT(1)
+            FROM CRBN_NOTICE
+        ]]>
+
+        <if test="searchValue != null and searchValue != '' " >
+            <if test="searchType != null and searchType != '' " >
+                <if test='searchType == "TITLE"'>
+                    <![CDATA[       
+                        where doc_title like CONCAT('%',#{searchValue},'%')
+                     ]]>
+                </if>
+                <if test='searchType == "INFO"'>
+                    <![CDATA[       
+                       where doc_info like CONCAT('%',#{searchValue},'%')
+                    ]]>
+                </if>
+            </if>
+        </if>
+    </select>
+ 
+    <select id="selectList" parameterType="com.ilmare.carbonbank.cmn.vo.CommonVo" resultType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+    /*
+    1. ID: selectList
+    2. 업무명: 모바일의 리스트
+    3. 업무설명:
+    */
+	         select 
+	           doc_seq, doc_title, DATE_FORMAT(show_dtm,'%Y-%m-%d %H:%i:%s') AS show_dtm
+	          from CRBN_NOTICE  WHERE doc_stat = 'V'
+	          order by show_dtm desc
+        	  LIMIT #{pageNo} , #{listSize}
+	          
+    </select>
+    
+    <select id="selectDesc" parameterType="com.ilmare.carbonbank.cmn.vo.CommonVo" resultType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+    /*
+    1. ID: selectList
+    2. 업무명: 모바일의 상세조회
+    3. 업무설명:
+    */
+	         select 
+	           doc_seq, doc_title, DATE_FORMAT(show_dtm,'%Y-%m-%d %H:%i:%s') AS show_dtm
+	          from CRBN_NOTICE  WHERE doc_seq = #{docSeq} and doc_stat = 'V'
+	          order by show_dtm desc
+        	  LIMIT #{pageNo} , #{listSize}
+	          
+    </select>
+    
+    <select id="selectListCount" parameterType="com.ilmare.carbonbank.cmn.vo.CommonVo" resultType="String">
+        <![CDATA[
+            /*
+                1. ID: selectListCount
+                2. 업무명: 뉴스
+                3. 업무설명: 뉴스 리스트 총갯수
+            */
+        
+            SELECT
+                COUNT(1)
+            FROM CRBN_NOTICE
+              WHERE doc_stat = 'V'
+	          LIMIT 0 , 10
+        ]]>
+    </select>
+ 
+    <insert id="insert" parameterType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+        <![CDATA[
+            /*
+                1. ID: insert
+                2. 업무명: 뉴스
+                3. 업무설명: 뉴스 등록
+            */
+            INSERT INTO CRBN_NOTICE (
+                party_cd, doc_title, doc_info, audit_id
+            ) VALUES (
+              #{partyCd}
+            , #{docTitle}
+            , #{docInfo}
+            , #{auditId}
+            )
+        ]]>
+    </insert>
+    
+    <update id="update" parameterType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+        <![CDATA[
+            /*
+                1. ID: update
+                2. 업무명: 뉴스
+                3. 업무설명: 뉴스 변경
+            */
+            UPDATE CRBN_NOTICE
+               SET
+                    doc_title = #{docTitle}
+                    , doc_info = #{docInfo}
+                    ,cre_dtm = now()
+              WHERE doc_seq = #{docSeq}
+        ]]>
+    </update>
+ 
+ 
+    <update id="updateShowStat" parameterType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+        <![CDATA[
+            /*
+            1. ID: updateStat
+            2. 업무명: 문서를 front로배포 상태로 변경
+            3. 업무설명:
+               N : 등록상태
+               V : 게시상태
+               C : 게시취소
+               D : 삭제
+            */
+                UPDATE CRBN_NOTICE
+                   SET
+                        doc_stat = 'V'
+                        ,show_id = #{showId}
+                        ,show_dtm = now()
+                  WHERE doc_seq = #{docSeq}
+        ]]>
+    </update>
+ 
+    <update id="updateCancelStat" parameterType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+        <![CDATA[
+            /*
+            1. ID: updateStat
+            2. 업무명: 문서르 배포취소 상태 변경
+            3. 업무설명:
+               N : 등록상태
+               V : 게시상태
+               C : 게시취소
+               D : 삭제
+            */
+                UPDATE CRBN_NOTICE
+                   SET
+                        doc_stat = 'C'
+                        ,cancel_id = cancel_id
+                        ,cancel_dtm = now()
+                  WHERE doc_seq = #{docSeq}
+        ]]>
+    </update>
+ 
+    <update id="updateDelStat" parameterType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+        <![CDATA[
+            /*
+            1. ID: updateDelStat
+            2. 업무명: 문서를 삭제상태 변경
+            3. 업무설명:
+               N : 등록상태
+               V : 게시상태
+               C : 게시취소
+               D : 삭제
+            */
+                UPDATE CRBN_NOTICE
+                   SET
+                        doc_stat = 'D'
+                        ,del_id = del_id
+                        ,del_dtm = now()
+                  WHERE doc_seq = #{docSeq}
+        ]]>
+    </update>
+ 
+    <update id="addReadCnt" parameterType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+        <![CDATA[
+            /*
+            1. ID: addReadCnt
+            2. 업무명: 읽음 건수 추가
+            3. 업무설명:
+            */
+                UPDATE CRBN_NOTICE
+                   SET
+                        doc_read = doc_read + 1
+                  WHERE doc_seq = #{docSeq}
+        ]]>
+    </update>
+ 
+    <select id="selectLatestList"  resultType="com.ilmare.carbonbank.model.content.CrbnNoticeModel">
+        <![CDATA[
+		    /*
+		    1. ID: selectLatestList
+		    2. 업무명: 모바일의 최근 5건 조회 리스트
+		    3. 업무설명:
+		    */
+	        select 
+	           doc_seq, doc_title, DATE_FORMAT(show_dtm,'%Y-%m-%d %H:%i:%s') AS show_dtm
+	         from CRBN_NOTICE  WHERE doc_stat = 'V'
+	         order by show_dtm desc limit 0, 5
+        ]]>
+    </select>
+
+</mapper>

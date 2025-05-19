@@ -1,0 +1,107 @@
+@charset "UTF-8";
+
+@import url("content.css");
+@import url("form.css");
+@import url("board.css");
+@import url("font.css");
+
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, summary,
+time, mark, audio, video,button,select,input
+{margin: 0;padding: 0;border: 0; font-family: 'Pretendard', sans-serif; }
+
+*:focus {
+    box-shadow: none !important;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+    height: 100%;
+    background: #fff;
+}
+
+body {
+	vertical-align: baseline;
+	text-decoration:none;
+	color: #222;
+	word-break:keep-all;
+    background: #fff;
+    box-sizing: border-box;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight:400;
+}
+
+
+ol, ul {list-style: none;}
+table {border-collapse: collapse; border-spacing: 0;}
+
+/* a Link */
+a {text-decoration: none;color: #222}
+a:active, a:link, a:visited {outline: 0;text-decoration: none;}
+a:hover {color:#222; outline: 0;text-decoration: none;  cursor: pointer}
+/* iOS (Safari)에서 링크 터치 시 하이라이트 제거 */
+a { -webkit-tap-highlight-color: transparent;}
+/* 안드로이드 일부 브라우저에서 포커스 시 배경 제거 */
+a:focus, a:active {background-color: transparent;outline: none;}
+
+/* etc */
+blockquote, q {quotes: none;}
+h1, h2, h3, h4, h5 {font-style:normal;}
+img {vertical-align: middle;}
+.btn.active.focus,.btn.active:focus,.btn.focus,.btn:active.focus,.btn:active:focus,.btn:focus,:active,:focus,:visited,a,a:active,a:focus,a:visited{outline:0}
+em {font-style:normal; font-weight: 400}
+
+
+/* layout */
+.adm-wrap       {width: 100%; min-width: 1400px; overflow: auto; display: grid;  grid-template-columns: 240px auto;; }
+.sidebar {height: 100vh; width: 240px; background: var(--main-color); }
+.adm-container  {min-width: 1200px; width: 100%; height: 100%; min-height: 100vh;}
+header  {height: 40px; background-color: #F0F1F7; border-bottom: 1px solid var(--border-line); box-sizing: border-box;}
+footer          {height: 40px; border-top: 1px solid var(--border-line); width: 100%; font-size: 0.76rem; color: #666; text-align: center;  padding-top: 10px; box-sizing: border-box;}
+.adm-content    {padding: 40px; box-sizing: border-box; min-height: calc(100vh - 80px);}
+.adm-content h2 {font-weight: 600; font-size: 1.46rem; margin-bottom: 20px;}
+
+.logo { height: 90px; width: 240px; text-align: center; display: inline-block; }
+.logo h1 {font-size: 0; background: url('../images/adm_logo.svg') no-repeat center; width: 140px; height: 40px; margin: 0 auto; margin-top: 20px; background-size: 140px; }
+
+.top-info {text-align: right; margin-right: 40px; float: right; }
+.top-info li {display: inline-block; margin-left: 20px; padding-top: 10px; font-size: 0.80rem; align-items: center;}
+.top-info li i {font-size: 1.12rem;  padding-right: 4px; }
+
+
+/* menu */
+.side-lnb .link {cursor: pointer;display: block;padding: 4px 20px; color: #fff; position: relative; }
+.side-lnb .link a{color: #C7D4E0; line-height: 32px;  font-size: 1rem;}
+.side-lnb  a:hover{opacity: 0.8}
+.side-lnb .arrow {font-size: 0;}
+.side-lnb .link::after {background: url('../images/down_arrow.svg') no-repeat center; width: 16px; height: 16px; display: inline-block; position: absolute; right: 16px; top:9px; content: '';  -webkit-transition: all 0.4s ease;-o-transition: all 0.4s ease;transition: all 0.4s ease; background-size: 12px; opacity: 0.5;}
+.side-lnb li.open .link::after {-webkit-transform: rotate(180deg);-ms-transform: rotate(180deg);-o-transform: rotate(180deg);transform: rotate(180deg); opacity: 1;}
+.side-lnb li.open .active {color: #fff;}
+.side-lnb li a.active{color: #fff;}
+.side-lnb li.open .submenu {display: block; }
+.side-lnb li .submenu {display: none; background: #1F4584; padding:10px 0 ; margin-bottom: 16px; }
+.submenu a {display: block;color: #96B9DB; padding:4px 16px 4px 38px;-webkit-transition: all 0.25s ease;-o-transition: all 0.25s ease;transition: all 0.25s ease; line-height: 22px; font-size: 0.92rem; }
+.submenu a:hover {color: #fff;}
+.submenu a:before {content: '\00B7';  padding-right: 8px; font-size: 22px; vertical-align: -2px }
+.side-lnb i {font-size: 1.12rem;}
+
