@@ -13,7 +13,7 @@ server:
 
 spring:
   application:
-  name: carbonbankAdmin
+    name: carbonbankAdmin
 
   servlet:
     multipart:
