@@ -19,5 +19,9 @@ http://localhost:8200/adm/content/NoticeMainList.do
 프론트 메인 : 
 http://localhost:8100/main/cbMain.do
 
+http://localhost:8200/adm/content/EnvNewsMainList.do
+http://localhost:8200/adm/content/HotNewsMainList.do
 
-정부장님 수정
+메모 : 
+CRBN_HOT_NEWS.CRE_DTM 칼럼명을 CRBN_HOT_NEWS.REG_DTM 으로 수정함.
+같은 서비스를 사용하면 매퍼 구분이 가능한가?

@@ -51,7 +51,8 @@ public class FileUtil {
     @Value("${comm.UpPathHotNews}")
     private static String upPathHotNews;		//기관 핫뉴스
 
-    private static String pcTemp = "D:\\myProject\\workspace\\sts_4-4.29.1\\ilmareMember\\src\\main\\resources\\static\\upload\\";		//기관 핫뉴스
+    //private static String pcTemp = "D:\\myProject\\workspace\\sts_4-4.29.1\\ilmareMember\\src\\main\\resources\\static\\upload\\";		//기관 핫뉴스
+    private static String pcTemp = "C:\\sts_work\\ilmareMember\\ilmareMember\\src\\main\\resources\\static\\upload\\";
     
 	private static final String DEFAULT_ENCODING = "euc-kr";
     /**
