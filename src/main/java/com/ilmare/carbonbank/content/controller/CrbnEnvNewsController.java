@@ -213,7 +213,8 @@ public class CrbnEnvNewsController {
 
         String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
 		String originalFilename = imgFile.getOriginalFilename();
-		String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+		//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+		String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt; // 중간에 점 제거
 		//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 		String tmpFileNm =  fileSavePath+File.separator +originalFilename;
 
@@ -292,7 +293,12 @@ public class CrbnEnvNewsController {
 	 * 공지사항 저장
 	 */
 	@PostMapping("/EnvNewsUptProc")
-	public  @ResponseBody HashMap EnvNewsUptProc(HttpServletRequest request, @RequestPart("imgFile") MultipartFile imgFile, final NewsCommonModel paramModel, Model model) throws Exception {
+	public  @ResponseBody HashMap EnvNewsUptProc(
+			HttpServletRequest request, 
+			//@RequestPart("imgFile") MultipartFile imgFile, 
+			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,
+			final NewsCommonModel paramModel, 
+			Model model) throws Exception {
 		
 		HashMap result = new HashMap();
 		log.info("EnvNewsUptProc Start");
@@ -327,7 +333,8 @@ public class CrbnEnvNewsController {
 
 	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
 			String originalFilename = imgFile.getOriginalFilename();
-			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;
 			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
 

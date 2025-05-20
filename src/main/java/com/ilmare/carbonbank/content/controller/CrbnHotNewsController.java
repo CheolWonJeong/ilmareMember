@@ -212,7 +212,8 @@ public class CrbnHotNewsController {
 
         String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
 		String originalFilename = imgFile.getOriginalFilename();
-		String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+		//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+		String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+fileExt; // 중간에 점 제거
 		//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 		String tmpFileNm =  fileSavePath+File.separator +originalFilename;
 
@@ -331,7 +332,8 @@ public class CrbnHotNewsController {
 
 	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
 			String originalFilename = imgFile.getOriginalFilename();
-			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;  // 중간에 점 제거
 			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
 
