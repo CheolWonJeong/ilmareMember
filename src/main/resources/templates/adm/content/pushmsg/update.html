@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/admlayour}">
+	<th:block layout:fragment="head" th:insert="~{@{/adm/layout/admhead}}"></th:block>
+<script type="text/javascript">
+	$(function(){ 
+				
+	});
+
+
+	$(document).ready(function(){
+		
+		// 초기값 저장 (로드 시점에 원본 값을 저장)
+		var originalTitle = $('#docTitle').val();
+		var originalInfo = $('#docInfo').val();
+		var originalFrom = $('#docFrom').val();
+		var originalUrl = $('#docUrl').val();
+		//var originalFilesCount = 0; // 첨부파일 초기 개수 (필요 시 서버에서 초기값 받아 설정)
+
+		// 2. 파일 변경 감지 플래그
+		var fileChanged = false;
+		$('#imgSrcFile').on('change', function() {
+		    fileChanged = true;
+		});
+				
+				
+		//저장버튼 클릭
+        $('#docSave').on('click', function(event) {
+        	
+			console.log("start docSave");//순수한 태그
+			
+			var updateInd = false; 
+			
+			// 텍스트 필드 변경 여부 체크
+			if ($('#docTitle').val() !== originalTitle) updateInd = true;
+			if ($('#docInfo').val() !== originalInfo) updateInd = true;
+			if ($('#docFrom').val() !== originalFrom) updateInd = true;
+			if ($('#docUrl').val() !== originalUrl) updateInd = true;
+
+			// 파일 변경 여부 체크
+			var files = $('#imgSrcFile')[0].files;
+			if (files.length > 0 || fileChanged) updateInd = true;
+						
+			
+			if ( !updateInd ) {
+				alert("변경된 내용이 없습니다.");
+				return;
+			}
+			var formData = new FormData();
+        	
+			//파일데이터 추출 (중복선언)
+			var file=$("#imgSrcFile");
+			var files = file[0].files;
+			
+			console.log(file);
+			
+			if ( files.length > 0) {
+	    		for(var i =0;i<files.length;i++){
+	    			console.log(files[i].name);//순수한 태그
+	    			if(!checkExtension(files[i].name, files[i].size)){
+	    		           return false;
+	    		    }    			
+	    			formData.append("imgFile", files[i]);
+	    		}
+				
+			}
+			
+
+			formData.append("docSeq", $('#docSeq').val() );
+			formData.append("docTitle", $('#docTitle').val() );
+			formData.append("docInfo", $('#docInfo').val() );
+			formData.append("docFrom", $('#docFrom').val() );
+			formData.append("docUrl", $('#docUrl').val() );
+
+			formData.append("befImgSrcNm", $('#befImgSrcNm').val() );
+			formData.append("befImgNailNm", $('#befImgNailNm').val() );
+
+			$.ajax({
+                url : '/adm/content/PushMsgUptProc'
+                , type : 'POST'
+                , data:formData //보내는데이터 form
+    			, contentType:false //보내는데이터타입 false->"multipart/form-data"로 선언됩니다.
+    			, processData:false //폼데이터가 name=값&name=값 형식으로 자동변경되는 것을 막아줍니다.
+                , beforeSend : function( xhr, settings ) { 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/PushMsgMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+        
+		//게시버튼 클릭
+        $('#docView').on('click', function(event) {
+			alert("푸시 발송 작업중");
+			return;
+        	//alert("게시 클릭 docSeq= " + $('#docSeq').val());
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/PushMsgViewProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/PushMsgMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+		//게시취소버튼 클릭
+        $('#docCancelView').on('click', function(event) {
+        	
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/PushMsgCancelProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/PushMsgMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+		//삭제버튼 클릭
+        $('#docDelete').on('click', function(event) {
+        	
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/PushMsgDelProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/PushMsgMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+    });
+</script>
+
+<body>
+<div class="adm-wrap">
+	<th:block layout:fragment="header" th:insert="~{@{/adm/layout/admheader}}"></th:block>
+	
+<div layout:fragment="content">
+    <div class="adm-container">
+        <header>
+            <ul class="top-info">
+                <li>
+                    <i class="iconfont">account_circle</i><span th:text="${sessInfo.CrbnAdmNm}">홍길동님</span> 님 반갑습니다
+                </li>
+                <li>
+                    <a href="#"><i class="iconfontline">logout</i>로그아웃</a>
+                </li>
+            </ul>
+        </header>
+		
+        <div class="adm-content">
+			<h2>알림</h2>
+            <div class="board-write mT10">
+				<table>
+					<colgroup>
+						<col style="width:20%;" />
+						<col />
+					</colgroup>
+					<tbody>
+						<input id="docSeq" type="hidden" th:value="${ docview.docSeq }">
+						<input id="befImgSrcNm" type="hidden" th:value="${ docview.imgSrcNm }">
+						<input id="befImgNailNm" type="hidden" th:value="${ docview.imgNailNm }">
+						<tr>
+							<th>제목</th>
+							<td><input type="text" name="" id="docTitle" class="w90"  th:value="${ docview.docTitle }" /></td>
+						</tr>
+                        <tr>
+                            <th>기사 대표 이미지</th>
+                            <td>
+                                <div class="file-input">
+                                    <label>파일선택<input type="file" id="imgSrcFile" onchange="javascript:document.getElementById('file_route1').value=this.value" ></label>
+                                    <input type="text" readonly="readonly" title="File Route" id="file_route1" th:value="${ docview.imgSrcNm }" >
+                               </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>기사내용</th>
+                            <td>
+                                <textarea name="" placeholder="" id="docInfo"  th:text="${ docview.DocInfo }"></textarea>
+                            </td>
+                        </tr>
+						<tr>
+							<th>기사 출처</th>
+							<td><input type="text" name="" id="docFrom" class="w90"   th:value="${ docview.docFrom }" /></td>
+						</tr>
+						<tr>
+							<th>기사 url</th>
+							<td><input type="text" name="" id="docUrl" class="w90"  th:value="${ docview.docUrl }" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="t-center mT40">
+                <button type="button" class="btn-grayfill" id="docSave">저장</button>
+                <!--<button type="button" class="btn-blue" id="docView">게시</button>
+				<button type="button" class="btn-grayfill" id="docCancelView">게시취소</button>-->
+                <button type="button" class="btn-blue" id="docView">푸시발송</button>
+                <button type="button" class="btn-blue" id="docDelete">삭제</button>
+			</div>
+		</div><!-- //content -->
+	
+    <script type="text/javascript" src="/adm/js/common/common.js"></script>
+	</div><!-- //container -->
+</div>
+</div><!-- //wrap -->
+</body>
+</html>
