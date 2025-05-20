@@ -21,24 +21,24 @@ import com.ilmare.carbonbank.cmn.service.CommonService;
 import com.ilmare.carbonbank.cmn.util.DateUtil;
 import com.ilmare.carbonbank.cmn.util.FileUtil;
 import com.ilmare.carbonbank.model.content.NewsCommonModel;
-import com.ilmare.carbonbank.service.CrbnHotNewsService;
+import com.ilmare.carbonbank.service.CrbnMunVideoService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 
 /*
- * 기관 핫뉴스 관리
+ * 시정영상 관리
  */
 @Slf4j
 @Controller
 @RequestMapping("/adm/content")
-public class CrbnHotNewsController {
+public class MunicipalVideoController {
 	@Autowired(required=true)
 	private SessionManager sessMgr;
 	
 	@Autowired
-	private CrbnHotNewsService svc;
+	private CrbnMunVideoService svc;
 
 	@Autowired
 	private CommonService commSvc;
@@ -48,63 +48,63 @@ public class CrbnHotNewsController {
 	
 
     @Value("${comm.pcUploadTemp}")
-    private static String pcTmp;		//기관 핫뉴스
+    private static String pcTmp;		//시정영상
 	
 	/*
-	 *  기관 핫뉴스 리스트 조회
+	 *  시정영상 리스트 조회
 	 */
-	@RequestMapping("/HotNewsMainList.do")
-	public String HotNewsMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/MunicipalVideoMainList.do")
+	public String MunicipalVideoMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
-		log.info("HotNewsMainList Start");
+		log.info("MunicipalVideoMainList Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 //		if ( !sessMgr.isSession(request) ) {
-			log.info("HotNewsMainList 세션 없음 상태");
+			log.info("MunicipalVideoMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 //		SessInfo sessInfo = sessMgr.getSession(request);
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("HotNewsMainList 로그인 상태");
-		log.info("HotNewsMainList sessInfo=" + sessInfo.toString());
+		log.info("MunicipalVideoMainList 로그인 상태");
+		log.info("MunicipalVideoMainList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("HotNewsMainList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("MunicipalVideoMainList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("HotNewsMainList 권한 없음 상태");
+			log.info("MunicipalVideoMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 		//메뉴 조회
 		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
-		//기관 핫뉴스 리스트 조회
+		//시정영상 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("HotNewsMainList {} ~ {}", sRowNum, pageSize);
+		log.info("MunicipalVideoMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
-		log.info("HotNewsMainList ntsList.size()" + ntsList.toString());
+		log.info("MunicipalVideoMainList ntsList.size()" + ntsList.toString());
 		
 
 		model.addAttribute("sessInfo", sessInfo);
 		model.addAttribute("ntsList", ntsList);
 		//model.addAttribute("menuList", menuList);
-		log.info("HotNewsMainList End");
+		log.info("MunicipalVideoMainList End");
 
-		return "adm/content/hotnews/list";
+		return "adm/content/municipalvideo/list";
 		
 	}
 
 	/*
 	 * 버튼 클릭조회
 	 */
-	@RequestMapping("/HotNewsQueryList")
-	public  @ResponseBody HashMap HotNewsQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/MunicipalVideoQueryList")
+	public  @ResponseBody HashMap MunicipalVideoQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
 		log.info("NoticeQueryList Start");
@@ -131,11 +131,11 @@ public class CrbnHotNewsController {
 			return result;
 		}
 		
-		//기관 핫뉴스 리스트 조회
+		//시정영상 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("HotNewsMainList {} ~ {}", sRowNum, pageSize);
+		log.info("MunicipalVideoMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
@@ -150,58 +150,58 @@ public class CrbnHotNewsController {
 	/*
 	 * 신규등록
 	 */
-	@RequestMapping("/HotNewsIns.do")
-	public String HotNewsIns(HttpServletRequest request, Model model) throws Exception {
-		log.info("HotNewsIns Start");
+	@RequestMapping("/MunicipalVideoIns.do")
+	public String MunicipalVideoIns(HttpServletRequest request, Model model) throws Exception {
+		log.info("MunicipalVideoIns Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("AdmHotNewsIns 세션 없음 상태");
+			log.info("AdmMunicipalVideoIns 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		log.info("HotNewsIns 로그인 상태");
+		log.info("MunicipalVideoIns 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("HotNewsIns sessInfo=" + sessInfo.toString());
+		log.info("MunicipalVideoIns sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("HotNewsIns PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("MunicipalVideoIns PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("HotNewsIns 권한 없음 상태");
+			log.info("MunicipalVideoIns 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 
 		model.addAttribute("sessInfo", sessInfo);
-		return "adm/content/hotnews/insert";
+		return "adm/content/municipalvideo/insert";
 	}
 
 	/*
 	 * 저장
 	 */
-	@PostMapping("/HotNewsInsProc")
-	public  @ResponseBody HashMap HotNewsInsProc(
+	@PostMapping("/MunicipalVideoInsProc")
+	public  @ResponseBody HashMap MunicipalVideoInsProc(
 			HttpServletRequest request, 
 			//@RequestPart("imgFile") MultipartFile imgFile,
-			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,	
+			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,				
 			final NewsCommonModel paramModel, 
 			Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("HotNewsInsProc Start");
+		log.info("MunicipalVideoInsProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("HotNewsInsProc 세션 없음 상태");
+			log.info("MunicipalVideoInsProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("HotNewsInsProc 로그인 상태");
+		log.info("MunicipalVideoInsProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("HotNewsInsProc sessInfo=" + sessInfo.toString());
+		log.info("MunicipalVideoInsProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("HotNewsInsProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("MunicipalVideoInsProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("AdmNoticeList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
@@ -239,13 +239,11 @@ public class CrbnHotNewsController {
 			
 			paramModel.setImgSrcNm(imgFile.getOriginalFilename());
 			paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() + fileExt);
-			
 		} else {
 			log.info("imgFile is null ");
 			paramModel.setImgSrcNm("");
 			paramModel.setImgNailNm("");
 		}			
-			
 
 		//저장
 		paramModel.setPartyCd(sessInfo.getPartyCd());
@@ -253,59 +251,59 @@ public class CrbnHotNewsController {
 		int rtn = svc.insert(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("HotNewsInsProc End");
+		log.info("MunicipalVideoInsProc End");
 
 		return result;
 	}
 
 	
 	/*
-	 * 기관 핫뉴스 상세 조회
+	 * 시정영상 상세 조회
 	 */
-	@RequestMapping("/HotNewsDesc.do")
-	public String HotNewsDesc(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/MunicipalVideoDesc.do")
+	public String MunicipalVideoDesc(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
-		log.info("HotNewsDesc Start");
+		log.info("MunicipalVideoDesc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("AdmNoticeView 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		log.info("HotNewsDesc 로그인 상태");
+		log.info("MunicipalVideoDesc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("HotNewsDesc sessInfo=" + sessInfo.toString());
+		log.info("MunicipalVideoDesc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("HotNewsDesc PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("MunicipalVideoDesc PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("HotNewsDesc 권한 없음 상태");
+			log.info("MunicipalVideoDesc 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 		//메뉴 조회
 		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
-		//기관 핫뉴스 한건 조회
+		//시정영상 한건 조회
 		
 		NewsCommonModel rtnModel = svc.selectAdmDesc(paramVo);
-		log.info("HotNewsDesc {}  {}",rtnModel.getImgSrcNm(),rtnModel.getImgNailNm());
+		log.info("MunicipalVideoDesc {}  {}",rtnModel.getImgSrcNm(),rtnModel.getImgNailNm());
 
 		model.addAttribute("hsDocStat", commSvc.hsDocStat);
 		model.addAttribute("sessInfo", sessInfo);
 		
 		model.addAttribute("docview", rtnModel);
 		//model.addAttribute("menuList", menuList);
-		log.info("HotNewsDesc End");
+		log.info("MunicipalVideoDesc End");
 
-		return "adm/content/hotnews/update";
+		return "adm/content/municipalvideo/update";
 	}
 
 	/*
-	 * 기관 핫뉴스 저장
+	 * 시정영상 저장
 	 */
-	@PostMapping("/HotNewsUptProc")
-	public  @ResponseBody HashMap HotNewsUptProc(
+	@PostMapping("/MunicipalVideoUptProc")
+	public  @ResponseBody HashMap MunicipalVideoUptProc(
 			HttpServletRequest request, 
 			//@RequestPart("imgFile") MultipartFile imgFile, 
 			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,			
@@ -313,24 +311,24 @@ public class CrbnHotNewsController {
 			Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("HotNewsUptProc Start");
+		log.info("MunicipalVideoUptProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("HotNewsUptProc 세션 없음 상태");
+			log.info("MunicipalVideoUptProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("HotNewsUptProc 로그인 상태");
+		log.info("MunicipalVideoUptProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("HotNewsUptProc sessInfo=" + sessInfo.toString());
+		log.info("MunicipalVideoUptProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("HotNewsUptProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("MunicipalVideoUptProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("HotNewsUptProc 권한 없음 상태");
+			log.info("MunicipalVideoUptProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -373,46 +371,46 @@ public class CrbnHotNewsController {
 			paramModel.setImgNailNm(paramModel.getBefImgNailNme());
 		}
 		
-		log.info("HotNewsUptProc , paramModel.getDocSeq() : " + paramModel.getDocSeq());
-		log.info("HotNewsUptProc , paramModel.getDocTitle() : " + paramModel.getDocTitle());
+		log.info("MunicipalVideoUptProc , paramModel.getDocSeq() : " + paramModel.getDocSeq());
+		log.info("MunicipalVideoUptProc , paramModel.getDocTitle() : " + paramModel.getDocTitle());
 		
-		//기관 핫뉴스 변경처리
+		//시정영상 변경처리
 		paramModel.setPartyCd(sessInfo.getPartyCd());
 		paramModel.setRegId(sessInfo.getCrbnAdmId());
 		int rtn = svc.update(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("HotNewsUptProc End");
+		log.info("MunicipalVideoUptProc End");
 
 		return result;
 	}
 
 	
 	/*
-	 * 기관 핫뉴스 게시
+	 * 시정영상 게시
 	 */
-	@RequestMapping("/HotNewsViewProc")
-	public  @ResponseBody HashMap HotNewsViewProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/MunicipalVideoViewProc")
+	public  @ResponseBody HashMap MunicipalVideoViewProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("HotNewsViewProc Start");
+		log.info("MunicipalVideoViewProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("HotNewsViewProc 세션 없음 상태");
+			log.info("MunicipalVideoViewProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("HotNewsViewProc 로그인 상태");
+		log.info("MunicipalVideoViewProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("HotNewsViewProc sessInfo=" + sessInfo.toString());
+		log.info("MunicipalVideoViewProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("HotNewsViewProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("MunicipalVideoViewProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("HotNewsViewProc 권한 없음 상태");
+			log.info("MunicipalVideoViewProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -424,36 +422,36 @@ public class CrbnHotNewsController {
 		int rtn = svc.updateShowStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("HotNewsViewProc End");
+		log.info("MunicipalVideoViewProc End");
 
 		return result;
 	}
 
 	/*
-	 * 기관 핫뉴스 게시 취소
+	 * 시정영상 게시 취소
 	 */
-	@RequestMapping("/HotNewsCancelProc")
-	public  @ResponseBody HashMap HotNewsCancelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/MunicipalVideoCancelProc")
+	public  @ResponseBody HashMap MunicipalVideoCancelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("HotNewsCancelProc Start");
+		log.info("MunicipalVideoCancelProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("HotNewsCancelProc 세션 없음 상태");
+			log.info("MunicipalVideoCancelProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("HotNewsCancelProc 로그인 상태");
+		log.info("MunicipalVideoCancelProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("HotNewsCancelProc sessInfo=" + sessInfo.toString());
+		log.info("MunicipalVideoCancelProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("HotNewsCancelProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("MunicipalVideoCancelProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("HotNewsCancelProc 권한 없음 상태");
+			log.info("MunicipalVideoCancelProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -465,34 +463,34 @@ public class CrbnHotNewsController {
 		int rtn = svc.updateCancelStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("HotNewsCancelProc End");
+		log.info("MunicipalVideoCancelProc End");
 
 		return result;
 	}
 
 	/*
-	 * 기관 핫뉴스 삭제
+	 * 시정영상 삭제
 	 */
-	@RequestMapping("/HotNewsDelProc")
-	public  @ResponseBody HashMap HotNewsDelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/MunicipalVideoDelProc")
+	public  @ResponseBody HashMap MunicipalVideoDelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("HotNewsDelProc Start");
+		log.info("MunicipalVideoDelProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("HotNewsDelProc 세션 없음 상태");
+			log.info("MunicipalVideoDelProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("HotNewsDelProc 로그인 상태");
+		log.info("MunicipalVideoDelProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("HotNewsDelProc sessInfo=" + sessInfo.toString());
+		log.info("MunicipalVideoDelProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("HotNewsDelProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("MunicipalVideoDelProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("NoticeCancelProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
@@ -506,7 +504,7 @@ public class CrbnHotNewsController {
 		int rtn = svc.updateDelStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("HotNewsDelProc End");
+		log.info("MunicipalVideoDelProc End");
 
 		return result;
 	}

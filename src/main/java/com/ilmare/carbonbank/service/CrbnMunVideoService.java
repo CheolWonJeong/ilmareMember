@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ilmare.carbonbank.mapper.content.CrbnHotNewsMapper;
+import com.ilmare.carbonbank.mapper.content.CrbnMunVideoMapper;
 import com.ilmare.carbonbank.model.content.NewsCommonModel;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class CrbnHotNewsService {
+public class CrbnMunVideoService {
 	@Autowired
-	public CrbnHotNewsMapper mapper;
+	public CrbnMunVideoMapper mapper;
 	
 
 	public NewsCommonModel selectAdmDesc(NewsCommonModel param){
