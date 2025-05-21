@@ -25,7 +25,7 @@
                };        
             
             $.ajax({
-                url : '/adm/content/HotNewsQueryList'
+                url : '/adm/content/MunicipalVideoQueryList'
                 , type : 'POST'
                 , dataType : 'JSON'
                 , cache : false
@@ -44,7 +44,7 @@
                             strHtml += '    <td class="left">' + value.docTitle + '</td>';
                             strHtml += '    <td>' + value.docRead + '</td>';
                             strHtml += '    <td>' + value.docStatText + '</td>';
-                            strHtml += '    <td>' + value.upDate + '</td>';
+                            strHtml += '    <td>' + value.upDate + ' add </td>';
                             strHtml += '</tr>';
                         });
                     } else {
