@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/admlayour}">
+	<th:block layout:fragment="head" th:insert="~{@{/adm/layout/admhead}}"></th:block>
+	<script type="text/javascript">
+		$(document).ready(function(){
+	
+			//조회버튼 클릭
+	        $('#docSave').on('click', function(event) {
+	        	
+				console.log("start docSave");//순수한 태그
+				
+	        	//파일데이터 추출
+				var file=$("#imgSrcNm");
+				var files = file[0].files;
+				console.log(files.length);
+				
+				var formData = new FormData();
+	    		for(var i =0;i<files.length;i++){
+	    			console.log(files[i].name);//순수한 태그
+	    			if(!checkExtension (files[i].name, files[i].size)){
+	    		           return false;
+	    		    }    			
+	    			formData.append("imgFile", files[i]);
+	    		}
+	
+				formData.append("docTitle", $('#docTitle').val() );
+				formData.append("docInfo", $('#docInfo').val() );
+				formData.append("docFrom", $('#docFrom').val() );
+				formData.append("docUrl", $('#docUrl').val() );
+
+				$.ajax({
+	                url : '/adm/content/PushMsgInsProc'
+	                , type : 'POST'
+	                , data:formData //보내는데이터 form
+	    			, contentType:false //보내는데이터타입 false->"multipart/form-data"로 선언됩니다.
+	    			, processData:false //폼데이터가 name=값&name=값 형식으로 자동변경되는 것을 막아줍니다.
+	                , beforeSend : function( xhr, settings ) { 
+	                }
+	                , success : function(data, stauts, request) {
+	    				if (data.procInd == "S") {
+	    					alert("정상 처리 되었습니다.");
+	    					location.href = "/adm/content/PushMsgMainList.do";
+	    				} else {
+	    					alert("처리중 오류가 발생 했습니다.");
+	    				}
+	
+	                }
+	                , error : function(xhr, status) {
+	                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+	                }
+	                , complete : function(xhr, status) {
+	                    //loadingbar_hide();
+	                }    
+	            });
+	        });
+	        
+	    });
+	</script>
+
+<body>
+<div class="adm-wrap">
+	<th:block layout:fragment="header" th:insert="~{@{/adm/layout/admheader}}"></th:block>
+	
+<div layout:fragment="content">
+    <div class="adm-container">
+        <header>
+            <ul class="top-info">
+                <li>
+                    <i class="iconfont">account_circle</i><span th:text="${sessInfo.CrbnAdmNm}">홍길동님</span> 님 반갑습니다
+                </li>
+                <li>
+                    <a href="#"><i class="iconfontline">logout</i>로그아웃</a>
+                </li>
+            </ul>
+        </header>
+		
+        <div class="adm-content">
+			<h2>알림</h2>
+            <div class="board-write mT10">
+				<table>
+					<colgroup>
+                        <col style="width:20%;" />
+						<col />
+					</colgroup>
+					<tbody>
+						<tr>
+							<th>제목</th>
+							<td><input type="text" name="" id="docTitle" class="w90" /></td>
+						</tr>
+                        <tr>
+                            <th>기사 대표 이미지</th>
+                            <td>
+                                <div class="file-input">
+                                    <label>파일선택<input type="file" onchange="javascript:document.getElementById('file_route1').value=this.value"   id="imgSrcNm" accept=".jpg,.png,.gif"></label>
+                                    <input type="text" readonly="readonly" title="File Route" id="file_route1">
+                               </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>기사내용</th>
+                            <td>
+                                <textarea name="" placeholder="" id="docInfo" ></textarea>
+                            </td>
+                        </tr>
+						<tr>
+							<th>기사 출처</th>
+							<td><input type="text" name="" id="docFrom" class="w90" /></td>
+						</tr>
+						<tr>
+							<th>기사 링크</th>
+							<td><input type="text" name="" id="docUrl" class="w90" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+            <div class="t-center mT40">
+                <button type="button" class="btn-grayfill" id="docCancel">취소</button>
+                <button type="button" class="btn-blue" id="docSave">등록</button>
+			</div>
+		</div><!-- //content -->
+    <script type="text/javascript" src="/adm/js/common/common.js"></script>
+	
+	</div><!-- //container -->
+</div>
+</div><!-- //wrap -->
+</body>
+</html>

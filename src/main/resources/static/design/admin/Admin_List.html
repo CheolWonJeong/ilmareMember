@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=1240, user-scalable=1" name="viewport"/>
+<title>중한통 관리자</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+
+	<!-- header  -->
+	<div class="header">
+		<h1><img src="images/admin_ci.png" alt="중한통관리자" /></h1>
+		<div class="admin_infor">
+			<i class="material-icons">account_circle</i> 홍길동AA 님 반갑습니다
+			<button class="btn_type1 mL10">로그아웃</button>
+		</div>
+	</div><!-- //header -->
+
+	<div class="container">
+		
+		<div class="lnb">
+			<ul class="adminlnb">
+				<li><a href="#" ><i class="material-icons">reorder</i>서블릿 관리</a></li>
+				<li><a href="#"><i class="material-icons">lock_outline</i>권한 관리</a></li>
+				<li><a href="#"><i class="material-icons">perm_contact_calendar</i>어드민 아이디 관리</a></li>
+				<li><a href="#"><i class="material-icons">settings</i>어드민 메뉴관리</a></li>
+			</ul>
+			<ul class="menulnb">
+				<li><a href="#"><i class="material-icons">assignment</i>프론트 메뉴(카테고리) 관리</a></li>
+				<li><a href="#"><i class="material-icons">description</i>홈기사 관리</a></li>
+				<li><a href="#" class="current"><i class="material-icons">list</i>뉴스 관리</a></li>  <!--현재상태 메뉴일때 current -->
+				<li><a href="#"><i class="material-icons">public</i>관광 관리</a></li>
+				<li><a href="#"><i class="material-icons">queue_music</i>뮤직 관리</a></li>
+				<li><a href="#"><i class="material-icons">toys</i>문화 관리</a></li>
+				<li><a href="#"><i class="material-icons">photo_camera</i>포토&동영상 관리</a></li>
+				<li><a href="#"><i class="material-icons">radio</i>라디오관리</a></li>
+				<li><a href="#"><i class="material-icons">shopping_cart</i>쇼핑 상품 관리</a></li>
+			</ul>
+		</div><!-- //lnb -->
+
+		<div class="content">
+			<h2>서블릿 관리</h2>
+			<div class="align_right">
+				<select name="select" class="sel_type1">
+					<option>항목을 선택하시오</option>	
+					<option>서블릿아이디</option>
+					<option>서블릿이름</option>
+				</select>
+				<input type="text" style="width:150px"/>
+				<button class="btn_type1">조회</button>
+			</div>
+			<div class="board_list mT10">
+				<table>
+					<colgroup>
+						<col />
+						<col style="width:13%;" />
+						<col style="width:13%;" />
+						<col style="width:13%;" />
+						<col style="width:13%;" />
+						<col style="width:13%;" />
+						<col style="width:15%;" />
+					</colgroup>
+					<thead>
+						<th>서블릿아이디</th>
+						<th>서블릿이름</th>
+						<th>서블릿클래스</th>
+						<th>서블릿함수</th>
+						<th>서블릿화면</th>
+						<th>서블릿권한</th>
+						<th>변경일</th>
+					</thead>
+					<tbody>
+						<tr>
+							<td><a href="#">asges999</a></td>
+							<td>홍길동 </td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-11</td>
+						</tr>
+						<tr>
+							<td><a href="#">djfAAAAddd</a></td>
+							<td>홍길동 </td>
+							<td>가나다라마바사</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-15</td>
+						</tr>
+						<tr>
+							<td><a href="#">asges999</a></td>
+							<td>홍길동 </td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-11</td>
+						</tr>
+						<tr>
+							<td><a href="#">djfAAAAddd</a></td>
+							<td>홍길동 </td>
+							<td>가나다라마바사</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-15</td>
+						</tr>
+						<tr>
+							<td><a href="#">asges999</a></td>
+							<td>홍길동 </td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-11</td>
+						</tr>
+						<tr>
+							<td><a href="#">djfAAAAddd</a></td>
+							<td>홍길동 </td>
+							<td>가나다라마바사</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-15</td>
+						</tr>
+						<tr>
+							<td><a href="#">asges999</a></td>
+							<td>홍길동 </td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-11</td>
+						</tr>
+						<tr>
+							<td><a href="#">djfAAAAddd</a></td>
+							<td>홍길동 </td>
+							<td>가나다라마바사</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-15</td>
+						</tr>
+						<tr>
+							<td><a href="#">asges999</a></td>
+							<td>홍길동 </td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-11</td>
+						</tr>
+						<tr>
+							<td><a href="#">djfAAAAddd</a></td>
+							<td>홍길동 </td>
+							<td>가나다라마바사</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>가나다라</td>
+							<td>2018-02-15</td>
+						</tr>
+
+					</tbody>
+				</table>
+			</div><!-- //list end -->
+			<div class="mT20 align_right"><button class="btn_type2">등록</button></div>
+
+			
+			<div class="paging">
+				<a href="#" class="paging_first"><span class="screen_hide">첫페이지</span></a>
+				<a href="#" class="paging_prev"><span class="screen_hide">이전페이지</span></a>
+				<span class="current">1</span>
+				<a href="#">2</a>
+				<a href="#">3</a>
+				<a href="#">4</a>
+				<a href="#">5</a>
+				<a href="#">6</a>
+				<a href="#">7</a>
+				<a href="#">8</a>
+				<a href="#">9</a>
+				<a href="#">10</a>
+				<a href="#" class="paging_next"><span class="screen_hide">다음페이지</span></a>
+				<a href="#" class="paging_last"><span class="screen_hide">마지막페이지</span></a>
+			</div><!--// paging -->
+		
+		</div><!-- //content -->
+	
+	</div><!-- //container -->
+</div><!-- //wrap -->
+</body>
+</html>

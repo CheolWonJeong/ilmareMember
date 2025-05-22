@@ -1,0 +1,113 @@
+@charset "utf-8";
+
+@font-face {
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 300;
+src: url('../fonts/Pretendard-Light.woff2') format('woff2'),
+        url('../fonts/Pretendard-Light.woff') format('woff'),
+        url('../fonts/Pretendard-Light.ttf') format('truetype');
+
+}
+
+@font-face {
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+src: url('../fonts//Pretendard-Regular.woff2') format('woff2'),
+    url('../fonts/Pretendard-Regular.woff') format('woff'),
+    url('../fonts/Pretendard-Regular.ttf') format('truetype');
+}
+
+@font-face {
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+src: url('../fonts/Pretendard-Medium.woff2') format('woff2'),
+    url('../fonts/Pretendard-Medium.woff') format('woff'),
+    url('../fonts/Pretendard-Medium.ttf') format('truetype');
+}
+
+@font-face {
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+src: url('../fonts/Pretendard-SemiBold.woff2') format('woff2'),
+    url('../fonts/Pretendard-SemiBold.woff') format('woff'),
+    url('../fonts/Pretendard-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+src: url('../fonts/Pretendard-Bold.woff2') format('woff2'),
+    url('../fonts/Pretendard-Bold.woff') format('woff'),
+    url('../fonts/Pretendard-Bold.ttf') format('truetype');
+}
+
+
+
+
+/*=== icon font <i class="iconfontline">ico</i> ===*/
+@font-face {
+    font-family: 'Material Icons Outlined';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../fonts/MaterialIcons-outline-Regular.woff2) format('woff2'),
+      url(fonts/MaterialIcons-outline-Regular.woff) format('woff'),
+      url(fonts/MaterialIcons-outline-Regular.ttf) format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Material Icons Outlined';
+    font-style: normal;
+    font-weight: 300;
+    src: url(../fonts/MaterialIcons-outline-Light.woff2) format('woff2'),
+      url(../fonts/MaterialIcons-outline-Light.woff) format('woff'),
+      url(../fonts/MaterialIcons-outline-Light.ttf) format('truetype');
+  }
+
+  @font-face {
+   font-family: 'Material Icons';
+   font-style: normal;
+   font-weight: 400;
+   src: url(../fonts/MaterialIcons-Regular.woff2) format('woff2'),
+     url(../fonts/MaterialIcons-Regular.woff) format('woff'),
+     url(../fonts/MaterialIcons-Regular.ttf) format('truetype');
+ }
+
+ .iconfont {
+   font-family: 'Material Icons';
+   font-weight: normal;
+   font-style: normal;
+   font-size: 24px;
+   line-height: 1;
+   letter-spacing: normal;
+   text-transform: none;
+   display: inline-block;
+   white-space: nowrap;
+   word-wrap: normal;
+   direction: ltr;
+   -webkit-font-feature-settings: 'liga';
+   -webkit-font-smoothing: antialiased;
+   vertical-align: -3px;
+ }
+
+
+  .iconfontline {
+    font-family: 'Material Icons Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    vertical-align: -3px;
+  }

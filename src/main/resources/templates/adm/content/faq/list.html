@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/admlayour}">
+	<th:block layout:fragment="head" th:insert="~{@{/adm/layout/admhead}}"></th:block>
+
+<script type="text/javascript">
+	$(function(){ 
+	});
+
+	$(document).ready(function(){
+    	
+		//조회버튼 클릭
+        $('#searchBtn').on('click', function(event, page) {
+        	
+            var pageIdx = (page == null ? "1" : page);
+            var rowPerPage = 10;
+            var pageBlock = 10;
+            
+            var param = {
+                     "searchType" : $('#searchType').val() 
+                     , "searchValue" : $('#searchValue').val() 
+                     , "pageNo" : pageIdx
+               };        
+            
+            $.ajax({
+                url : '/adm/content/FaqQueryList'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, status, request) {
+					console.log("AJAX Success 콜백 진입", data);
+                    var values = data.rows;
+                    var strHtml = "";
+                    
+                    if (values.length > 0) {
+                        $.each(values, function(index, value){
+                            strHtml += '<tr id="' + value.docSeq + '">';
+                            strHtml += '    <td>' + ((pageIdx-1) * rowPerPage + index + 1) + '</td>';
+                            strHtml += '    <td class="left">' + value.docTitle + value.qnaSort + '</td>';
+                            strHtml += '    <td>' + value.qnContent + '</td>';
+                            strHtml += '    <td>' + value.docStatText + '</td>';
+                            strHtml += '    <td>' + value.creDtm + '</td>';
+                            strHtml += '</tr>';
+                        });
+                    } else {
+                        strHtml = '<tr><td colspan=5 class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
+                    }
+                    $('#boardTbody1').html(strHtml);
+                    
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요 we');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+        
+        $("#searchBtn").trigger('click', 1);
+        
+        $('#insertBtn').on('click',function(){
+            location.href = "/adm/content/FaqIns.do";
+        });
+        
+        //엔터시 검색
+        $('#searchValue').on('keydown', function(event, page) {
+        	if (event.keyCode != 13) {
+        		return;
+        	}
+        	$("#searchBtn").trigger('click', 1);
+        });
+    });
+</script>
+
+<body>
+<div class="adm-wrap">
+	<th:block layout:fragment="header" th:insert="~{@{/adm/layout/admheader}}"></th:block>
+	
+	<div layout:fragment="content">
+    <div class="adm-container">
+        <header>
+            <ul class="top-info">
+                <li>
+                    <i class="iconfont">account_circle</i><span th:text="${sessInfo.CrbnAdmNm}">홍길동님</span> 님 반갑습니다
+                </li>
+                <li>
+                    <a href="#"><i class="iconfontline">logout</i>로그아웃</a>
+                </li>
+            </ul>
+        </header>
+
+        <!--- content -->
+        <div class="adm-content">
+            <h2>자주하는 질문</h2>
+
+            <div class="grid-2">
+                <div class="t-13 mT10 gray">총 건수 : 300건</div>
+                <div class="t-right">
+                    <div class="search-type">
+                        <input type="text" name="" id="" class="input-type1" placeholder="Search" />
+                        <button type="button" class="btn-search">검색</button>
+                    </div>
+                </div>
+            </div>
+			
+			<!--
+			<div>
+			    <ul>
+			        <li th:each="item : ${ntsList}" th:text="${item.docTitle}"></li>
+			    </ul>
+			</div>	
+			-->				
+			<!--ntsList : AJAX로 데이터를 받아오는 부분과는 별개-->			
+
+            <div class="board-type1 mT10">
+                <table>
+                    <colgroup>
+						<col style="width:25%;" />
+						<col style="width:30%;" />
+						<col style="width:30%;" />
+						<col style="width:15%;" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+							<th>중분류</th>
+							<th>질문</th>
+							<th>답변</th>
+							<th>변경일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+			            <tr th:each="docdesc : ${ntsList}">
+			                <td > <a th:href="@{'/adm/content/FaqDesc.do?docSeq=' + ${docdesc.docSeq}}" th:text="${docdesc.qnaSort}"></a>
+			                </td>
+			                <td th:text="${ docdesc.qnContent }"></td>
+			                <td th:text="${ docdesc.qaContent }"></td>
+			                <td th:text="${ docdesc.creDtm }"></td>
+			            </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="f-right mT20">
+                <button type="button" class="btn-blue" id="insertBtn">등록</button>
+            </div>
+
+            <!-- page number
+            <div class="page-num mT30">
+                <div class="inner">
+                    <li><a href="#"><i class="iconfont">first_page</i></a></li>
+                    <li><a href="#"><i class="iconfont">chevron_left</i></a></li>
+                    <li>
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">4</a>
+                        <a href="#">5</a>
+                    </li>
+                    <li><a href="#"><i class="iconfont">chevron_right</i></a></li>
+                    <li><a href="#"><i class="iconfont">last_page</i></a></li>
+                </div>
+            </div> -->
+            <!--// page number -->
+
+        </div>
+        <!---// content -->
+
+        <footer>
+            Copyright ⓒ CarbonBank. All Rights Reserved
+        </footer>
+    </div>
+
+	</div>
+</div><!-- //wrap -->
+</body>
+</html>

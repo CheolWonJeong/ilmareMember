@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ilmare.carbonbank.mapper.AdmInfoMapper">
+
+	<select id="getAdmInfo" parameterType="java.lang.String" resultType="com.ilmare.carbonbank.model.CrbnAdmInfoModel">
+		SELECT  
+			crbn_adm_id
+			,crbn_adm_pwd
+			,crbn_adm_cell_num
+			,crbn_adm_nm
+			,party_grp
+			,party_cd
+			,party_grade
+			,crbn_email
+			,crbn_dept
+			,crbn_pstn
+			,chg_pwd_dtm
+			,lst_lgn_dtm
+			,cre_dtm
+			,chg_dtm
+		FROM CRBN_ADM_INFO
+		where crbn_adm_id = #{crbnAdmId}
+	</select>
+
+	<select id="getAdmList" resultType="com.ilmare.carbonbank.model.CrbnAdmInfoModel">
+		SELECT  
+			crbn_adm_id
+			,crbn_adm_pwd
+			,crbn_adm_cell_num
+			,crbn_adm_nm
+			,party_grp
+			,party_cd
+			,party_grade
+			,crbn_email
+			,crbn_dept
+			,crbn_pstn
+			,chg_pwd_dtm
+			,lst_lgn_dtm
+			,cre_dtm
+			,chg_dtm
+		FROM CRBN_ADM_INFO
+ 
+	</select>
+
+    <update id="updateLgnDtm" parameterType="java.lang.String">
+        <![CDATA[
+            /*
+            1. ID: updateStat
+            2. 업무명: 마지막 로그인 일시 변경
+            */
+                UPDATE CRBN_ADM_INFO
+                   SET
+                        lst_lgn_dtm = DATE_FORMAT(now(),'%Y%m%d%H%i%s')
+                  WHERE crbn_adm_id = #{crbnAdmId}
+        ]]>
+    </update>
+ 
+    <insert id="insertLoginHst" parameterType="com.ilmare.carbonbank.model.CrbnAdmLgnHstModel">
+        <![CDATA[
+            /*
+                1. ID: insertLoginHst
+                2. 업무명: 어드민 로그인
+                3. 업무설명: 어드민 로그인 이력 등록
+            */
+            INSERT INTO CRBN_ADM_LGN_HST ( crbn_adm_id, lgn_ip, lgn_os, lgn_browser, cre_dtm ) 
+            VALUES (
+              #{crbnAdmId}
+            , #{lgnIp}
+            , #{lgnOs}
+            , #{lgnBrowser}
+            , now()
+            )
+        ]]>
+    </insert>
+
+</mapper>

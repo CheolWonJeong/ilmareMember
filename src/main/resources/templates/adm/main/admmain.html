@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/admlayour}">
+	<th:block layout:fragment="head" th:include="~{@{/adm/layout/admhead}}"></th:block>
+<body>
+<div class="wrap">
+	<th:block layout:fragment="header" th:include="~{@{/adm/layout/admheader}}"></th:block>
+	
+<div layout:fragment="content">
+	<div class="container">
+		
+		<div class="lnb">
+<!--		
+			<ul class="adminlnb">
+				<li><a href="#" ><i class="material-icons">reorder</i>서블릿 관리</a></li>
+				<li><a href="#"><i class="material-icons">lock_outline</i>권한 관리</a></li>
+				<li><a href="#"><i class="material-icons">perm_contact_calendar</i>어드민 아이디 관리</a></li>
+				<li><a href="#"><i class="material-icons">settings</i>어드민 메뉴관리</a></li>
+			</ul>
+ -->			
+			<ul class="menulnb">
+				<li><a href="/adm/content/AdmNoticeList.do" class="current"><i class="material-icons">assignment</i>공지사항</a></li>  <!--현재상태 메뉴일때 current -->
+				<li><a href="/adm/content/AdmfrqntlAskList.do"><i class="material-icons">description</i>자주하는 질문</a></li>
+				<li><a href="/adm/content/AdmNtlEnvNewsList.do"><i class="material-icons">list</i>환경뉴스 관리</a></li>
+				<li><a href="/adm/content/AdmEnentList.do"><i class="material-icons">public</i>이벤트 관리</a></li>
+				<li><a href="/adm/content/AdmQnaList.do"><i class="material-icons">queue_music</i>문의 및 제안</a></li>
+				<li><a href="/adm/content/AdmWinnerList.do"><i class="material-icons">toys</i>당첨자 관리</a></li>
+				<li><a href="/adm/content/AdmHotNewsList.do"><i class="material-icons">radio</i>기관 핫뉴스  관리</a></li>
+				<li><a href="/adm/content/AdmAdvertisingList.do"><i class="material-icons">shopping_cart</i>광고 관리</a></li>
+			</ul>
+		</div><!-- //lnb -->
+
+		<div class="content">
+			<h2>공지사항</h2>
+			<div class="align_right">
+				<select name="select" class="sel_type1">
+					<option>항목을 선택하시오</option>	
+					<option>전체</option>
+					<option>기사제목</option>
+					<option>기사내용</option>
+				</select>
+				<input type="text" style="width:150px"/>
+				<button class="btn_type1">조회</button>
+			</div>
+			<div class="board_list mT10">
+				<table>
+					<colgroup>
+						<col />
+						<col style="width:13%;" />
+						<col style="width:13%;" />
+						<col style="width:13%;" />
+						<col style="width:13%;" />
+					</colgroup>
+					<thead>
+						<th>제목</th>
+						<th>출처</th>
+						<th>읽음/좋아요/싫어요</th>
+						<th>변경일</th>
+					</thead>
+					<tbody>
+						<tr>
+							<td  class="subject"><a href="#">로봇·AI 도입했더니 생산성 하락.. '솔로우의 역설'이 맞다?</a></td>
+							<td>다음 </td>
+							<td>250/5/19</td>
+							<td>2018-02-11</td>
+						</tr>
+						
+					</tbody>
+				</table>
+			</div><!-- //list end -->
+			<div class="mT20 align_right"><button class="btn_type2">등록</button></div>
+
+			
+			<div class="paging">
+				<a href="#" class="paging_first"><span class="screen_hide">첫페이지</span></a>
+				<a href="#" class="paging_prev"><span class="screen_hide">이전페이지</span></a>
+				<span class="current">1</span>
+				<a href="#">2</a>
+				<a href="#">3</a>
+				<a href="#">4</a>
+				<a href="#">5</a>
+				<a href="#">6</a>
+				<a href="#">7</a>
+				<a href="#">8</a>
+				<a href="#">9</a>
+				<a href="#">10</a>
+				<a href="#" class="paging_next"><span class="screen_hide">다음페이지</span></a>
+				<a href="#" class="paging_last"><span class="screen_hide">마지막페이지</span></a>
+			</div><!--// paging -->
+		
+		</div><!-- //content -->
+	
+	</div><!-- //container -->
+ <script src="/adm/js/login.js"></script>
+</div>
+</div><!-- //wrap -->
+</body>
+</html>

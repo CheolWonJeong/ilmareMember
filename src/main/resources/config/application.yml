@@ -1,0 +1,75 @@
+# 서버 포트 번호
+server:
+  port: 8200
+
+  error:
+#오류 응답에 exception의 내용을 포함할지 여부
+    include-exception: TRUE
+#오류 응답에 stacktrace 내용을 포함할지 여부 (ALWAYS, NEVER, ON_TRACE_PARAM)
+    include-stacktrace: ALWAYS
+#브라우저 요청에 대해 서버 오류시 기본으로 노출할 페이지를 사용할지 여부
+    whitelabel: 
+      enabled: FALSE
+
+spring:
+  application:
+    name: carbonbankAdmin
+
+  servlet:
+    multipart:
+      location: /app/data/upload/temp #업로드된 파일의 임시 저장 공간
+      max-file-size: 1MB
+      max-request-size: 5MB
+# 소스파일에 변화가 있을 때 자동으로 서버 재 시작 설정
+#  devtools:
+#    restart:
+#      enabled: true
+
+# thymeleaf 참조 경로
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    enabled: true
+
+# thymeleaf에 대한 캐시를 남기지 않는다. cache=false 설정(운영시는 true)
+    cache: false
+# templates 디렉토리에 파일이 있는지 없는지 체크, 없으면 에러를 발생시킨다.
+    check-template-location: true
+
+#Mysql 
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://52.78.180.119:32698/carbonbankDB?characterEncoding=UTF-8&serverTimezone=UTC
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://52.78.180.119:32698/carbonbankDB?characterEncoding=UTF-8&serverTimezone=UTC
+    username: carbonbank
+    password: Bank2504!@
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true  # snake_case → camelCase 자동 매핑
+    jdbc-type-for-null: VARCHAR  # mybatis로 넘어오는 parameter가 null인 경우, jdbcType을 Setting
+    call-setters-on-nulls: true            #가져온 값이 null일때 setter나 맵의 put 메소드를 호출할지를 명시 (false일경우, null인 field는 제거되어 나타남 : default는 false
+#  configuration-locations: classpath:mybatis-config.xml
+# 매핑할 모델의 패키지 경로 (mybatis 매핑 type을 짧게 쓰기 위한 설정)
+  type-aliases-package: com.ilmare.carbonbank.mapper
+# mybatis mapper.xml 위치 명시
+  mapper-locations: classpath:/mybatis/**/*.xml
+
+# Logback 설정
+logging:
+  level:
+    root: info
+  config: classpath:log/logback-spring.xml 
+
+# 파일업로드 경로
+comm:
+  UpPathStoreBis: /app/data/upload/store_bis/    #가맹점 사업자등록증
+  UpPathStore: /app/data/upload/uploadFiles/store/     #가맹점 매장
+  UpPathEnvNews: /app/data/upload/uploadFiles/env_news/   #환경뉴스
+  UpPathMunicipalNews: /app/data/upload/uploadFiles/municipal_news/   #시정뉴스
+  UpPathVideoNews: /app/data/upload/uploadFiles/video_news/  #영상뉴스
+  UpPathHotNews: /app/data/upload/uploadFiles/hot_news/    #기관 핫뉴스
+  UploadTemp: /app/data/upload/temp/ #업로드된 파일의 임시 저장 공간
+
+ 
