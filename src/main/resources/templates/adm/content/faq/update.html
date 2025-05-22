@@ -237,33 +237,23 @@
 						<input id="docSeq" type="hidden" th:value="${ docview.docSeq }">
 						<input id="befImgSrcNm" type="hidden" th:value="${ docview.imgSrcNm }">
 						<input id="befImgNailNm" type="hidden" th:value="${ docview.imgNailNm }">
+
 						<tr>
-							<th>제목</th>
-							<td><input type="text" name="" id="docTitle" class="w90"  th:value="${ docview.docTitle }" /></td>
+							<th>중분류</th>
+							<td><input type="text" name="" id="qnaSort" class="w90"  th:value="${ docview.qnaSort }" /></td>
 						</tr>
                         <tr>
-                            <th>기사 대표 이미지</th>
-                            <td>
-                                <div class="file-input">
-                                    <label>파일선택<input type="file" id="imgSrcFile" onchange="javascript:document.getElementById('file_route1').value=this.value" ></label>
-                                    <input type="text" readonly="readonly" title="File Route" id="file_route1" th:value="${ docview.imgSrcNm }" >
-                               </div>
-                            </td>
+                            <th>질문</th>
+							<td>
+							    <textarea name="" placeholder="" id="qnContent"  th:text="${ docview.qnContent }"></textarea>
+							</td>							
                         </tr>
                         <tr>
-                            <th>기사내용</th>
-                            <td>
-                                <textarea name="" placeholder="" id="docInfo"  th:text="${ docview.DocInfo }"></textarea>
-                            </td>
+                            <th>답변</th>
+							<td>
+							    <textarea name="" placeholder="" id="qaContent"  th:text="${ docview.qaContent }"></textarea>
+							</td>														
                         </tr>
-						<tr>
-							<th>기사 출처</th>
-							<td><input type="text" name="" id="docFrom" class="w90"   th:value="${ docview.docFrom }" /></td>
-						</tr>
-						<tr>
-							<th>기사 url</th>
-							<td><input type="text" name="" id="docUrl" class="w90"  th:value="${ docview.docUrl }" /></td>
-						</tr>
 					</tbody>
 				</table>
 			</div>
