@@ -48,6 +48,9 @@ public class NewsCommonModel {
 	private String auditId;   // 관리자 아이디
 	private String creDtm;
 	
+	private int totalCount  ;		//총 건수  
+	
+	
     public String getBefImgSrcNme() {
         return befImgSrcNm;
     }
@@ -273,6 +276,12 @@ public class NewsCommonModel {
 	}
 	public void setCreDtm(String creDtm) {
 		this.creDtm = creDtm;
+	}
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
 	}
 	
 }

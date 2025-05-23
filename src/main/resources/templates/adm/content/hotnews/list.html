@@ -100,7 +100,11 @@
             <h2>기관 핫 뉴스</h2>
 
             <div class="grid-2">
-                <div class="t-13 mT10 gray">총 건수 : 300건</div>
+                <!--<div class="t-13 mT10 gray">총 건수 : 300건</div>-->
+				<div class="t-13 mT10 gray">
+				    <!--총 건수 : <span id="totalCount">0</span>건-->
+				    총 건수 : <span th:text="${totalCount}">0</span> 건
+				</div>
                 <div class="t-right">
                     <div class="search-type">
                         <input type="text" name="" id="" class="input-type1" placeholder="Search" />
