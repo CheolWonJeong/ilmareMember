@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,9 +55,17 @@ public class CrbnHotNewsController {
 	 *  기관 핫뉴스 리스트 조회
 	 */
 	@RequestMapping("/HotNewsMainList.do")
-	public String HotNewsMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	public String HotNewsMainList(
+			HttpServletRequest request, 
+			final NewsCommonModel paramVo, 
+			Model model,
+			
+			@RequestParam(defaultValue = "1") int page
+			) throws Exception {
 		
-		log.info("HotNewsMainList Start");
+		log.info("HotNewsMainList Start , page = " + page);
+
+		
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 //		if ( !sessMgr.isSession(request) ) {
@@ -81,7 +90,10 @@ public class CrbnHotNewsController {
 		
 		//기관 핫뉴스 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
-        int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
+        
+        //int pageNo   = paramVo.getPageNo(); //조회할 페이지 번호
+        int pageNo   = page; //조회할 페이지 번호
+        
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
 		log.info("HotNewsMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
@@ -89,11 +101,24 @@ public class CrbnHotNewsController {
 		
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
 		log.info("HotNewsMainList ntsList.size()" + ntsList.toString());
-		
+		String totalCountStr = svc.selectAdmListCount(paramVo);
 
 		model.addAttribute("sessInfo", sessInfo);
 		model.addAttribute("ntsList", ntsList);
+		model.addAttribute("totalCount", totalCountStr);
 		//model.addAttribute("menuList", menuList);
+		
+	    //model.addAttribute("currentPage", page);
+	    //model.addAttribute("totalPages", result.getTotalPages());
+	    model.addAttribute("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+	    model.addAttribute("totalPages", totalPages);
+	    
+	    
 		log.info("HotNewsMainList End");
 
 		return "adm/content/hotnews/list";
@@ -104,7 +129,14 @@ public class CrbnHotNewsController {
 	 * 버튼 클릭조회
 	 */
 	@RequestMapping("/HotNewsQueryList")
-	public  @ResponseBody HashMap HotNewsQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	public  @ResponseBody HashMap HotNewsQueryList(
+			HttpServletRequest request, 
+			final NewsCommonModel paramVo, 
+			Model model,			
+		    @RequestParam(defaultValue = "1") int page
+			) throws Exception {
+		
+		log.info("HotNewsQueryList Start , page = " + page);
 		
 		HashMap result = new HashMap();
 		log.info("NoticeQueryList Start");

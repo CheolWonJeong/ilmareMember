@@ -62,5 +62,17 @@ TO-DO :
 페이징? 보류
 좋아요, 싫어요, 슬퍼요, 화나요.외...
 콘솔 네트워크에 list 잡히지 않는 이유?
+환경뉴스등 NewCommonModel 외 모델 정보 수정.
 ----------------------------------------------------------------------------------
+
+INSERT INTO carbonbankDB.CRBN_HOT_NEWS ( PARTY_CD, DOC_TITLE, IMG_SRC_NM, IMG_NAIL_NM, DOC_INFO, DOC_FROM, DOC_URL, DOC_READ, DOC_RCMND, DOC_LIKE, DOC_SAD,
+	DOC_ANGRY, DOC_STAT, REG_ID, REG_DTM, SHOW_ID, SHOW_DTM, CANCEL_ID, CANCEL_DTM, DEL_ID, DEL_DTM)
+VALUES('CARBONBANK', '페이징 테스트', '', '', 
+'페이징 테스트
+내용수정', '다음 2 naver', 'www.daum.net www.naver.com', 0, 0, 0, 0, 0, 'C', 'carbonbankadm', '2025-05-20 23:13:36', NULL, '2025-05-20 23:15:14', NULL, '2025-05-20 23:15:18', NULL, NULL);
+
+
+핫뉴스 총건수 표시 (타임리프)
+페이징 오류 (타임리프)
+
 ----------------------------------------------------------------------------------
