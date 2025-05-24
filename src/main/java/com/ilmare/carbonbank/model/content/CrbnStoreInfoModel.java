@@ -7,25 +7,27 @@ package com.ilmare.carbonbank.model.content;
  */
 public class CrbnStoreInfoModel {
 
-	private String STORE_ID;          // 가맹점아이디
-	private String PARTY_CD;          // 소속코드
-	private String BIS_NUM;           // 사업자 등록번호
-	private String STORE_PWD;         // 비밀번호
-	private String STORE_CELL_NUM;    // 휴대폰번호
-	private String STORE_CEO_NM;      // 대표자 성명
-	private String STORE_NM; 		  // 상호
-	private String STORE_LTTD_LNGTD;  //  위도경도(위도,경도)
-	private String STORE_NO_IMG;      // 사업자등록증 이미지 파일 경로
-	private String STORE_IMG;         // 사업장 사진 이미지 파일 경로
-	private String STORE_EMAIL;       // 메일주소
-	private String STORE_ADDR;        // 사업장 주소
-	private String STORE_EVENT;       // 할인행사
-	private String CHG_PWD_DTM;       // 패스워드 변경일
-	private String LST_LGN_DTM;       // 마지막 로그인 일시
+	private String storeId;          // 가맹점아이디
+	private String partyCd;          // 소속코드
+	private String bisNum;           // 사업자 등록번호
+	private String storePwd;         // 비밀번호
+	private String storeCellNum;    // 휴대폰번호
+	private String storeCeoNm;      // 대표자 성명
+	private String storeNm; 		  // 상호
+	//private String STORE_LTTD_LNGTD;  //  위도경도(위도,경도)
+	private String storeLatitude;  //  위도경도(위도,경도)
+	private String storeLongitude;  //  위도경도(위도,경도)
+	
+	private String storeNoImg;      // 사업자등록증 이미지 파일 경로
+	private String storeImg;         // 사업장 사진 이미지 파일 경로
+	private String storeEmail;       // 메일주소
+	private String storeAddr;        // 사업장 주소
+	private String storeEvent;       // 할인행사
+	private String chgPwdDtm;       // 패스워드 변경일
+	private String lstLgnDtm;       // 마지막 로그인 일시
   
 	private String creDtm; // 생성일시
 	private String chgDtm; // 변경일시
-
 		
 	//조회
 	private int pageNo  = 1;	//조회시작 위치 
@@ -34,95 +36,103 @@ public class CrbnStoreInfoModel {
 
 	private String searchType;
 	private String searchValue;
-	public String getSTORE_ID() {
-		return STORE_ID;
+	
+	
+	public String getStoreId() {
+		return storeId;
 	}
-	public void setSTORE_ID(String sTORE_ID) {
-		STORE_ID = sTORE_ID;
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
 	}
-	public String getPARTY_CD() {
-		return PARTY_CD;
+	public String getPartyCd() {
+		return partyCd;
 	}
-	public void setPARTY_CD(String pARTY_CD) {
-		PARTY_CD = pARTY_CD;
+	public void setPartyCd(String partyCd) {
+		this.partyCd = partyCd;
 	}
-	public String getBIS_NUM() {
-		return BIS_NUM;
+	public String getBisNum() {
+		return bisNum;
 	}
-	public void setBIS_NUM(String bIS_NUM) {
-		BIS_NUM = bIS_NUM;
+	public void setBisNum(String bisNum) {
+		this.bisNum = bisNum;
 	}
-	public String getSTORE_PWD() {
-		return STORE_PWD;
+	public String getStorePwd() {
+		return storePwd;
 	}
-	public void setSTORE_PWD(String sTORE_PWD) {
-		STORE_PWD = sTORE_PWD;
+	public void setStorePwd(String storePwd) {
+		this.storePwd = storePwd;
 	}
-	public String getSTORE_CELL_NUM() {
-		return STORE_CELL_NUM;
+	public String getStoreCellNum() {
+		return storeCellNum;
 	}
-	public void setSTORE_CELL_NUM(String sTORE_CELL_NUM) {
-		STORE_CELL_NUM = sTORE_CELL_NUM;
+	public void setStoreCellNum(String storeCellNum) {
+		this.storeCellNum = storeCellNum;
 	}
-	public String getSTORE_CEO_NM() {
-		return STORE_CEO_NM;
+	public String getStoreCeoNm() {
+		return storeCeoNm;
 	}
-	public void setSTORE_CEO_NM(String sTORE_CEO_NM) {
-		STORE_CEO_NM = sTORE_CEO_NM;
+	public void setStoreCeoNm(String storeCeoNm) {
+		this.storeCeoNm = storeCeoNm;
 	}
-	public String getSTORE_NM() {
-		return STORE_NM;
+	public String getStoreNm() {
+		return storeNm;
 	}
-	public void setSTORE_NM(String sTORE_NM) {
-		STORE_NM = sTORE_NM;
+	public void setStoreNm(String storeNm) {
+		this.storeNm = storeNm;
 	}
-	public String getSTORE_LTTD_LNGTD() {
-		return STORE_LTTD_LNGTD;
+	public String getStoreLatitude() {
+		return storeLatitude;
 	}
-	public void setSTORE_LTTD_LNGTD(String sTORE_LTTD_LNGTD) {
-		STORE_LTTD_LNGTD = sTORE_LTTD_LNGTD;
+	public void setStoreLatitude(String storeLatitude) {
+		this.storeLatitude = storeLatitude;
 	}
-	public String getSTORE_NO_IMG() {
-		return STORE_NO_IMG;
+	public String getStoreLongitude() {
+		return storeLongitude;
 	}
-	public void setSTORE_NO_IMG(String sTORE_NO_IMG) {
-		STORE_NO_IMG = sTORE_NO_IMG;
+	public void setStoreLongitude(String storeLongitude) {
+		this.storeLongitude = storeLongitude;
 	}
-	public String getSTORE_IMG() {
-		return STORE_IMG;
+	public String getStoreNoImg() {
+		return storeNoImg;
 	}
-	public void setSTORE_IMG(String sTORE_IMG) {
-		STORE_IMG = sTORE_IMG;
+	public void setStoreNoImg(String storeNoImg) {
+		this.storeNoImg = storeNoImg;
 	}
-	public String getSTORE_EMAIL() {
-		return STORE_EMAIL;
+	public String getStoreImg() {
+		return storeImg;
 	}
-	public void setSTORE_EMAIL(String sTORE_EMAIL) {
-		STORE_EMAIL = sTORE_EMAIL;
+	public void setStoreImg(String storeImg) {
+		this.storeImg = storeImg;
 	}
-	public String getSTORE_ADDR() {
-		return STORE_ADDR;
+	public String getStoreEmail() {
+		return storeEmail;
 	}
-	public void setSTORE_ADDR(String sTORE_ADDR) {
-		STORE_ADDR = sTORE_ADDR;
+	public void setStoreEmail(String storeEmail) {
+		this.storeEmail = storeEmail;
 	}
-	public String getSTORE_EVENT() {
-		return STORE_EVENT;
+	public String getStoreAddr() {
+		return storeAddr;
 	}
-	public void setSTORE_EVENT(String sTORE_EVENT) {
-		STORE_EVENT = sTORE_EVENT;
+	public void setStoreAddr(String storeAddr) {
+		this.storeAddr = storeAddr;
 	}
-	public String getCHG_PWD_DTM() {
-		return CHG_PWD_DTM;
+	public String getStoreEvent() {
+		return storeEvent;
 	}
-	public void setCHG_PWD_DTM(String cHG_PWD_DTM) {
-		CHG_PWD_DTM = cHG_PWD_DTM;
+	public void setStoreEvent(String storeEvent) {
+		this.storeEvent = storeEvent;
 	}
-	public String getLST_LGN_DTM() {
-		return LST_LGN_DTM;
+	public String getChgPwdDtm() {
+		return chgPwdDtm;
 	}
-	public void setLST_LGN_DTM(String lST_LGN_DTM) {
-		LST_LGN_DTM = lST_LGN_DTM;
+	public void setChgPwdDtm(String chgPwdDtm) {
+		this.chgPwdDtm = chgPwdDtm;
+	}
+	public String getLstLgnDtm() {
+		return lstLgnDtm;
+	}
+	public void setLstLgnDtm(String lstLgnDtm) {
+		this.lstLgnDtm = lstLgnDtm;
 	}
 	public String getCreDtm() {
 		return creDtm;
@@ -165,6 +175,6 @@ public class CrbnStoreInfoModel {
 	}
 	public void setSearchValue(String searchValue) {
 		this.searchValue = searchValue;
-	}		
-		
+	}
+	
 }

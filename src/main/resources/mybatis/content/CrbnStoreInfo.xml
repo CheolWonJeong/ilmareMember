@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ilmare.carbonbank.mapper.content.CrbnStoreInfoModel">
+<mapper namespace="com.ilmare.carbonbank.mapper.content.CrbnStoreInfoMapper">
     <select id="selectAdmDesc" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel" resultType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel">
     <![CDATA[
             /*
@@ -19,7 +19,10 @@
 			  ,store_cell_num
 			  ,store_ceo_nm
 			  ,store_nm
-			  ,store_lttd_lngtd
+
+			  ,store_latitude
+			  ,store_longitude
+			  
 			  ,store_no_img
 			  ,store_img
 			  ,store_email
@@ -28,7 +31,8 @@
 			  ,chg_pwd_dtm
 			  ,lst_lgn_dtm
 			  ,cre_dtm
-			  ,chg_dtm  			
+			  ,chg_dtm
+
         from CRBN_STORE_INFO
             WHERE STORE_ID = #{storeId}
      ]]>
@@ -48,7 +52,10 @@
 						  ,store_cell_num
 						  ,store_ceo_nm
 						  ,store_nm
-						  ,store_lttd_lngtd
+						  
+						  ,store_latitude
+						  ,store_longitude
+						  
 						  ,store_no_img
 						  ,store_img
 						  ,store_email
@@ -126,34 +133,38 @@
 			  ,store_cell_num
 			  ,store_ceo_nm
 			  ,store_nm
-			  ,store_lttd_lngtd
+			  
+			  ,store_latitude
+			  ,store_longitude
+			  
 			  ,store_no_img
 			  ,store_img
 			  ,store_email
 			  ,store_addr
 			  ,store_event
-			  ,chg_pwd_dtm
-			  ,lst_lgn_dtm
 			  ,cre_dtm
-			  ,chg_dtm                  
+			  ,chg_dtm
+			  
             ) VALUES (
-			    #{store_id}
-			  , #{party_cd}
-			  , #{bis_num}
-			  , #{store_pwd}
-			  , #{store_cell_num}
-			  , #{store_ceo_nm}
-			  , #{store_nm}
-			  , #{store_lttd_lngtd}
-			  , #{store_no_img}
-			  , #{store_img}
-			  , #{store_email}
-			  , #{store_addr}
-			  , #{store_event}
-			  , #{chg_pwd_dtm}
-			  , #{lst_lgn_dtm}
+			    #{storeId}
+			  , #{partyCd}
+			  , #{bisNum}
+			  , #{storePwd}
+			  , #{storeCellNum}
+			  , #{storeCeoNm}
+			  , #{storeNm}
+			  
+			  , #{storeLatitude}
+			  , #{storeLongitude}
+			  
+			  , #{storeNoImg}
+			  , #{storeImg}
+			  , #{storeEmail}
+			  , #{storeAddr}
+			  , #{storeEvent}
 			  , now()
-			  , #{chg_dtm}
+			  , now()
+			  
             )
         ]]>
     </insert>
@@ -173,8 +184,10 @@
 			  , store_cell_num = #{storeCellNum}
 			  , store_ceo_nm = #{storeCeoNm}
 			  , store_nm = #{storeNm}
-			  , store_lttd_lngtd = #{storeLttdLngtd}
-			  , store_no_img = #{storeIoImg}
+			  , store_latitude = #{storeLatitude}
+			  , store_longitude = #{storeLongitude}
+
+			  , store_no_img = #{storeNoImg}
 			  , store_img = #{storeImg}
 			  , store_email = #{storeEmail}
 			  , store_addr = #{storeAddr}

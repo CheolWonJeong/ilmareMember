@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +33,7 @@ import net.coobird.thumbnailator.Thumbnails;
  */
 @Slf4j
 @Controller
-@RequestMapping("/adm/content")
+@RequestMapping("/adm/store")
 public class CrbnStoreInfoController {
 	@Autowired(required=true)
 	private SessionManager sessMgr;
@@ -54,9 +55,15 @@ public class CrbnStoreInfoController {
 	 *  가맹점 정보 리스트 조회
 	 */
 	@RequestMapping("/StoreInfoMainList.do")
-	public String StoreInfoMainList(HttpServletRequest request, final CrbnStoreInfoModel paramVo, Model model) throws Exception {
+	public String StoreInfoMainList(
+			HttpServletRequest request, 
+			final CrbnStoreInfoModel paramVo, 
+			Model model,
+			@RequestParam(defaultValue = "1") int page
+			) throws Exception {
 		
-		log.info("StoreInfoMainList Start");
+		log.info("StoreInfoMainList Start , page = " + page);
+		
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 //		if ( !sessMgr.isSession(request) ) {
@@ -81,8 +88,10 @@ public class CrbnStoreInfoController {
 		
 		//가맹점 정보 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
-        int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
+        //int pageNo   = paramVo.getPageNo(); //조회할 페이지 번호
+        int pageNo   = page; //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
+        
 		log.info("StoreInfoMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
@@ -97,7 +106,7 @@ public class CrbnStoreInfoController {
 		//model.addAttribute("menuList", menuList);
 		log.info("StoreInfoMainList End");
 
-		return "adm/content/StoreInfo/list";
+		return "adm/content/store/list";
 		
 	}
 
@@ -172,7 +181,7 @@ public class CrbnStoreInfoController {
 		}
 
 		model.addAttribute("sessInfo", sessInfo);
-		return "adm/content/StoreInfo/insert";
+		return "adm/content/store/insert";
 	}
 
 	/*
@@ -298,7 +307,7 @@ public class CrbnStoreInfoController {
 		//model.addAttribute("menuList", menuList);
 		log.info("StoreInfoDesc End");
 
-		return "adm/content/StoreInfo/update";
+		return "adm/content/store/update";
 	}
 
 	/*
