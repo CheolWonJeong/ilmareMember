@@ -12,27 +12,67 @@
 	        	
 				console.log("start docSave");//순수한 태그
 				
-	        	//파일데이터 추출
-				var file=$("#imgSrcNm");
-				var files = file[0].files;
-				console.log(files.length);
 				
+				// 사업자 등록번호 필수 체크
+				var bisNum = $('#bisNum').val().trim();
+				if (bisNum === "") { alert("사업자 등록번호를 입력하세요."); $('#bisNum').focus(); return false; }
+				
+				alert(bisNum);
+				
+				var storeNm = $('#storeNm').val().trim();
+				if (storeNm === "") { alert("상호를 입력하세요."); $('#storeNm').focus(); return false; }
+				
+				var storePwd = $('#storePwd').val().trim();
+				if (storePwd === "") { alert("비밀번호를 입력하세요."); $('#storePwd').focus(); return false; }
+				
+				var storeCeoNm = $('#storeCeoNm').val().trim();
+				if (storeCeoNm === "") { alert("대표자 성명을 입력하세요."); $('#storeCeoNm').focus(); return false; }
+				
+				var storeCellNum = $('#storeCellNum').val().trim();
+				if (storeCellNum === "") { alert("휴대폰 번호를 입력하세요."); $('#storeCellNum').focus(); return false; }
+				
+	        	//파일데이터 추출
+
+				//파일데이터 추출 (중복선언)
 				var formData = new FormData();
-	    		for(var i =0;i<files.length;i++){
-	    			console.log(files[i].name);//순수한 태그
-	    			if(!checkExtension (files[i].name, files[i].size)){
-	    		           return false;
-	    		    }    			
-	    			formData.append("imgFile", files[i]);
-	    		}
-	
-				formData.append("docTitle", $('#docTitle').val() );
-				formData.append("docInfo", $('#docInfo').val() );
-				formData.append("docFrom", $('#docFrom').val() );
-				formData.append("docUrl", $('#docUrl').val() );
+				
+				// 1. storeNoImg 파일 추가
+				var storeNoImgFile = $("#storeNoImg")[0].files;
+				if (storeNoImgFile.length > 0) {
+				    for (var i = 0; i < storeNoImgFile.length; i++) {
+				        if (!checkExtension(storeNoImgFile[i].name, storeNoImgFile[i].size)) {
+				            return false;
+				        }
+				        // name을 명확히 지정
+				        formData.append("storeNoImgFile", storeNoImgFile[i]);
+				    }
+				}
+
+				// 2. storeImg 파일 추가
+				var storeImgFile = $("#storeImg")[0].files;
+				if (storeImgFile.length > 0) {
+				    for (var i = 0; i < storeImgFile.length; i++) {
+				        if (!checkExtension(storeImgFile[i].name, storeImgFile[i].size)) {
+				            return false;
+				        }
+				        formData.append("storeImgFile", storeImgFile[i]);
+				    }
+				}	
+
+				
+				formData.append("storeId", $('#storeId').val() );
+				formData.append("storeNm", $('#storeNm').val() );
+				
+				formData.append("bisNum", $('#bisNum').val() );
+				formData.append("storePwd", $('#storePwd').val() );
+				formData.append("storeCeoNm", $('#storeCeoNm').val() );
+				formData.append("storeCellNum", $('#storeCellNum').val() );
+				
+				formData.append("storeAddr", $('#storeAddr').val() );
+				formData.append("storeEmail", $('#storeEmail').val() );				
 
 				$.ajax({
-	                url : '/adm/content/HotNewsInsProc'
+	                url : '/adm/store/StoreInfoInsProc'
 	                , type : 'POST'
 	                , data:formData //보내는데이터 form
 	    			, contentType:false //보내는데이터타입 false->"multipart/form-data"로 선언됩니다.
@@ -42,7 +82,7 @@
 	                , success : function(data, stauts, request) {
 	    				if (data.procInd == "S") {
 	    					alert("정상 처리 되었습니다.");
-	    					location.href = "/adm/content/HotNewsMainList.do";
+	    					location.href = "/adm/store/StoreInfoMainList.do";
 	    				} else {
 	    					alert("처리중 오류가 발생 했습니다.");
 	    				}
@@ -78,7 +118,7 @@
         </header>
 		
         <div class="adm-content">
-			<h2>기관 핫 뉴스</h2>
+			<h2>가맹점 관리</h2>
             <div class="board-write mT10">
 				<table>
 					<colgroup>
@@ -86,33 +126,60 @@
 						<col />
 					</colgroup>
 					<tbody>
+
 						<tr>
-							<th>제목</th>
-							<td><input type="text" name="" id="docTitle" class="w90" /></td>
-						</tr>
-                        <tr>
-                            <th>기사 대표 이미지</th>
-                            <td>
-                                <div class="file-input">
-                                    <label>파일선택<input type="file" onchange="javascript:document.getElementById('file_route1').value=this.value"   id="imgSrcNm" accept=".jpg,.png,.gif"></label>
-                                    <input type="text" readonly="readonly" title="File Route" id="file_route1">
-                               </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>기사내용</th>
-                            <td>
-                                <textarea name="" placeholder="" id="docInfo" ></textarea>
-                            </td>
-                        </tr>
-						<tr>
-							<th>기사 출처</th>
-							<td><input type="text" name="" id="docFrom" class="w90" /></td>
+							<th>가맹점 아이디</th>
+							<td><input type="text" name="" id="storeId" class="w90"  /></td>
 						</tr>
 						<tr>
-							<th>기사 링크</th>
-							<td><input type="text" name="" id="docUrl" class="w90" /></td>
+							<th>상호</th>
+							<td><input type="text" name="" id="storeNm" class="w90"  /></td>
+						</tr>						
+						<tr>
+							<th>사업자 등록번호</th>
+							<td><input type="text" name="" id="bisNum" class="w90"  /></td>
+						</tr>						
+                        
+						<tr>
+							<th>비밀번호</th>
+							<td><input type="password" name="" id="storePwd" class="w90"  /></td>
+						</tr>						
+						<tr>
+							<th>대표자 명</th>
+							<td><input type="text" name="" id="storeCeoNm" class="w90"  /></td>
+						</tr>						
+						<tr>
+							<th>대표자 휴대폰 번호</th>
+							<td><input type="text" name="" id="storeCellNum" class="w90"  /></td>
+						</tr>						
+                        
+						<tr>
+						    <th>사업자 등록증 이미지</th>
+						    <td>
+						        <div class="file-input">
+						            <label>파일선택<input type="file" onchange="javascript:document.getElementById('file_route1').value=this.value"  id="storeNoImg" accept=".jpg,.png,.gif" ></label>
+						            <input type="text" readonly="readonly" title="File Route" id="file_route1" >
+						       </div>
+						    </td>
 						</tr>
+						<tr>
+						    <th>사업장 이미지</th>
+						    <td>
+						        <div class="file-input">
+						            <label>파일선택<input type="file" onchange="javascript:document.getElementById('file_route2').value=this.value" id="storeImg" accept=".jpg,.png,.gif" ></label>
+						            <input type="text" readonly="readonly" title="File Route" id="file_route2"  >
+						       </div>
+						    </td>
+						</tr>
+						
+						<tr>
+							<th>사업장 주소</th>
+							<td><input type="text" name="" id="storeAddr" class="w90" /></td>
+						</tr>
+						<tr>
+							<th>대표 Email</th>
+							<td><input type="text" name="" id="storeEmail" class="w90" /></td>
+						</tr>						
 					</tbody>
 				</table>
 			</div>

@@ -65,7 +65,7 @@
         $("#searchBtn").trigger('click', 1);
         
         $('#insertBtn').on('click',function(){
-            location.href = "/adm/store/StoreIns.do";
+            location.href = "/adm/store/StoreInfoIns.do";
         });
         
         //엔터시 검색
@@ -133,7 +133,7 @@
                     </thead>
                     <tbody>
 			            <tr th:each="docdesc : ${ntsList}">
-			                <td > <a th:href="@{'/adm/store/StoreDesc.do?storeId=' + ${docdesc.storeId}}" th:text="${docdesc.storeId}"></a>
+			                <td > <a th:href="@{'/adm/store/StoreInfoDesc.do?storeId=' + ${docdesc.storeId}}" th:text="${docdesc.storeId}"></a>
 			                </td>
 			                <td th:text="${ docdesc.storeNm }"></td>
 			                <td th:text="${ docdesc.storeAddr }"></td>

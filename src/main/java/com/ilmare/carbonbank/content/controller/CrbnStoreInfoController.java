@@ -190,8 +190,8 @@ public class CrbnStoreInfoController {
 	@PostMapping("/StoreInfoInsProc")
 	public  @ResponseBody HashMap StoreInfoInsProc(
 			HttpServletRequest request, 
-			//@RequestPart("imgFile") MultipartFile imgFile,
-			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,	
+			@RequestPart(value = "storeNoImgFile", required = false) MultipartFile storeNoImgFile,			
+			@RequestPart(value = "storeImgFile", required = false) MultipartFile storeImgFile,			
 			final CrbnStoreInfoModel paramModel, 
 			Model model) throws Exception {
 		
@@ -221,43 +221,62 @@ public class CrbnStoreInfoController {
 		}
 		
 		//파일 관련		
-		if ( imgFile != null && !imgFile.isEmpty()) {		
+		if ( storeNoImgFile != null && !storeNoImgFile.isEmpty()) {
 			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			log.info("파일 이름: " + imgFile.getOriginalFilename());
+			
+			log.info("파일 이름: " + storeNoImgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
-	
-	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
-			String originalFilename = imgFile.getOriginalFilename();
+
+	        String fileExt = storeNoImgFile.getOriginalFilename().substring(storeNoImgFile.getOriginalFilename().lastIndexOf("."));
+			String originalFilename = storeNoImgFile.getOriginalFilename();
 			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
-			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+fileExt; // 중간에 점 제거
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;  // 중간에 점 제거
 			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
-			//log.info("파라머터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,  tmpFileNm);
-	
+
+			log.info("파라미터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,  tmpFileNm);
+
 			FileUtil.createDirectory(fileSavePath);
 			File savedFile = new File(tmpFileNm);
-			imgFile.transferTo(savedFile); // 업로드된 파일 저장
-			//log.info("TEST {} | {} | {} | {}", paramModel.getDocStat(), paramModel.getDocFrom(),  paramModel.getDocTitle());
-	
-	        // 썸네일 생성
-	        File thumbnailFile = new File(imgNailNm);
-	        Thumbnails.of(savedFile)
-	                  .size(700, 400)
-	                  .toFile(thumbnailFile);		
-			//file upload
+			storeNoImgFile.transferTo(savedFile); // 업로드된 파일 저장
+
+			paramModel.setStoreNoImg(storeNoImgFile.getOriginalFilename());
+
+		} else {
+			log.info("storeNoImgFile is null ");
+			paramModel.setStoreNoImg("");
+		}
+		
+		//파일 관련
+		if ( storeImgFile != null && !storeImgFile.isEmpty()) {
+			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
 			
-			//paramModel.setImgSrcNm(imgFile.getOriginalFilename());
-			//paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() + fileExt);
+			log.info("파일 이름: " + storeImgFile.getOriginalFilename());
+			log.info("fileSavePath: {} " ,fileSavePath);
+			
+			String fileExt = storeImgFile.getOriginalFilename().substring(storeImgFile.getOriginalFilename().lastIndexOf("."));
+			String originalFilename = storeImgFile.getOriginalFilename();
+			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;  // 중간에 점 제거
+			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
+			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
+			
+			log.info("파라미터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,  tmpFileNm);
+			
+			FileUtil.createDirectory(fileSavePath);
+			File savedFile = new File(tmpFileNm);
+			storeImgFile.transferTo(savedFile); // 업로드된 파일 저장
+			
+			paramModel.setStoreImg(storeImgFile.getOriginalFilename());
 			
 		} else {
-			log.info("imgFile is null ");
-			//paramModel.setImgSrcNm("");
-			//paramModel.setImgNailNm("");
-		}			
+			log.info("storeImgFile is null ");
+			paramModel.setStoreImg("");
+		}		
 			
 
 		//저장
-		//paramModel.setPartyCd(sessInfo.getPartyCd());
+		paramModel.setPartyCd(sessInfo.getPartyCd());
 		//paramModel.setRegId(sessInfo.getCrbnAdmId());
 		int rtn = svc.insert(paramModel);
 
@@ -317,7 +336,8 @@ public class CrbnStoreInfoController {
 	public  @ResponseBody HashMap StoreInfoUptProc(
 			HttpServletRequest request, 
 			//@RequestPart("imgFile") MultipartFile imgFile, 
-			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,			
+			@RequestPart(value = "storeNoImgFile", required = false) MultipartFile storeNoImgFile,			
+			@RequestPart(value = "storeImgFile", required = false) MultipartFile storeImgFile,			
 			final CrbnStoreInfoModel paramModel, 
 			Model model) throws Exception {
 		
@@ -347,46 +367,101 @@ public class CrbnStoreInfoController {
 		}
 		
 		//파일 관련
-		if ( imgFile != null && !imgFile.isEmpty()) {
+		/*
+		 * if ( imgFile != null && !imgFile.isEmpty()) { String fileSavePath =
+		 * FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+		 * log.info("파일 이름: " + imgFile.getOriginalFilename());
+		 * log.info("fileSavePath: {} " ,fileSavePath);
+		 * 
+		 * String fileExt =
+		 * imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().
+		 * lastIndexOf(".")); String originalFilename = imgFile.getOriginalFilename();
+		 * //String imgNailNm = fileSavePath +File.separator +
+		 * "640"+DateUtil.getCurrDateTime()+"." + fileExt; String imgNailNm =
+		 * fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt; //
+		 * 중간에 점 제거 //String tmpFileNm = FileUtil.uploadTemp + originalFilename; String
+		 * tmpFileNm = fileSavePath+File.separator +originalFilename;
+		 * 
+		 * log.info("파라머터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,
+		 * tmpFileNm);
+		 * 
+		 * FileUtil.createDirectory(fileSavePath); File savedFile = new File(tmpFileNm);
+		 * imgFile.transferTo(savedFile); // 업로드된 파일 저장
+		 * //log.info("TEST {} | {} | {} | {}", paramModel.getDocStat(),
+		 * paramModel.getDocFrom(), paramModel.getDocTitle());
+		 * 
+		 * // 썸네일 생성 File thumbnailFile = new File(imgNailNm); Thumbnails.of(savedFile)
+		 * .size(700, 400) .toFile(thumbnailFile); //file upload
+		 * 
+		 * //paramModel.setImgSrcNm(imgFile.getOriginalFilename());
+		 * //paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() +
+		 * fileExt);
+		 * 
+		 * } else { log.info("imgFile is null ");
+		 * //paramModel.setImgSrcNm(paramModel.getBefImgSrcNme());
+		 * //paramModel.setImgNailNm(paramModel.getBefImgNailNme()); }
+		 */
+		
+		//파일 관련
+		if ( storeNoImgFile != null && !storeNoImgFile.isEmpty()) {
 			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			log.info("파일 이름: " + imgFile.getOriginalFilename());
+			
+			log.info("파일 이름: " + storeNoImgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 
-	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
-			String originalFilename = imgFile.getOriginalFilename();
+	        String fileExt = storeNoImgFile.getOriginalFilename().substring(storeNoImgFile.getOriginalFilename().lastIndexOf("."));
+			String originalFilename = storeNoImgFile.getOriginalFilename();
 			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
 			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;  // 중간에 점 제거
 			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
 
-			log.info("파라머터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,  tmpFileNm);
+			log.info("파라미터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,  tmpFileNm);
 
 			FileUtil.createDirectory(fileSavePath);
 			File savedFile = new File(tmpFileNm);
-			imgFile.transferTo(savedFile); // 업로드된 파일 저장
-			//log.info("TEST {} | {} | {} | {}", paramModel.getDocStat(), paramModel.getDocFrom(),  paramModel.getDocTitle());
+			storeNoImgFile.transferTo(savedFile); // 업로드된 파일 저장
 
-	        // 썸네일 생성
-	        File thumbnailFile = new File(imgNailNm);
-	        Thumbnails.of(savedFile)
-	                  .size(700, 400)
-	                  .toFile(thumbnailFile);		
-			//file upload
-			
-			//paramModel.setImgSrcNm(imgFile.getOriginalFilename());
-			//paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() + fileExt);
+			paramModel.setStoreNoImg(storeNoImgFile.getOriginalFilename());
 
 		} else {
-			log.info("imgFile is null ");
-			//paramModel.setImgSrcNm(paramModel.getBefImgSrcNme());
-			//paramModel.setImgNailNm(paramModel.getBefImgNailNme());
+			log.info("storeNoImgFile is null ");
+			paramModel.setStoreNoImg(paramModel.getBefStoreNoImg());
 		}
+		
+		//파일 관련
+		if ( storeImgFile != null && !storeImgFile.isEmpty()) {
+			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			
+			log.info("파일 이름: " + storeImgFile.getOriginalFilename());
+			log.info("fileSavePath: {} " ,fileSavePath);
+			
+			String fileExt = storeImgFile.getOriginalFilename().substring(storeImgFile.getOriginalFilename().lastIndexOf("."));
+			String originalFilename = storeImgFile.getOriginalFilename();
+			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;  // 중간에 점 제거
+			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
+			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
+			
+			log.info("파라미터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,  tmpFileNm);
+			
+			FileUtil.createDirectory(fileSavePath);
+			File savedFile = new File(tmpFileNm);
+			storeImgFile.transferTo(savedFile); // 업로드된 파일 저장
+			
+			paramModel.setStoreImg(storeImgFile.getOriginalFilename());
+			
+		} else {
+			log.info("storeImgFile is null ");
+			paramModel.setStoreImg(paramModel.getBefStoreNoImg());
+		}
+		
 		
 		//log.info("StoreInfoUptProc , paramModel.getDocSeq() : " + paramModel.getDocSeq());
 		//log.info("StoreInfoUptProc , paramModel.getDocTitle() : " + paramModel.getDocTitle());
 		
 		//가맹점 정보 변경처리
-		//paramModel.setPartyCd(sessInfo.getPartyCd());
+		paramModel.setPartyCd(sessInfo.getPartyCd());
 		//paramModel.setRegId(sessInfo.getCrbnAdmId());
 		int rtn = svc.update(paramModel);
 
