@@ -16,7 +16,18 @@
 		var originalStoreNm = $('#storeNm').val();
 		var originalStoreAddr = $('#storeAddr').val();
 		var originalStoreEmail = $('#storeEmail').val();
+		var originalStoreEmail = $('#storeEmail').val();
+		var originalBisNum = $('#bisNum').val();
+		var originalStoreCellNum = $('#storeCellNum').val();
 		//var originalUrl = $('#docUrl').val();
+		
+		
+
+		// 페이지 로드 시 초기값 포맷팅
+		var initVal = $('#bisNum').val();
+		if (initVal) {
+		    $('#bisNum').val(formatBizNum(initVal));
+		}		
 
 		//var originalFilesCount = 0; // 첨부파일 초기 개수 (필요 시 서버에서 초기값 받아 설정)
 
@@ -37,8 +48,12 @@
 			console.log("start docSave");//순수한 태그
 			
 			// 사업자 등록번호 필수 체크
-			var bizNum = $('#bizNum').val().trim();
-			if (bizNum === "") { alert("사업자 등록번호를 입력하세요."); $('#bizNum').focus(); return false; }
+			var bisNum = $('#bisNum').val().trim();
+			if (bisNum === "") { alert("사업자 등록번호를 입력하세요."); $('#bisNum').focus(); return false; }
+			
+			// 하이픈 제거
+			var bisNumRaw = bisNum.replace(/-/g, '');
+
 
 			var storeNm = $('#storeNm').val().trim();
 			if (storeNm === "") { alert("상호를 입력하세요."); $('#storeNm').focus(); return false; }
@@ -49,17 +64,21 @@
 			var storeCeoNm = $('#storeCeoNm').val().trim();
 			if (storeCeoNm === "") { alert("대표자 성명을 입력하세요."); $('#storeCeoNm').focus(); return false; }
 
-			var storeCelNum = $('#storeCelNum').val().trim();
-			if (storeCelNum === "") { alert("휴대폰 번호를 입력하세요."); $('#storeCelNum').focus(); return false; }
+			var storeCellNum = $('#storeCellNum').val().trim();
+			if (storeCellNum === "") { alert("휴대폰 번호를 입력하세요."); $('#storeCellNum').focus(); return false; }
 
 						
 			var updateInd = false; 
 			
 			// 텍스트 필드 변경 여부 체크
-			if ($('#storeNm').val() !== originalStoreNm) storeNm = true;
-			if ($('#storeAddr').val() !== originalStoreAddr) updateInd = true;
-			if ($('#storeEmail').val() !== originalStoreEmail) updateInd = true;
-			//if ($('#docUrl').val() !== originalUrl) updateInd = true;
+			if ($('#storeNm').val()        !== originalStoreNm)      updateInd = true;
+			if ($('#storeAddr').val()      !== originalStoreAddr)    updateInd = true;
+			if ($('#storeEmail').val()     !== originalStoreEmail)   updateInd = true;
+			if ($('#originalBisNum').val() !== originalBisNum)       updateInd = true;
+			if ($('#storeCellNum').val()   !== originalStoreCellNum) updateInd = true;
+			
+			//console.log("start updateInd : " + updateInd);
+
 
 			// 파일 변경 여부 체크
 			var files = $('#storeNoImg')[0].files;
@@ -72,6 +91,7 @@
 				alert("변경된 내용이 없습니다.");
 				return;
 			}
+			
 			var formData = new FormData();
         	
 			//파일데이터 추출 (중복선언)
@@ -101,14 +121,19 @@
 
 			formData.append("storeId", $('#storeId').val() );
 			formData.append("storeNm", $('#storeNm').val() );
-			formData.append("storeAddr", $('#storeAddr').val() );
-			formData.append("storeEmail", $('#storeEmail').val() );
 
-			formData.append("befStoreNoImg", $('#befStoreNoImg').val() );
-			formData.append("befStoreImg", $('#befStoreImg').val() );
+			//formData.append("bisNum", $('#bisNum').val() );
+			formData.append("bisNum", bisNumRaw); // 하이픈 제거된 값으로 저장
+
+			formData.append("storePwd", $('#storePwd').val() );
+			formData.append("storeCeoNm", $('#storeCeoNm').val() );
+			formData.append("storeCellNum", $('#storeCellNum').val() );
+
+			formData.append("storeAddr", $('#storeAddr').val() );
+			formData.append("storeEmail", $('#storeEmail').val() );	
 
 			$.ajax({
-                url : '/adm/store/StoreUptProc'
+                url : '/adm/store/StoreInfoUptProc'
                 , type : 'POST'
                 , data:formData //보내는데이터 form
     			, contentType:false //보내는데이터타입 false->"multipart/form-data"로 선언됩니다.
@@ -118,7 +143,9 @@
                 , success : function(data, stauts, request) {
     				if (data.procInd == "S") {
     					alert("정상 처리 되었습니다.");
-    					location.href = "/adm/store/StoreMainList.do";
+    					location.href = "/adm/store/StoreInfoMainList.do";
+					} else if (data.procInd == "E" || (data.errorId == "dupCellNum" || data.errorId == "dupCellNum") ) {
+						alert(data.errorMsg);
     				} else {
     					alert("처리중 오류가 발생 했습니다.");
     				}
@@ -132,75 +159,23 @@
                 }    
             });
         });
-        
-		//게시버튼 클릭
-        $('#docView').on('click', function(event) {
-        	//alert("게시 클릭 docSeq= " + $('#docSeq').val());
-            var param = {
-                     "storeId" : $('#storeId').val() 
-               };        
-            
-            $.ajax({
-                url : '/adm/store/StoreViewProc'
-                , type : 'POST'
-                , dataType : 'JSON'
-                , cache : false
-                , data : param
-                , beforeSend : function( xhr, settings ) { 
-                    //loadingbar_show(); 
-                }
-                , success : function(data, stauts, request) {
-    				if (data.procInd == "S") {
-    					alert("정상 처리 되었습니다.");
-    					location.href = "/adm/store/StoreMainList.do";
-    				} else {
-    					alert("처리중 오류가 발생 했습니다.");
-    				}
-
-                }
-                , error : function(xhr, status) {
-                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
-                }
-                , complete : function(xhr, status) {
-                    //loadingbar_hide();
-                }    
-            });
-        });
-       
-		//게시취소버튼 클릭
-        $('#docCancelView').on('click', function(event) {
-        	
-            var param = {
-                     "storeId" : $('#storeId').val() 
-               };        
-            
-            $.ajax({
-                url : '/adm/store/StoreCancelProc'
-                , type : 'POST'
-                , dataType : 'JSON'
-                , cache : false
-                , data : param
-                , beforeSend : function( xhr, settings ) { 
-                    //loadingbar_show(); 
-                }
-                , success : function(data, stauts, request) {
-    				if (data.procInd == "S") {
-    					alert("정상 처리 되었습니다.");
-    					location.href = "/adm/store/StoreMainList.do";
-    				} else {
-    					alert("처리중 오류가 발생 했습니다.");
-    				}
-
-                }
-                , error : function(xhr, status) {
-                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
-                }
-                , complete : function(xhr, status) {
-                    //loadingbar_hide();
-                }    
-            });
-        });
-       
+		
+		
+		function formatBizNum(value) {
+		    value = value.replace(/[^0-9]/g, '').slice(0, 10);
+		    if (value.length > 3 && value.length <= 5) {
+		        return value.slice(0,3) + '-' + value.slice(3);
+		    } else if (value.length > 5) {
+		        return value.slice(0,3) + '-' + value.slice(3,5) + '-' + value.slice(5);
+		    }
+		    return value;
+		}
+				
+		// 사업자등록번호 숫자만 입력, 자동 하이픈
+		$('#bisNum').on('input', function() {
+		    $(this).val(formatBizNum($(this).val()));
+		});
+		
 		//삭제버튼 클릭
         $('#docDelete').on('click', function(event) {
         	
@@ -220,7 +195,7 @@
                 , success : function(data, stauts, request) {
     				if (data.procInd == "S") {
     					alert("정상 처리 되었습니다.");
-    					location.href = "/adm/store/StoreMainList.do";
+    					location.href = "/adm/store/StoreInfoMainList.do";
     				} else {
     					alert("처리중 오류가 발생 했습니다.");
     				}
@@ -275,6 +250,24 @@
 							<th>상호</th>
 							<td><input type="text" name="" id="storeNm" class="w90"  th:value="${ docview.storeNm }" /></td>
 						</tr>
+
+						<tr>
+							<th>사업자 등록번호</th>
+							<td><input type="text" name="" id="bisNum" class="w90" th:value="${ docview.bisNum }"  maxlength="12" autocomplete="off" /></td>
+						</tr>						
+
+						<tr>
+							<th>비밀번호</th>
+							<td><input type="password" name="" id="storePwd" class="w90" th:value="${ docview.storePwd }"  /></td>
+						</tr>						
+						<tr>
+							<th>대표자 명</th>
+							<td><input type="text" name="" id="storeCeoNm" class="w90" th:value="${ docview.storeCeoNm }" /></td>
+						</tr>						
+						<tr>
+							<th>대표자 휴대폰 번호</th>
+							<td><input type="text" name="" id="storeCellNum" class="w90"  th:value="${ docview.storeCellNum }"/></td>
+						</tr>									
 						<tr>
 						    <th>사업자 등록증 이미지</th>
 						    <td>
@@ -309,8 +302,6 @@
 			
 			<div class="t-center mT40">
                 <button type="button" class="btn-grayfill" id="docSave">저장</button>
-                <button type="button" class="btn-blue" id="docView">게시</button>
-                <button type="button" class="btn-grayfill" id="docCancelView">게시취소</button>
                 <button type="button" class="btn-blue" id="docDelete">삭제</button>
 			</div>
 		</div><!-- //content -->

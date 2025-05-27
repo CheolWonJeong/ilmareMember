@@ -13,7 +13,11 @@ public interface CrbnStoreInfoMapper {
 	CrbnStoreInfoModel selectAdmDesc(CrbnStoreInfoModel commModel);
 	//CrbnStoreInfoModel selectBeforeAfter(CrbnStoreInfoModel commModel);
 	List<CrbnStoreInfoModel> selectAdmList(CrbnStoreInfoModel commModel);
-	String selectAdmListCount(CrbnStoreInfoModel commModel);	
+	String selectAdmListCount(CrbnStoreInfoModel commModel);
+	
+	int countCellNum(CrbnStoreInfoModel commModel);	
+	int countBisNum(CrbnStoreInfoModel commModel);	
+	
 	//List<CrbnStoreInfoModel> selectList(CrbnStoreInfoModel commModel);
 	//String selectListCount(CrbnStoreInfoModel commModel);
 	//CrbnStoreInfoModel selectDesc(CrbnStoreInfoModel commModel);

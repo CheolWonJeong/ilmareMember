@@ -11,70 +11,76 @@
 
 	$(document).ready(function(){
     	
-		//조회버튼 클릭
-        $('#searchBtn').on('click', function(event, page) {
-        	
-            var pageIdx = (page == null ? "1" : page);
-            var rowPerPage = 10;
-            var pageBlock = 10;
-            
-            var param = {
-                     "searchType" : $('#searchType').val() 
-                     , "searchValue" : $('#searchValue').val() 
-                     , "pageNo" : pageIdx
-               };        
-            
-            $.ajax({
-                url : '/adm/content/HotNewsQueryList'
-                , type : 'POST'
-                , dataType : 'JSON'
-                , cache : false
-                , data : param
-                , beforeSend : function( xhr, settings ) { 
-                    //loadingbar_show(); 
-                }
-                , success : function(data, stauts, request) {
-                    var values = data.rows;
-                    var strHtml = "";
-                    
-                    if (values.length > 0) {
-                        $.each(values, function(index, value){
-                            strHtml += '<tr id="' + value.docSeq + '">';
-                            strHtml += '    <td>' + ((pageIdx-1) * rowPerPage + index + 1) + '</td>';
-                            strHtml += '    <td class="left">' + value.docTitle + '</td>';
-                            strHtml += '    <td>' + value.docRead + '</td>';
-                            strHtml += '    <td>' + value.docStatText + '</td>';
-                            strHtml += '    <td>' + value.upDate + '</td>';
-                            strHtml += '</tr>';
-                        });
-                    } else {
-                        strHtml = '<tr><td colspan=5 class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
-                    }
-                    $('#boardTbody1').html(strHtml);
-                    
-                }
-                , error : function(xhr, status) {
-                    alert('서비스 장애발생 관리자에게 문의해 주십시요 we');
-                }
-                , complete : function(xhr, status) {
-                    //loadingbar_hide();
-                }    
-            });
-        });
-        
-        $("#searchBtn").trigger('click', 1);
+		// 검색 버튼 클릭
+	    $('#searchBtn').on('click', function() {
+			
+	        searchNews(1);
+	    });
+
+	    // 엔터키로 검색
+	    $('#searchValue').on('keydown', function(event) {
+			//alert("enter");
+	        if (event.keyCode === 13) {
+	            searchNews(1);
+	        }
+	    });
+
+	    // 최초 로딩 시 1페이지 검색
+	    //searchNews(1);
+
+	    function searchNews(pageIdx) {
+			alert("searchNews pageIdx " + pageIdx);
+	        var rowPerPage = 10;
+	        var param = {
+				"searchType" : "TITLE",
+	            "searchValue" : $('#searchValue').val(),
+	            "pageNo" : pageIdx
+	        };
+
+	        $.ajax({
+	            url : '/adm/content/HotNewsQueryList',
+	            type : 'POST',
+	            dataType : 'JSON',
+	            cache : false,
+	            data : param,
+	            success : function(data) {
+	                var values = data.rows;
+	                var strHtml = "";
+
+	                if (values && values.length > 0) {
+	                    $.each(values, function(index, value){
+							
+							// 상태값 변환
+							var statText = '';
+							if (value.docStat === 'N') statText = '등록';
+							else if (value.docStat === 'V') statText = '게시';
+							else if (value.docStat === 'C') statText = '게시취소';
+							else if (value.docStat === 'D') statText = '삭제';
+							else statText = '';
+														
+	                        strHtml += '<tr id="' + value.docSeq + '">';
+	                        strHtml += '    <td>' + value.docTitle + '</td>';
+	                        strHtml += '    <td>' + value.docFrom + '</td>';
+	                        strHtml += '    <td>' + statText + '</td>';
+	                        strHtml += '    <td>' + value.regDtm + '</td>';
+	                        strHtml += '</tr>';
+	                    });
+	                } else {
+	                    strHtml = '<tr><td colspan="4" class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
+	                }
+	                $('#boardTbody1').html(strHtml);
+	            },
+	            error : function() {
+	                alert('서비스 장애발생 관리자에게 문의해 주십시요');
+	            }
+	        });
+	    }
         
         $('#insertBtn').on('click',function(){
             location.href = "/adm/content/HotNewsIns.do";
         });
+		
         
-        //엔터시 검색
-        $('#searchValue').on('keydown', function(event, page) {
-        	if (event.keyCode != 13) {
-        		return;
-        	}
-        	$("#searchBtn").trigger('click', 1);
-        });
     });
 </script>
 
@@ -107,8 +113,12 @@
 				</div>
                 <div class="t-right">
                     <div class="search-type">
-                        <input type="text" name="" id="" class="input-type1" placeholder="Search" />
-                        <button type="button" class="btn-search">검색</button>
+                        <!--<input type="text" name="" id="" class="input-type1" placeholder="Search" />
+                        <button type="button" class="btn-search">검색</button>-->
+						<!-- 검색 입력란과 버튼에 id, name 추가 -->
+						<input type="text" name="searchValue" id="searchValue" class="input-type1" placeholder="Search" />
+						<button type="button" class="btn-search" id="searchBtn">검색</button>						
+						
                     </div>
                 </div>
             </div>
@@ -130,7 +140,8 @@
 			              <th>변경일</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <!--<tbody>-->
+                    <tbody id="boardTbody1">
 			            <tr th:each="docdesc : ${ntsList}">
 			                <td > <a th:href="@{'/adm/content/HotNewsDesc.do?docSeq=' + ${docdesc.docSeq}}" th:text="${docdesc.docTitle}"></a>
 			                </td>
@@ -150,22 +161,7 @@
                 <button type="button" class="btn-blue" id="insertBtn">등록</button>
             </div>
 
-            <!-- page number
-            <div class="page-num mT30">
-                <div class="inner">
-                    <li><a href="#"><i class="iconfont">first_page</i></a></li>
-                    <li><a href="#"><i class="iconfont">chevron_left</i></a></li>
-                    <li>
-                        <a href="#" class="active">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#">4</a>
-                        <a href="#">5</a>
-                    </li>
-                    <li><a href="#"><i class="iconfont">chevron_right</i></a></li>
-                    <li><a href="#"><i class="iconfont">last_page</i></a></li>
-                </div>
-            </div> -->
+            <!-- page number -->
             <!--// page number -->
 			
 

@@ -220,6 +220,23 @@ public class CrbnStoreInfoController {
 			return result;
 		}
 		
+		log.info("StoreInfoInsProc countCellNum=" + svc.countCellNum(paramModel) );
+		log.info("StoreInfoInsProc countBisNum=" + svc.countBisNum(paramModel) );
+	
+		// 휴대폰 & 사업자번호
+		if ( svc.countCellNum(paramModel) > 0 ) {
+			result.put("procInd"  , "E");
+			result.put("errorId"  , "dupCellNum");
+			result.put("errorMsg" , "휴대폰 번호가 중복되었습니다.");
+			return result;
+		}
+		if ( svc.countBisNum(paramModel) > 0 ) {
+			result.put("procInd"  , "E");
+			result.put("errorId"  , "dupBisNum");
+			result.put("errorMsg" , "사업자 번호가 중복되었습니다.");
+			return result;
+		}
+		
 		//파일 관련		
 		if ( storeNoImgFile != null && !storeNoImgFile.isEmpty()) {
 			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
@@ -366,41 +383,22 @@ public class CrbnStoreInfoController {
 			return result;
 		}
 		
-		//파일 관련
-		/*
-		 * if ( imgFile != null && !imgFile.isEmpty()) { String fileSavePath =
-		 * FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-		 * log.info("파일 이름: " + imgFile.getOriginalFilename());
-		 * log.info("fileSavePath: {} " ,fileSavePath);
-		 * 
-		 * String fileExt =
-		 * imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().
-		 * lastIndexOf(".")); String originalFilename = imgFile.getOriginalFilename();
-		 * //String imgNailNm = fileSavePath +File.separator +
-		 * "640"+DateUtil.getCurrDateTime()+"." + fileExt; String imgNailNm =
-		 * fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt; //
-		 * 중간에 점 제거 //String tmpFileNm = FileUtil.uploadTemp + originalFilename; String
-		 * tmpFileNm = fileSavePath+File.separator +originalFilename;
-		 * 
-		 * log.info("파라머터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,
-		 * tmpFileNm);
-		 * 
-		 * FileUtil.createDirectory(fileSavePath); File savedFile = new File(tmpFileNm);
-		 * imgFile.transferTo(savedFile); // 업로드된 파일 저장
-		 * //log.info("TEST {} | {} | {} | {}", paramModel.getDocStat(),
-		 * paramModel.getDocFrom(), paramModel.getDocTitle());
-		 * 
-		 * // 썸네일 생성 File thumbnailFile = new File(imgNailNm); Thumbnails.of(savedFile)
-		 * .size(700, 400) .toFile(thumbnailFile); //file upload
-		 * 
-		 * //paramModel.setImgSrcNm(imgFile.getOriginalFilename());
-		 * //paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() +
-		 * fileExt);
-		 * 
-		 * } else { log.info("imgFile is null ");
-		 * //paramModel.setImgSrcNm(paramModel.getBefImgSrcNme());
-		 * //paramModel.setImgNailNm(paramModel.getBefImgNailNme()); }
-		 */
+		log.info("StoreInfoInsProc countCellNum=" + svc.countCellNum(paramModel) );
+		log.info("StoreInfoInsProc countBisNum=" + svc.countBisNum(paramModel) );
+	
+		// 휴대폰 & 사업자번호
+		if ( svc.countCellNum(paramModel) > 0 ) {
+			result.put("procInd"  , "E");
+			result.put("errorId"  , "dupCellNum");
+			result.put("errorMsg" , "휴대폰 번호가 중복되었습니다.");
+			return result;
+		}
+		if ( svc.countBisNum(paramModel) > 0 ) {
+			result.put("procInd"  , "E");
+			result.put("errorId"  , "dupBisNum");
+			result.put("errorMsg" , "사업자 번호가 중복되었습니다.");
+			return result;
+		}
 		
 		//파일 관련
 		if ( storeNoImgFile != null && !storeNoImgFile.isEmpty()) {

@@ -32,10 +32,15 @@ public class CrbnStoreInfoService {
 	public String  selectAdmListCount(CrbnStoreInfoModel param){
 		return mapper.selectAdmListCount(param);
 	}
-//	public String  selectAdmListCount(String searchValue){
-//		return mapper.selectAdmListCount(searchValue);
-//	}
+	
+	public int countCellNum(CrbnStoreInfoModel param){
+		return mapper.countCellNum(param);
+	}
 
+	public int countBisNum(CrbnStoreInfoModel param){
+		return mapper.countBisNum(param);
+	}
+	
 	
 	/*
 	 * 등록

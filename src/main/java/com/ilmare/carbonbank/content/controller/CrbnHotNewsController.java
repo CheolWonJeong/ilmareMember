@@ -174,6 +174,7 @@ public class CrbnHotNewsController {
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
 
 		result.put("ntsList", ntsList);
+		result.put("rows", ntsList);
 		log.info("NoticeQueryList End");
 
 		return result;
