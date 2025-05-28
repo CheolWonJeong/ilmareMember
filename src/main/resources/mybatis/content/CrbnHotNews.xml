@@ -31,19 +31,6 @@
             WHERE doc_seq = #{docSeq}
      ]]>
     </select>
-    
-    <select id="selectBeforeAfter" parameterType="com.ilmare.carbonbank.model.content.NewsCommonModel" resultType="com.ilmare.carbonbank.model.content.NewsCommonModel">
-    <![CDATA[
-            /*
-            1. ID: selectBeforeAfter
-            2. 업무명: 이전, 이후 seq 구함
-            3. 업무설명:
-            */
-		select 'preSeq' doc_title, IFNULL(max(doc_seq),0) doc_seq from CRBN_HOT_NEWS where doc_seq < #{docSeq} and doc_stat = 'V'
-		union all
-		select 'sufSeq' doc_title, IFNULL(min(doc_seq),0) doc_seq from CRBN_HOT_NEWS where doc_seq > #{docSeq} and doc_stat = 'V'
-     ]]>
-    </select>
 
     <select id="selectAdmList" parameterType="com.ilmare.carbonbank.model.content.NewsCommonModel" resultType="com.ilmare.carbonbank.model.content.NewsCommonModel">
     <![CDATA[

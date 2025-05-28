@@ -22,6 +22,7 @@ import com.ilmare.carbonbank.cmn.service.CommonService;
 import com.ilmare.carbonbank.cmn.util.DateUtil;
 import com.ilmare.carbonbank.cmn.util.FileUtil;
 import com.ilmare.carbonbank.model.content.CrbnStoreInfoModel;
+import com.ilmare.carbonbank.model.content.NewsCommonModel;
 import com.ilmare.carbonbank.service.CrbnStoreInfoService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,12 +67,10 @@ public class CrbnStoreInfoController {
 		
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-//		if ( !sessMgr.isSession(request) ) {
 			log.info("StoreInfoMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-//		SessInfo sessInfo = sessMgr.getSession(request);
 		SessInfo sessInfo = sessMgr.getSessInfo();
 		log.info("StoreInfoMainList 로그인 상태");
 		log.info("StoreInfoMainList sessInfo=" + sessInfo.toString());
@@ -83,12 +82,8 @@ public class CrbnStoreInfoController {
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		//메뉴 조회
-		//List menuList = iUserInfoService.getMenu(userInfoVO);
-		
 		//가맹점 정보 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
-        //int pageNo   = paramVo.getPageNo(); //조회할 페이지 번호
         int pageNo   = page; //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
         
@@ -97,13 +92,20 @@ public class CrbnStoreInfoController {
 		paramVo.setListSize(pageSize);
 		
 		List<CrbnStoreInfoModel> ntsList = svc.selectAdmList(paramVo);
-		log.info("StoreInfoMainList ntsList.size()" + ntsList.toString());
-		String totalCount = svc.selectAdmListCount(paramVo);
-
+		log.info("HotNewsMainList ntsList.size()" + ntsList.toString());
+		String totalCountStr = svc.selectAdmListCount(paramVo);		
+		
 		model.addAttribute("sessInfo", sessInfo);
 		model.addAttribute("ntsList", ntsList);
-		model.addAttribute("totalCount", totalCount);
-		//model.addAttribute("menuList", menuList);
+		model.addAttribute("totalCount", totalCountStr);
+	    model.addAttribute("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+	    model.addAttribute("totalPages", totalPages);
+	    
 		log.info("StoreInfoMainList End");
 
 		return "adm/content/store/list";
@@ -114,10 +116,15 @@ public class CrbnStoreInfoController {
 	 * 버튼 클릭조회
 	 */
 	@RequestMapping("/StoreInfoQueryList")
-	public  @ResponseBody HashMap StoreInfoQueryList(HttpServletRequest request, final CrbnStoreInfoModel paramVo, Model model) throws Exception {
+	public  @ResponseBody HashMap StoreInfoQueryList(
+			HttpServletRequest request, 
+			final CrbnStoreInfoModel paramVo, 
+			Model model,
+			@RequestParam(defaultValue = "1") int page
+			) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("NoticeQueryList Start");
+		log.info("StoreInfoQueryList Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("NoticeQueryList 세션 없음 상태");
@@ -127,14 +134,14 @@ public class CrbnStoreInfoController {
 			return result;
 		}
 		
-		log.info("NoticeQueryList 로그인 상태");
+		log.info("StoreInfoQueryList 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("NoticeQueryList sessInfo=" + sessInfo.toString());
+		log.info("StoreInfoQueryList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("NoticeQueryList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("StoreInfoQueryList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("NoticeQueryList 권한 없음 상태");
+			log.info("StoreInfoQueryList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -146,13 +153,31 @@ public class CrbnStoreInfoController {
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
 		log.info("StoreInfoMainList {} ~ {}", sRowNum, pageSize);
+		
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
-		List<CrbnStoreInfoModel> ntsList = svc.selectAdmList(paramVo);
+		
+		List<CrbnStoreInfoModel> dataList = svc.selectAdmList(paramVo);
 
-		result.put("ntsList", ntsList);
-		log.info("NoticeQueryList End");
+		///////////////////////////////
+		
+		String totalCountStr = svc.selectAdmListCount(paramVo);
+
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+
+	    result.put("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+	    result.put("totalCount", totalCountStr);
+	    result.put("totalPages", totalPages);
+	    
+		///////////////////////////////
+
+		result.put("rows", dataList); // jquery는 이 데이터만 사용.
+		
+		log.info("StoreInfoQueryList End");
 
 		return result;
 	}
