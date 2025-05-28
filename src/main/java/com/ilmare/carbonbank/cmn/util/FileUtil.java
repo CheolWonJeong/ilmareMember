@@ -30,15 +30,16 @@ import org.springframework.beans.factory.annotation.Value;
 @Component
 public class FileUtil {
 	
+	public static String imgServerPath = "/app/data/upload/";
 	private static final  Map<String, String> initMap = Map.of(
-			"StoreBis", "/app/data/upload/store_bis/"    //가맹점 사업자등록증
-			,"Store", "/app/data/upload/uploadFiles/store/"     //가맹점 매장
-			,"EnvNews", "/app/data/upload/uploadFiles/env_news/"   //환경뉴스
-			,"MunicipalNews", "/app/data/upload/uploadFiles/municipal_news/"   //시정뉴스
-			,"VideoNews", "/app/data/upload/uploadFiles/video_news/"  //영상뉴스
-			,"HotNews", "/app/data/upload/uploadFiles/hot_news/"    //기관 핫뉴스
-			,"Temp", "/app/data/upload/temp/" //업로드된 파일의 임시 저장 공간
-			,"Event", "/app/data/upload/uploadFiles/event/"    //이벤트
+			"StoreBis", "store_bis/"    //가맹점 사업자등록증
+			,"Store", "uploadFiles/store/"     //가맹점 매장
+			,"EnvNews", "uploadFiles/env_news/"   //환경뉴스
+			,"MunicipalNews", "uploadFiles/municipal_news/"   //시정뉴스
+			,"VideoNews", "uploadFiles/video_news/"  //영상뉴스
+			,"HotNews", "uploadFiles/hot_news/"    //기관 핫뉴스
+			,"Temp", "temp/" //업로드된 파일의 임시 저장 공간
+			,"Event", "uploadFiles/event/"    //이벤트
 			,"pcTemp", "C:\\sts_work\\ilmareMember\\ilmareMember\\src\\main\\resources\\static\\upload\\"    //PC
 		);
 	private static final Hashtable<String, String> imgPath = new Hashtable<>(initMap);	
