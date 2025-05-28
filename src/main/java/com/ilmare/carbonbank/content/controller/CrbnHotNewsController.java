@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,27 +21,25 @@ import com.ilmare.carbonbank.cmn.controller.ConfigConstants;
 import com.ilmare.carbonbank.cmn.service.CommonService;
 import com.ilmare.carbonbank.cmn.util.DateUtil;
 import com.ilmare.carbonbank.cmn.util.FileUtil;
-import com.ilmare.carbonbank.cmn.vo.CommonVo;
-import com.ilmare.carbonbank.model.content.CrbnNoticeModel;
 import com.ilmare.carbonbank.model.content.NewsCommonModel;
-import com.ilmare.carbonbank.service.CrbnEnvNewsService;
+import com.ilmare.carbonbank.service.CrbnHotNewsService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 
 /*
- * 환경 뉴스
+ * 기관 핫뉴스 관리
  */
 @Slf4j
 @Controller
 @RequestMapping("/adm/content")
-public class CrbnEnvNewsController {
+public class CrbnHotNewsController {
 	@Autowired(required=true)
 	private SessionManager sessMgr;
 	
 	@Autowired
-	private CrbnEnvNewsService svc;
+	private CrbnHotNewsService svc;
 
 	@Autowired
 	private CommonService commSvc;
@@ -53,59 +52,91 @@ public class CrbnEnvNewsController {
     private static String pcTmp;		//기관 핫뉴스
 	
 	/*
-	 *  리스트 조회
+	 *  기관 핫뉴스 리스트 조회
 	 */
-	@RequestMapping("/EnvNewsMainList.do")
-	public String EnvNewsMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/HotNewsMainList.do")
+	public String HotNewsMainList(
+			HttpServletRequest request, 
+			final NewsCommonModel paramVo, 
+			Model model,
+			
+			@RequestParam(defaultValue = "1") int page
+			) throws Exception {
 		
-		log.info("EnvNewsMainList Start");
+		log.info("HotNewsMainList Start , page = " + page);
+
+		
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 //		if ( !sessMgr.isSession(request) ) {
-			log.info("EnvNewsMainList 세션 없음 상태");
+			log.info("HotNewsMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 //		SessInfo sessInfo = sessMgr.getSession(request);
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsMainList 로그인 상태");
-		log.info("EnvNewsMainList sessInfo=" + sessInfo.toString());
+		log.info("HotNewsMainList 로그인 상태");
+		log.info("HotNewsMainList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsMainList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("HotNewsMainList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsMainList 권한 없음 상태");
+			log.info("HotNewsMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 		//메뉴 조회
 		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
-		//공지사항 리스트 조회
+		//기관 핫뉴스 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
-        int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
+        
+        //int pageNo   = paramVo.getPageNo(); //조회할 페이지 번호
+        int pageNo   = page; //조회할 페이지 번호
+        
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("EnvNewsMainList {} ~ {}", sRowNum, pageSize);
+		log.info("HotNewsMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
-		log.info("EnvNewsMainList ntsList.size()" + ntsList.toString());
-		
+		log.info("HotNewsMainList ntsList.size()" + ntsList.toString());
+		String totalCountStr = svc.selectAdmListCount(paramVo);
 
 		model.addAttribute("sessInfo", sessInfo);
 		model.addAttribute("ntsList", ntsList);
+		model.addAttribute("totalCount", totalCountStr);
 		//model.addAttribute("menuList", menuList);
-		log.info("EnvNewsMainList End");
+		
+	    //model.addAttribute("currentPage", page);
+	    //model.addAttribute("totalPages", result.getTotalPages());
+	    model.addAttribute("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
 
-		return "adm/content/envnews/list";
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+	    model.addAttribute("totalPages", totalPages);
+	    
+	    
+		log.info("HotNewsMainList End");
+
+		return "adm/content/hotnews/list";
+		
 	}
 
 	/*
 	 * 버튼 클릭조회
 	 */
-	@RequestMapping("/EnvNewsQueryList")
-	public  @ResponseBody HashMap EnvNewsQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/HotNewsQueryList")
+	public  @ResponseBody HashMap HotNewsQueryList(
+			HttpServletRequest request, 
+			final NewsCommonModel paramVo, 
+			Model model,			
+		    @RequestParam(defaultValue = "1") int page
+			) throws Exception {
+		
+		log.info("HotNewsQueryList Start , page = " + page);
 		
 		HashMap result = new HashMap();
 		log.info("NoticeQueryList Start");
@@ -132,11 +163,11 @@ public class CrbnEnvNewsController {
 			return result;
 		}
 		
-		//공지사항 리스트 조회
+		//기관 핫뉴스 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("EnvNewsMainList {} ~ {}", sRowNum, pageSize);
+		log.info("HotNewsMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
@@ -151,58 +182,58 @@ public class CrbnEnvNewsController {
 	/*
 	 * 신규등록
 	 */
-	@RequestMapping("/EnvNewsIns.do")
-	public String EnvNewsIns(HttpServletRequest request, Model model) throws Exception {
-		log.info("EnvNewsIns Start");
+	@RequestMapping("/HotNewsIns.do")
+	public String HotNewsIns(HttpServletRequest request, Model model) throws Exception {
+		log.info("HotNewsIns Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("AdmEnvNewsIns 세션 없음 상태");
+			log.info("AdmHotNewsIns 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		log.info("EnvNewsIns 로그인 상태");
+		log.info("HotNewsIns 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsIns sessInfo=" + sessInfo.toString());
+		log.info("HotNewsIns sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsIns PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("HotNewsIns PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsIns 권한 없음 상태");
+			log.info("HotNewsIns 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 
 		model.addAttribute("sessInfo", sessInfo);
-		return "adm/content/envnews/insert";
+		return "adm/content/hotnews/insert";
 	}
 
 	/*
 	 * 저장
 	 */
-	@PostMapping("/EnvNewsInsProc")
-	public  @ResponseBody HashMap EnvNewsInsProc(
+	@PostMapping("/HotNewsInsProc")
+	public  @ResponseBody HashMap HotNewsInsProc(
 			HttpServletRequest request, 
-			//@RequestPart("imgFile") MultipartFile imgFile, 
+			//@RequestPart("imgFile") MultipartFile imgFile,
 			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,	
 			final NewsCommonModel paramModel, 
 			Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsInsProc Start");
+		log.info("HotNewsInsProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsInsProc 세션 없음 상태");
+			log.info("HotNewsInsProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsInsProc 로그인 상태");
+		log.info("HotNewsInsProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsInsProc sessInfo=" + sessInfo.toString());
+		log.info("HotNewsInsProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsInsProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("HotNewsInsProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("AdmNoticeList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
@@ -220,7 +251,7 @@ public class CrbnEnvNewsController {
 	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
 			String originalFilename = imgFile.getOriginalFilename();
 			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
-			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt; // 중간에 점 제거
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+fileExt; // 중간에 점 제거
 			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
 	
@@ -246,7 +277,7 @@ public class CrbnEnvNewsController {
 			paramModel.setImgSrcNm("");
 			paramModel.setImgNailNm("");
 		}			
-						
+			
 
 		//저장
 		paramModel.setPartyCd(sessInfo.getPartyCd());
@@ -254,84 +285,84 @@ public class CrbnEnvNewsController {
 		int rtn = svc.insert(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsInsProc End");
+		log.info("HotNewsInsProc End");
 
 		return result;
 	}
 
 	
 	/*
-	 * 공지사항 상세 조회
+	 * 기관 핫뉴스 상세 조회
 	 */
-	@RequestMapping("/EnvNewsDesc.do")
-	public String EnvNewsDesc(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/HotNewsDesc.do")
+	public String HotNewsDesc(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
-		log.info("EnvNewsDesc Start");
+		log.info("HotNewsDesc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("AdmNoticeView 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		log.info("EnvNewsDesc 로그인 상태");
+		log.info("HotNewsDesc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsDesc sessInfo=" + sessInfo.toString());
+		log.info("HotNewsDesc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsDesc PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("HotNewsDesc PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsDesc 권한 없음 상태");
+			log.info("HotNewsDesc 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 		//메뉴 조회
 		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
-		//공지사항 한건 조회
+		//기관 핫뉴스 한건 조회
 		
 		NewsCommonModel rtnModel = svc.selectAdmDesc(paramVo);
-		log.info("EnvNewsDesc {}  {}",rtnModel.getImgSrcNm(),rtnModel.getImgNailNm());
+		log.info("HotNewsDesc {}  {}",rtnModel.getImgSrcNm(),rtnModel.getImgNailNm());
 
 		model.addAttribute("hsDocStat", commSvc.hsDocStat);
 		model.addAttribute("sessInfo", sessInfo);
 		
 		model.addAttribute("docview", rtnModel);
 		//model.addAttribute("menuList", menuList);
-		log.info("EnvNewsDesc End");
+		log.info("HotNewsDesc End");
 
-		return "adm/content/envnews/update";
+		return "adm/content/hotnews/update";
 	}
 
 	/*
-	 * 공지사항 저장
+	 * 기관 핫뉴스 저장
 	 */
-	@PostMapping("/EnvNewsUptProc")
-	public  @ResponseBody HashMap EnvNewsUptProc(
+	@PostMapping("/HotNewsUptProc")
+	public  @ResponseBody HashMap HotNewsUptProc(
 			HttpServletRequest request, 
 			//@RequestPart("imgFile") MultipartFile imgFile, 
-			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,
+			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,			
 			final NewsCommonModel paramModel, 
 			Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsUptProc Start");
+		log.info("HotNewsUptProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsUptProc 세션 없음 상태");
+			log.info("HotNewsUptProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsUptProc 로그인 상태");
+		log.info("HotNewsUptProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsUptProc sessInfo=" + sessInfo.toString());
+		log.info("HotNewsUptProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsUptProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("HotNewsUptProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsUptProc 권한 없음 상태");
+			log.info("HotNewsUptProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -347,7 +378,7 @@ public class CrbnEnvNewsController {
 	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
 			String originalFilename = imgFile.getOriginalFilename();
 			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
-			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;  // 중간에 점 제거
 			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
 
@@ -374,44 +405,46 @@ public class CrbnEnvNewsController {
 			paramModel.setImgNailNm(paramModel.getBefImgNailNme());
 		}
 		
-
-		//공지사항 변경처리
+		log.info("HotNewsUptProc , paramModel.getDocSeq() : " + paramModel.getDocSeq());
+		log.info("HotNewsUptProc , paramModel.getDocTitle() : " + paramModel.getDocTitle());
+		
+		//기관 핫뉴스 변경처리
 		paramModel.setPartyCd(sessInfo.getPartyCd());
 		paramModel.setRegId(sessInfo.getCrbnAdmId());
 		int rtn = svc.update(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsUptProc End");
+		log.info("HotNewsUptProc End");
 
 		return result;
 	}
 
 	
 	/*
-	 * 공지사항 게시
+	 * 기관 핫뉴스 게시
 	 */
-	@RequestMapping("/EnvNewsViewProc")
-	public  @ResponseBody HashMap EnvNewsViewProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/HotNewsViewProc")
+	public  @ResponseBody HashMap HotNewsViewProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsViewProc Start");
+		log.info("HotNewsViewProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsViewProc 세션 없음 상태");
+			log.info("HotNewsViewProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsViewProc 로그인 상태");
+		log.info("HotNewsViewProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsViewProc sessInfo=" + sessInfo.toString());
+		log.info("HotNewsViewProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsViewProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("HotNewsViewProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsViewProc 권한 없음 상태");
+			log.info("HotNewsViewProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -423,36 +456,36 @@ public class CrbnEnvNewsController {
 		int rtn = svc.updateShowStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsViewProc End");
+		log.info("HotNewsViewProc End");
 
 		return result;
 	}
 
 	/*
-	 * 공지사항 게시 취소
+	 * 기관 핫뉴스 게시 취소
 	 */
-	@RequestMapping("/EnvNewsCancelProc")
-	public  @ResponseBody HashMap EnvNewsCancelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/HotNewsCancelProc")
+	public  @ResponseBody HashMap HotNewsCancelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsCancelProc Start");
+		log.info("HotNewsCancelProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsCancelProc 세션 없음 상태");
+			log.info("HotNewsCancelProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsCancelProc 로그인 상태");
+		log.info("HotNewsCancelProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsCancelProc sessInfo=" + sessInfo.toString());
+		log.info("HotNewsCancelProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsCancelProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("HotNewsCancelProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsCancelProc 권한 없음 상태");
+			log.info("HotNewsCancelProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -464,34 +497,34 @@ public class CrbnEnvNewsController {
 		int rtn = svc.updateCancelStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsCancelProc End");
+		log.info("HotNewsCancelProc End");
 
 		return result;
 	}
 
 	/*
-	 * 공지사항 삭제
+	 * 기관 핫뉴스 삭제
 	 */
-	@RequestMapping("/EnvNewsDelProc")
-	public  @ResponseBody HashMap EnvNewsDelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/HotNewsDelProc")
+	public  @ResponseBody HashMap HotNewsDelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsDelProc Start");
+		log.info("HotNewsDelProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsDelProc 세션 없음 상태");
+			log.info("HotNewsDelProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsDelProc 로그인 상태");
+		log.info("HotNewsDelProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsDelProc sessInfo=" + sessInfo.toString());
+		log.info("HotNewsDelProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsDelProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("HotNewsDelProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("NoticeCancelProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
@@ -505,7 +538,7 @@ public class CrbnEnvNewsController {
 		int rtn = svc.updateDelStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsDelProc End");
+		log.info("HotNewsDelProc End");
 
 		return result;
 	}

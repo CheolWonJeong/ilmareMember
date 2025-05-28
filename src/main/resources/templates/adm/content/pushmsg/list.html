@@ -25,7 +25,7 @@
                };        
             
             $.ajax({
-                url : '/adm/content/NoticeQueryList'
+                url : '/adm/content/PushMsgQueryList'
                 , type : 'POST'
                 , dataType : 'JSON'
                 , cache : false
@@ -44,7 +44,7 @@
                             strHtml += '    <td class="left">' + value.docTitle + '</td>';
                             strHtml += '    <td>' + value.docRead + '</td>';
                             strHtml += '    <td>' + value.docStatText + '</td>';
-                            strHtml += '    <td>' + value.upDate + ' add </td>';
+                            strHtml += '    <td>' + value.upDate + '</td>';
                             strHtml += '</tr>';
                         });
                     } else {
@@ -65,7 +65,7 @@
         $("#searchBtn").trigger('click', 1);
         
         $('#insertBtn').on('click',function(){
-            location.href = "/adm/content/NoticeIns.do";
+            location.href = "/adm/content/PushMsgIns.do";
         });
         
         //엔터시 검색
@@ -97,7 +97,7 @@
 
         <!--- content -->
         <div class="adm-content">
-            <h2>공지사항</h2>
+            <h2>알림</h2>
 
             <div class="grid-2">
                 <div class="t-13 mT10 gray">총 건수 : 300건</div>
@@ -113,33 +113,29 @@
                 <table>
                     <colgroup>
                         <col />
+                        <col style="width:40%;" />
                         <col style="width:15%;" />
                         <col style="width:15%;" />
-                        <col style="width:15%;" />
-                        <col style="width:15%;" />
-                        <col style="width:15%;" />
+                        <col style="width:10%;" />
                     </colgroup>
                     <thead>
                         <tr>
-							<th>번호</th>
-							<th>제목</th>
-							<th>읽음</th>
-							<th>상태</th>
-							<th>변경일 add2</th>
+			              <th>제목</th>
+			              <th>문서 출처</th>
+			              <th>상태</th>
+			              <th>변경일</th>
                         </tr>
                     </thead>
                     <tbody>
 			            <tr th:each="docdesc : ${ntsList}">
-			                <td th:text="${ docdesc.docSeq }" ></td>
-			                <td > <a th:href="@{'/adm/content/NoticeDesc.do?docSeq=' + ${docdesc.docSeq}}" th:text="${docdesc.docTitle}"></a>
+			                <td > <a th:href="@{'/adm/content/PushMsgDesc.do?docSeq=' + ${docdesc.docSeq}}" th:text="${docdesc.docTitle}"></a>
 			                </td>
-			                
-			                <td th:text="${ docdesc.docRead }"></td>
+			                <td th:text="${ docdesc.docFrom }"></td>
 			                <td th:if="${docdesc.docStat == 'N'}">등록</td>
 			                <td th:if="${docdesc.docStat == 'V'}">게시</td>
 			                <td th:if="${docdesc.docStat == 'C'}">게시취소</td>
 			                <td th:if="${docdesc.docStat == 'D'}">삭제</td>
-			                <td th:text="${ docdesc.creDtm }"></td>
+			                <td th:text="${ docdesc.regDtm }"></td>
 			            </tr>
 
                     </tbody>

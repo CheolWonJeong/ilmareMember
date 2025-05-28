@@ -25,7 +25,7 @@
                };        
             
             $.ajax({
-                url : '/adm/content/NoticeQueryList'
+                url : '/adm/content/FaqQueryList'
                 , type : 'POST'
                 , dataType : 'JSON'
                 , cache : false
@@ -33,7 +33,8 @@
                 , beforeSend : function( xhr, settings ) { 
                     //loadingbar_show(); 
                 }
-                , success : function(data, stauts, request) {
+                , success : function(data, status, request) {
+					console.log("AJAX Success 콜백 진입", data);
                     var values = data.rows;
                     var strHtml = "";
                     
@@ -41,10 +42,10 @@
                         $.each(values, function(index, value){
                             strHtml += '<tr id="' + value.docSeq + '">';
                             strHtml += '    <td>' + ((pageIdx-1) * rowPerPage + index + 1) + '</td>';
-                            strHtml += '    <td class="left">' + value.docTitle + '</td>';
-                            strHtml += '    <td>' + value.docRead + '</td>';
+                            strHtml += '    <td class="left">' + value.docTitle + value.qnaSort + '</td>';
+                            strHtml += '    <td>' + value.qnContent + '</td>';
                             strHtml += '    <td>' + value.docStatText + '</td>';
-                            strHtml += '    <td>' + value.upDate + ' add </td>';
+                            strHtml += '    <td>' + value.creDtm + '</td>';
                             strHtml += '</tr>';
                         });
                     } else {
@@ -65,7 +66,7 @@
         $("#searchBtn").trigger('click', 1);
         
         $('#insertBtn').on('click',function(){
-            location.href = "/adm/content/NoticeIns.do";
+            location.href = "/adm/content/FaqIns.do";
         });
         
         //엔터시 검색
@@ -97,7 +98,7 @@
 
         <!--- content -->
         <div class="adm-content">
-            <h2>공지사항</h2>
+            <h2>자주하는 질문</h2>
 
             <div class="grid-2">
                 <div class="t-13 mT10 gray">총 건수 : 300건</div>
@@ -108,37 +109,38 @@
                     </div>
                 </div>
             </div>
+			
+			<!--
+			<div>
+			    <ul>
+			        <li th:each="item : ${ntsList}" th:text="${item.docTitle}"></li>
+			    </ul>
+			</div>	
+			-->				
+			<!--ntsList : AJAX로 데이터를 받아오는 부분과는 별개-->			
 
             <div class="board-type1 mT10">
                 <table>
                     <colgroup>
-                        <col />
-                        <col style="width:15%;" />
-                        <col style="width:15%;" />
-                        <col style="width:15%;" />
-                        <col style="width:15%;" />
-                        <col style="width:15%;" />
+						<col style="width:25%;" />
+						<col style="width:30%;" />
+						<col style="width:30%;" />
+						<col style="width:15%;" />
                     </colgroup>
                     <thead>
                         <tr>
-							<th>번호</th>
-							<th>제목</th>
-							<th>읽음</th>
-							<th>상태</th>
-							<th>변경일 add2</th>
+							<th>중분류</th>
+							<th>질문</th>
+							<th>답변</th>
+							<th>변경일</th>
                         </tr>
                     </thead>
                     <tbody>
 			            <tr th:each="docdesc : ${ntsList}">
-			                <td th:text="${ docdesc.docSeq }" ></td>
-			                <td > <a th:href="@{'/adm/content/NoticeDesc.do?docSeq=' + ${docdesc.docSeq}}" th:text="${docdesc.docTitle}"></a>
+			                <td > <a th:href="@{'/adm/content/FaqDesc.do?docSeq=' + ${docdesc.docSeq}}" th:text="${docdesc.qnaSort}"></a>
 			                </td>
-			                
-			                <td th:text="${ docdesc.docRead }"></td>
-			                <td th:if="${docdesc.docStat == 'N'}">등록</td>
-			                <td th:if="${docdesc.docStat == 'V'}">게시</td>
-			                <td th:if="${docdesc.docStat == 'C'}">게시취소</td>
-			                <td th:if="${docdesc.docStat == 'D'}">삭제</td>
+			                <td th:text="${ docdesc.qnContent }"></td>
+			                <td th:text="${ docdesc.qaContent }"></td>
 			                <td th:text="${ docdesc.creDtm }"></td>
 			            </tr>
 

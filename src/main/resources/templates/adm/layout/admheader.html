@@ -3,9 +3,17 @@
     <!--- menu -->
     <div class="sidebar">
         <div class="logo">
-            <h1>한국렌탈</h1>
+            <h1>탄소뱅크</h1>
         </div>
         <ul id="side-lnb" class="side-lnb">
+            <li class="open"> <!-- 현재상태 메뉴 open -->
+                <div class="link">
+                    <a href="#" class="active"><i class="iconfont">article</i> 가맹점 관리</a> <!-- 현재상태 메뉴 active -->
+                </div>
+                <ul class="submenu">
+                    <li><a href="/adm/store/StoreInfoMainList.do" class="active">가맹점 관리</a></li> <!-- 현재상태 메뉴 active -->
+                </ul>
+            </li>
             <li class="open"> <!-- 현재상태 메뉴 open -->
                 <div class="link">
                     <a href="#" class="active"><i class="iconfont">article</i> 컨텐츠 관리</a> <!-- 현재상태 메뉴 active -->
@@ -13,7 +21,12 @@
                 <ul class="submenu">
                     <li><a href="/adm/content/NoticeMainList.do" class="active">공지사항</a></li> <!-- 현재상태 메뉴 active -->
                     <li><a href="/adm/content/EnvNewsMainList.do">환경뉴스 관리</a></li>
-                    <li><a href="/adm/content/HotNewsMainList.do">기관 핫뉴스  관리</a></li>
+                    <li><a href="/adm/content/HotNewsMainList.do">기관 핫뉴스 관리</a></li>
+					<li><a href="/adm/content/MunicipalNewsMainList.do">시정뉴스 관리</a></li>
+					<li><a href="/adm/content/MunicipalVideoMainList.do">시정활동 영상 관리</a></li>
+					<li><a href="/adm/content/PushMsgMainList.do">알림 관리</a></li>
+					<li><a href="/adm/content/EventMainList.do">이벤트 관리</a></li>
+					<li><a href="/adm/content/FaqMainList.do">자주하는 질문</a></li>
                 </ul>
             </li>
 <!--             
@@ -51,5 +64,31 @@
         </ul>
     </div>
 
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    // 현재 URL의 path만 추출 (쿼리스트링, 해시 제외)
+	    var currentPath = window.location.pathname;
 
+	    // 모든 사이드 메뉴의 a 태그를 선택
+	    var menuLinks = document.querySelectorAll('.side-lnb a');
+
+	    menuLinks.forEach(function(link) {
+	        // 메뉴의 href 속성값
+	        var linkPath = link.getAttribute('href');
+
+	        // 현재 경로와 메뉴의 href가 일치하면 active 클래스 추가
+	        if (linkPath === currentPath) {
+	            // 기존에 active가 있으면 제거 (중복 방지)
+	            menuLinks.forEach(function(l) { l.classList.remove('active'); });
+	            link.classList.add('active');
+	            
+	            // 상위 li에 open 클래스도 추가 (서브메뉴 펼침용)
+	            var parentLi = link.closest('li');
+	            if (parentLi) {
+	                parentLi.classList.add('open');
+	            }
+	        }
+	    });
+	});
+	</script>
 </html>

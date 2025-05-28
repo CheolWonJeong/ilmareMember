@@ -40,7 +40,17 @@ public class NewsCommonModel {
 	private String searchValue;	//문서상태(N:등록, V:게시, C:게시취소)	
 
 	private String befImgSrcNm;		//이미지 원래이름	
-	private String befImgNailNm;		//이미지 이름	
+	private String befImgNailNm;		//이미지 이름
+	
+	private String qnaSort;   // FAQ 중분류
+	private String qnContent; // FAQ 질문
+	private String qaContent; // FAQ 답변
+	private String auditId;   // 관리자 아이디
+	private String creDtm;
+	
+	private int totalCount;		//총 건수  
+	private int currentPage;
+	private int totalPages;
 	
     public String getBefImgSrcNme() {
         return befImgSrcNm;
@@ -231,5 +241,60 @@ public class NewsCommonModel {
     public void setDocStatNm(String docStatNm) {
         this.docStatNm = docStatNm;
     }
+	public String getQnaSort() {
+		return qnaSort;
+	}
+	public void setQnaSort(String qnaSort) {
+		this.qnaSort = qnaSort;
+	}
+	public String getBefImgSrcNm() {
+		return befImgSrcNm;
+	}
+	public String getBefImgNailNm() {
+		return befImgNailNm;
+	}
+	public String getQnContent() {
+		return qnContent;
+	}
+	public void setQnContent(String qnContent) {
+		this.qnContent = qnContent;
+	}
+	public String getQaContent() {
+		return qaContent;
+	}
+	public void setQaContent(String qaContent) {
+		this.qaContent = qaContent;
+	}
+	public String getAuditId() {
+		return auditId;
+	}
+	public void setAuditId(String auditId) {
+		this.auditId = auditId;
+	}
+
+	public String getCreDtm() {
+		return creDtm;
+	}
+	public void setCreDtm(String creDtm) {
+		this.creDtm = creDtm;
+	}
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+	public int getTotalPages() {
+		return totalPages;
+	}
+	public void setTotalPages(int totalPages) {
+		this.totalPages = totalPages;
+	}
 	
 }

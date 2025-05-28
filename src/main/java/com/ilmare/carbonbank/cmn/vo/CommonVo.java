@@ -31,5 +31,9 @@ public class CommonVo {
 	private Integer   totalCount;		//
 	private String   searchType;		//
 	private String   searchValue;		//
+	
+	private String qnaSort;   // FAQ 중분류
+	private String qnContent; // FAQ 질문
+	private String qaContent; // FAQ 답변
 
 }

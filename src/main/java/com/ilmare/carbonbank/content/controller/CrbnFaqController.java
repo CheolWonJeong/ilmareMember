@@ -20,27 +20,25 @@ import com.ilmare.carbonbank.cmn.controller.ConfigConstants;
 import com.ilmare.carbonbank.cmn.service.CommonService;
 import com.ilmare.carbonbank.cmn.util.DateUtil;
 import com.ilmare.carbonbank.cmn.util.FileUtil;
-import com.ilmare.carbonbank.cmn.vo.CommonVo;
-import com.ilmare.carbonbank.model.content.CrbnNoticeModel;
 import com.ilmare.carbonbank.model.content.NewsCommonModel;
-import com.ilmare.carbonbank.service.CrbnEnvNewsService;
+import com.ilmare.carbonbank.service.CrbnFaqService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 
 /*
- * 환경 뉴스
+ * 이벤트 관리
  */
 @Slf4j
 @Controller
 @RequestMapping("/adm/content")
-public class CrbnEnvNewsController {
+public class CrbnFaqController {
 	@Autowired(required=true)
 	private SessionManager sessMgr;
 	
 	@Autowired
-	private CrbnEnvNewsService svc;
+	private CrbnFaqService svc;
 
 	@Autowired
 	private CommonService commSvc;
@@ -50,62 +48,64 @@ public class CrbnEnvNewsController {
 	
 
     @Value("${comm.pcUploadTemp}")
-    private static String pcTmp;		//기관 핫뉴스
+    private static String pcTmp;		//이벤트
 	
 	/*
-	 *  리스트 조회
+	 *  이벤트 리스트 조회
+	 *  
 	 */
-	@RequestMapping("/EnvNewsMainList.do")
-	public String EnvNewsMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/FaqMainList.do")
+	public String EventMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
-		log.info("EnvNewsMainList Start");
+		log.info("EventMainList Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 //		if ( !sessMgr.isSession(request) ) {
-			log.info("EnvNewsMainList 세션 없음 상태");
+			log.info("EventMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 //		SessInfo sessInfo = sessMgr.getSession(request);
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsMainList 로그인 상태");
-		log.info("EnvNewsMainList sessInfo=" + sessInfo.toString());
+		log.info("EventMainList 로그인 상태");
+		log.info("EventMainList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsMainList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("EventMainList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsMainList 권한 없음 상태");
+			log.info("EventMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 		//메뉴 조회
 		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
-		//공지사항 리스트 조회
+		//이벤트 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("EnvNewsMainList {} ~ {}", sRowNum, pageSize);
+		log.info("EventMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
-		log.info("EnvNewsMainList ntsList.size()" + ntsList.toString());
+		log.info("EventMainList ntsList.size()" + ntsList.toString());
 		
 
 		model.addAttribute("sessInfo", sessInfo);
 		model.addAttribute("ntsList", ntsList);
 		//model.addAttribute("menuList", menuList);
-		log.info("EnvNewsMainList End");
+		log.info("EventMainList End");
 
-		return "adm/content/envnews/list";
+		return "adm/content/faq/list";
+		
 	}
 
 	/*
 	 * 버튼 클릭조회
 	 */
-	@RequestMapping("/EnvNewsQueryList")
-	public  @ResponseBody HashMap EnvNewsQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/FaqQueryList")
+	public  @ResponseBody HashMap EventQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
 		log.info("NoticeQueryList Start");
@@ -132,11 +132,11 @@ public class CrbnEnvNewsController {
 			return result;
 		}
 		
-		//공지사항 리스트 조회
+		//이벤트 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("EnvNewsMainList {} ~ {}", sRowNum, pageSize);
+		log.info("EventMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
@@ -151,58 +151,58 @@ public class CrbnEnvNewsController {
 	/*
 	 * 신규등록
 	 */
-	@RequestMapping("/EnvNewsIns.do")
-	public String EnvNewsIns(HttpServletRequest request, Model model) throws Exception {
-		log.info("EnvNewsIns Start");
+	@RequestMapping("/FaqIns.do")
+	public String EventIns(HttpServletRequest request, Model model) throws Exception {
+		log.info("EventIns Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("AdmEnvNewsIns 세션 없음 상태");
+			log.info("AdmEventIns 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		log.info("EnvNewsIns 로그인 상태");
+		log.info("EventIns 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsIns sessInfo=" + sessInfo.toString());
+		log.info("EventIns sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsIns PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("EventIns PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsIns 권한 없음 상태");
+			log.info("EventIns 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 
 		model.addAttribute("sessInfo", sessInfo);
-		return "adm/content/envnews/insert";
+		return "adm/content/Faq/insert";
 	}
 
 	/*
 	 * 저장
 	 */
-	@PostMapping("/EnvNewsInsProc")
-	public  @ResponseBody HashMap EnvNewsInsProc(
+	@PostMapping("/FaqInsProc")
+	public  @ResponseBody HashMap EventInsProc(
 			HttpServletRequest request, 
-			//@RequestPart("imgFile") MultipartFile imgFile, 
+			//@RequestPart("imgFile") MultipartFile imgFile,
 			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,	
 			final NewsCommonModel paramModel, 
 			Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsInsProc Start");
+		log.info("EventInsProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsInsProc 세션 없음 상태");
+			log.info("EventInsProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsInsProc 로그인 상태");
+		log.info("EventInsProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsInsProc sessInfo=" + sessInfo.toString());
+		log.info("EventInsProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsInsProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("EventInsProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("AdmNoticeList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
@@ -211,127 +211,93 @@ public class CrbnEnvNewsController {
 			return result;
 		}
 		
-		//파일 관련		
-		if ( imgFile != null && !imgFile.isEmpty()) {		
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			log.info("파일 이름: " + imgFile.getOriginalFilename());
-			log.info("fileSavePath: {} " ,fileSavePath);
-	
-	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
-			String originalFilename = imgFile.getOriginalFilename();
-			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
-			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt; // 중간에 점 제거
-			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
-			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
-	
-			log.info("파라머터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,  tmpFileNm);
-	
-			FileUtil.createDirectory(fileSavePath);
-			File savedFile = new File(tmpFileNm);
-			imgFile.transferTo(savedFile); // 업로드된 파일 저장
-			log.info("TEST {} | {} | {} | {}", paramModel.getDocStat(), paramModel.getDocFrom(),  paramModel.getDocTitle());
-	
-	        // 썸네일 생성
-	        File thumbnailFile = new File(imgNailNm);
-	        Thumbnails.of(savedFile)
-	                  .size(700, 400)
-	                  .toFile(thumbnailFile);		
-			//file upload
-			
-			paramModel.setImgSrcNm(imgFile.getOriginalFilename());
-			paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() + fileExt);
-			
-		} else {
-			log.info("imgFile is null ");
-			paramModel.setImgSrcNm("");
-			paramModel.setImgNailNm("");
-		}			
-						
+		//파일 관련 내용 삭제
 
 		//저장
 		paramModel.setPartyCd(sessInfo.getPartyCd());
-		paramModel.setRegId(sessInfo.getCrbnAdmId());
+//		paramModel.setRegId(sessInfo.getCrbnAdmId());
+		paramModel.setAuditId(sessInfo.getCrbnAdmId());
 		int rtn = svc.insert(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsInsProc End");
+		log.info("EventInsProc End");
 
 		return result;
 	}
 
 	
 	/*
-	 * 공지사항 상세 조회
+	 * 이벤트 상세 조회
 	 */
-	@RequestMapping("/EnvNewsDesc.do")
-	public String EnvNewsDesc(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	@RequestMapping("/FaqDesc.do")
+	public String EventDesc(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
-		log.info("EnvNewsDesc Start");
+		log.info("EventDesc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("AdmNoticeView 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		log.info("EnvNewsDesc 로그인 상태");
+		log.info("EventDesc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsDesc sessInfo=" + sessInfo.toString());
+		log.info("EventDesc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsDesc PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("EventDesc PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsDesc 권한 없음 상태");
+			log.info("EventDesc 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 		//메뉴 조회
 		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
-		//공지사항 한건 조회
+		//이벤트 한건 조회
 		
 		NewsCommonModel rtnModel = svc.selectAdmDesc(paramVo);
-		log.info("EnvNewsDesc {}  {}",rtnModel.getImgSrcNm(),rtnModel.getImgNailNm());
+		log.info("EventDesc {}  {}",rtnModel.getImgSrcNm(),rtnModel.getImgNailNm());
 
 		model.addAttribute("hsDocStat", commSvc.hsDocStat);
 		model.addAttribute("sessInfo", sessInfo);
 		
 		model.addAttribute("docview", rtnModel);
 		//model.addAttribute("menuList", menuList);
-		log.info("EnvNewsDesc End");
+		log.info("EventDesc End");
 
-		return "adm/content/envnews/update";
+		return "adm/content/Faq/update";
 	}
 
 	/*
-	 * 공지사항 저장
+	 * 이벤트 저장
 	 */
-	@PostMapping("/EnvNewsUptProc")
-	public  @ResponseBody HashMap EnvNewsUptProc(
+	@PostMapping("/FaqUptProc")
+	public  @ResponseBody HashMap EventUptProc(
 			HttpServletRequest request, 
 			//@RequestPart("imgFile") MultipartFile imgFile, 
-			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,
+			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,			
 			final NewsCommonModel paramModel, 
 			Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsUptProc Start");
+		log.info("EventUptProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsUptProc 세션 없음 상태");
+			log.info("EventUptProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsUptProc 로그인 상태");
+		log.info("EventUptProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsUptProc sessInfo=" + sessInfo.toString());
+		log.info("EventUptProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsUptProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("EventUptProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsUptProc 권한 없음 상태");
+			log.info("EventUptProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -347,7 +313,7 @@ public class CrbnEnvNewsController {
 	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
 			String originalFilename = imgFile.getOriginalFilename();
 			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
-			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;  // 중간에 점 제거
 			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
 			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
 
@@ -374,44 +340,46 @@ public class CrbnEnvNewsController {
 			paramModel.setImgNailNm(paramModel.getBefImgNailNme());
 		}
 		
-
-		//공지사항 변경처리
+		log.info("EventUptProc , paramModel.getDocSeq() : " + paramModel.getDocSeq());
+		log.info("EventUptProc , paramModel.getDocTitle() : " + paramModel.getDocTitle());
+		
+		//이벤트 변경처리
 		paramModel.setPartyCd(sessInfo.getPartyCd());
 		paramModel.setRegId(sessInfo.getCrbnAdmId());
 		int rtn = svc.update(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsUptProc End");
+		log.info("EventUptProc End");
 
 		return result;
 	}
 
 	
 	/*
-	 * 공지사항 게시
+	 * 이벤트 게시
 	 */
-	@RequestMapping("/EnvNewsViewProc")
-	public  @ResponseBody HashMap EnvNewsViewProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/FaqViewProc")
+	public  @ResponseBody HashMap EventViewProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsViewProc Start");
+		log.info("EventViewProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsViewProc 세션 없음 상태");
+			log.info("EventViewProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsViewProc 로그인 상태");
+		log.info("EventViewProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsViewProc sessInfo=" + sessInfo.toString());
+		log.info("EventViewProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsViewProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("EventViewProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsViewProc 권한 없음 상태");
+			log.info("EventViewProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -423,36 +391,36 @@ public class CrbnEnvNewsController {
 		int rtn = svc.updateShowStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsViewProc End");
+		log.info("EventViewProc End");
 
 		return result;
 	}
 
 	/*
-	 * 공지사항 게시 취소
+	 * 이벤트 게시 취소
 	 */
-	@RequestMapping("/EnvNewsCancelProc")
-	public  @ResponseBody HashMap EnvNewsCancelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/FaqCancelProc")
+	public  @ResponseBody HashMap EventCancelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsCancelProc Start");
+		log.info("EventCancelProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsCancelProc 세션 없음 상태");
+			log.info("EventCancelProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsCancelProc 로그인 상태");
+		log.info("EventCancelProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsCancelProc sessInfo=" + sessInfo.toString());
+		log.info("EventCancelProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsCancelProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("EventCancelProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsCancelProc 권한 없음 상태");
+			log.info("EventCancelProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -464,34 +432,34 @@ public class CrbnEnvNewsController {
 		int rtn = svc.updateCancelStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsCancelProc End");
+		log.info("EventCancelProc End");
 
 		return result;
 	}
 
 	/*
-	 * 공지사항 삭제
+	 * 이벤트 삭제
 	 */
-	@RequestMapping("/EnvNewsDelProc")
-	public  @ResponseBody HashMap EnvNewsDelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
+	@RequestMapping("/FaqDelProc")
+	public  @ResponseBody HashMap EventDelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("EnvNewsDelProc Start");
+		log.info("EventDelProc Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("EnvNewsDelProc 세션 없음 상태");
+			log.info("EventDelProc 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("EnvNewsDelProc 로그인 상태");
+		log.info("EventDelProc 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EnvNewsDelProc sessInfo=" + sessInfo.toString());
+		log.info("EventDelProc sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("EnvNewsDelProc getPartyCd=" + sessInfo.getPartyCd());
+		log.info("EventDelProc getPartyCd=" + sessInfo.getPartyCd());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("NoticeCancelProc 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
@@ -505,7 +473,7 @@ public class CrbnEnvNewsController {
 		int rtn = svc.updateDelStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
-		log.info("EnvNewsDelProc End");
+		log.info("EventDelProc End");
 
 		return result;
 	}
