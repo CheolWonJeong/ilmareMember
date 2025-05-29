@@ -213,8 +213,7 @@ public class CrbnEnvNewsController {
 		
 		//파일 관련		
 		if ( imgFile != null && !imgFile.isEmpty()) {		
-			String fileDbPath = FileUtil.getSaveFilePath("EnvNews", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.imgServerPath + fileDbPath;
+			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 	
@@ -240,7 +239,7 @@ public class CrbnEnvNewsController {
 			//file upload
 			
 			paramModel.setImgSrcNm(imgFile.getOriginalFilename());
-			paramModel.setImgNailNm(fileDbPath + DateUtil.getCurrDateTime() + fileExt);
+			paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() + fileExt);
 			
 		} else {
 			log.info("imgFile is null ");
@@ -341,8 +340,7 @@ public class CrbnEnvNewsController {
 		
 		//파일 관련
 		if ( imgFile != null && !imgFile.isEmpty()) {
-			String fileDbPath = FileUtil.getSaveFilePath("EnvNews", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.imgServerPath + fileDbPath;
+			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 
@@ -368,7 +366,7 @@ public class CrbnEnvNewsController {
 			//file upload
 			
 			paramModel.setImgSrcNm(imgFile.getOriginalFilename());
-			paramModel.setImgNailNm(fileDbPath + DateUtil.getCurrDateTime() + fileExt);
+			paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() + fileExt);
 
 		} else {
 			log.info("imgFile is null ");
