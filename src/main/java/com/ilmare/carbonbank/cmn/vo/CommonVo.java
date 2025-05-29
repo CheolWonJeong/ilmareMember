@@ -35,5 +35,23 @@ public class CommonVo {
 	private String qnaSort;   // FAQ 중분류
 	private String qnContent; // FAQ 질문
 	private String qaContent; // FAQ 답변
+	
+	
+	private String storeId;
+	//private String partyCd;
+	private String bisNum;
+	private String storePwd;
+	private String storeCellNum;
+	private String storeCeoNm;
+	private String storeNm;
+	  
+	private String storeLatitude;
+	private String storeLongitude;
+	  
+	private String storeNoImg;
+	private String storeImg;
+	private String storeEmail;
+	private String storeAddr;
+	private String storeEvent;	
 
 }

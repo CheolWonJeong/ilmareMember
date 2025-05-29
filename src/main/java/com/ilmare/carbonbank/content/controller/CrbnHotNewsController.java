@@ -59,21 +59,17 @@ public class CrbnHotNewsController {
 			HttpServletRequest request, 
 			final NewsCommonModel paramVo, 
 			Model model,
-			
 			@RequestParam(defaultValue = "1") int page
 			) throws Exception {
 		
 		log.info("HotNewsMainList Start , page = " + page);
-
 		
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-//		if ( !sessMgr.isSession(request) ) {
 			log.info("HotNewsMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-//		SessInfo sessInfo = sessMgr.getSession(request);
 		SessInfo sessInfo = sessMgr.getSessInfo();
 		log.info("HotNewsMainList 로그인 상태");
 		log.info("HotNewsMainList sessInfo=" + sessInfo.toString());
@@ -85,16 +81,12 @@ public class CrbnHotNewsController {
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		//메뉴 조회
-		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
 		//기관 핫뉴스 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
-        
-        //int pageNo   = paramVo.getPageNo(); //조회할 페이지 번호
         int pageNo   = page; //조회할 페이지 번호
-        
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
+        
 		log.info("HotNewsMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
@@ -106,10 +98,6 @@ public class CrbnHotNewsController {
 		model.addAttribute("sessInfo", sessInfo);
 		model.addAttribute("ntsList", ntsList);
 		model.addAttribute("totalCount", totalCountStr);
-		//model.addAttribute("menuList", menuList);
-		
-	    //model.addAttribute("currentPage", page);
-	    //model.addAttribute("totalPages", result.getTotalPages());
 	    model.addAttribute("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
 
 	    int totalCount = 0;
@@ -117,7 +105,6 @@ public class CrbnHotNewsController {
 	    
 	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
 	    model.addAttribute("totalPages", totalPages);
-	    
 	    
 		log.info("HotNewsMainList End");
 
@@ -139,7 +126,7 @@ public class CrbnHotNewsController {
 		log.info("HotNewsQueryList Start , page = " + page);
 		
 		HashMap result = new HashMap();
-		log.info("NoticeQueryList Start");
+		log.info("HotNewsQueryList Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("NoticeQueryList 세션 없음 상태");
@@ -149,14 +136,14 @@ public class CrbnHotNewsController {
 			return result;
 		}
 		
-		log.info("NoticeQueryList 로그인 상태");
+		log.info("HotNewsQueryList 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("NoticeQueryList sessInfo=" + sessInfo.toString());
+		log.info("HotNewsQueryList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("NoticeQueryList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("HotNewsQueryList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("NoticeQueryList 권한 없음 상태");
+			log.info("HotNewsQueryList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -168,13 +155,31 @@ public class CrbnHotNewsController {
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
 		log.info("HotNewsMainList {} ~ {}", sRowNum, pageSize);
+		
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
-		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
+		
+		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 
-		result.put("ntsList", ntsList);
-		log.info("NoticeQueryList End");
+		///////////////////////////////
+		
+		String totalCountStr = svc.selectAdmListCount(paramVo);
+
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+
+	    result.put("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+	    result.put("totalCount", totalCountStr);
+	    result.put("totalPages", totalPages);
+	    
+		///////////////////////////////
+
+		result.put("rows", dataList); // jquery는 이 데이터만 사용.
+		
+		log.info("HotNewsMainList End");
 
 		return result;
 	}

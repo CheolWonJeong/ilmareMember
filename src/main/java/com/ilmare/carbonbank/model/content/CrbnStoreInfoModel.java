@@ -20,6 +20,8 @@ public class CrbnStoreInfoModel {
 	
 	private String storeNoImg;      // 사업자등록증 이미지 파일 경로
 	private String storeImg;         // 사업장 사진 이미지 파일 경로
+	private String befStoreNoImg;      // 사업자등록증 이미지 파일 경로
+	private String befStoreImg;         // 사업장 사진 이미지 파일 경로
 	private String storeEmail;       // 메일주소
 	private String storeAddr;        // 사업장 주소
 	private String storeEvent;       // 할인행사
@@ -175,6 +177,18 @@ public class CrbnStoreInfoModel {
 	}
 	public void setSearchValue(String searchValue) {
 		this.searchValue = searchValue;
+	}
+	public String getBefStoreNoImg() {
+		return befStoreNoImg;
+	}
+	public void setBefStoreNoImg(String befStoreNoImg) {
+		this.befStoreNoImg = befStoreNoImg;
+	}
+	public String getBefStoreImg() {
+		return befStoreImg;
+	}
+	public void setBefStoreImg(String befStoreImg) {
+		this.befStoreImg = befStoreImg;
 	}
 	
 }

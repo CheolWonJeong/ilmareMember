@@ -13,15 +13,31 @@
 	$(document).ready(function(){
 		
 		// 초기값 저장 (로드 시점에 원본 값을 저장)
-		var originalTitle = $('#docTitle').val();
-		var originalInfo = $('#docInfo').val();
-		var originalFrom = $('#docFrom').val();
-		var originalUrl = $('#docUrl').val();
+		var originalStoreNm = $('#storeNm').val();
+		var originalStoreAddr = $('#storeAddr').val();
+		var originalStoreEmail = $('#storeEmail').val();
+		var originalStoreEmail = $('#storeEmail').val();
+		var originalBisNum = $('#bisNum').val();
+		var originalStoreCellNum = $('#storeCellNum').val();
+		//var originalUrl = $('#docUrl').val();
+		
+		
+
+		// 페이지 로드 시 초기값 포맷팅
+		var initVal = $('#bisNum').val();
+		if (initVal) {
+		    $('#bisNum').val(formatBizNum(initVal));
+		}		
+
 		//var originalFilesCount = 0; // 첨부파일 초기 개수 (필요 시 서버에서 초기값 받아 설정)
 
 		// 2. 파일 변경 감지 플래그
 		var fileChanged = false;
-		$('#imgSrcFile').on('change', function() {
+		$('#storeNoImg').on('change', function() {
+		    fileChanged = true;
+		});
+				
+		$('#storeImg').on('change', function() {
 		    fileChanged = true;
 		});
 				
@@ -31,16 +47,43 @@
         	
 			console.log("start docSave");//순수한 태그
 			
+			// 사업자 등록번호 필수 체크
+			var bisNum = $('#bisNum').val().trim();
+			if (bisNum === "") { alert("사업자 등록번호를 입력하세요."); $('#bisNum').focus(); return false; }
+			
+			// 하이픈 제거
+			var bisNumRaw = bisNum.replace(/-/g, '');
+
+
+			var storeNm = $('#storeNm').val().trim();
+			if (storeNm === "") { alert("상호를 입력하세요."); $('#storeNm').focus(); return false; }
+
+			var storePwd = $('#storePwd').val().trim();
+			if (storePwd === "") { alert("비밀번호를 입력하세요."); $('#storePwd').focus(); return false; }
+
+			var storeCeoNm = $('#storeCeoNm').val().trim();
+			if (storeCeoNm === "") { alert("대표자 성명을 입력하세요."); $('#storeCeoNm').focus(); return false; }
+
+			var storeCellNum = $('#storeCellNum').val().trim();
+			if (storeCellNum === "") { alert("휴대폰 번호를 입력하세요."); $('#storeCellNum').focus(); return false; }
+
+						
 			var updateInd = false; 
 			
 			// 텍스트 필드 변경 여부 체크
-			if ($('#docTitle').val() !== originalTitle) updateInd = true;
-			if ($('#docInfo').val() !== originalInfo) updateInd = true;
-			if ($('#docFrom').val() !== originalFrom) updateInd = true;
-			if ($('#docUrl').val() !== originalUrl) updateInd = true;
+			if ($('#storeNm').val()        !== originalStoreNm)      updateInd = true;
+			if ($('#storeAddr').val()      !== originalStoreAddr)    updateInd = true;
+			if ($('#storeEmail').val()     !== originalStoreEmail)   updateInd = true;
+			if ($('#originalBisNum').val() !== originalBisNum)       updateInd = true;
+			if ($('#storeCellNum').val()   !== originalStoreCellNum) updateInd = true;
+			
+			//console.log("start updateInd : " + updateInd);
+
 
 			// 파일 변경 여부 체크
-			var files = $('#imgSrcFile')[0].files;
+			var files = $('#storeNoImg')[0].files;
+			if (files.length > 0 || fileChanged) updateInd = true;
+			files = $('#storeImg')[0].files;
 			if (files.length > 0 || fileChanged) updateInd = true;
 						
 			
@@ -48,37 +91,49 @@
 				alert("변경된 내용이 없습니다.");
 				return;
 			}
+			
 			var formData = new FormData();
         	
 			//파일데이터 추출 (중복선언)
-			var file=$("#imgSrcFile");
-			var files = file[0].files;
-			
-			console.log(file);
-			
-			if ( files.length > 0) {
-	    		for(var i =0;i<files.length;i++){
-	    			console.log(files[i].name);//순수한 태그
-	    			if(!checkExtension(files[i].name, files[i].size)){
-	    		           return false;
-	    		    }    			
-	    			formData.append("imgFile", files[i]);
-	    		}
-				
+			// 1. storeNoImg 파일 추가
+			var storeNoImgFile = $("#storeNoImg")[0].files;
+			if (storeNoImgFile.length > 0) {
+			    for (var i = 0; i < storeNoImgFile.length; i++) {
+			        if (!checkExtension(storeNoImgFile[i].name, storeNoImgFile[i].size)) {
+			            return false;
+			        }
+			        // name을 명확히 지정
+			        formData.append("storeNoImgFile", storeNoImgFile[i]);
+			    }
 			}
+
+			// 2. storeImg 파일 추가
+			var storeImgFile = $("#storeImg")[0].files;
+			if (storeImgFile.length > 0) {
+			    for (var i = 0; i < storeImgFile.length; i++) {
+			        if (!checkExtension(storeImgFile[i].name, storeImgFile[i].size)) {
+			            return false;
+			        }
+			        formData.append("storeImgFile", storeImgFile[i]);
+			    }
+			}			
 			
 
-			formData.append("docSeq", $('#docSeq').val() );
-			formData.append("docTitle", $('#docTitle').val() );
-			formData.append("docInfo", $('#docInfo').val() );
-			formData.append("docFrom", $('#docFrom').val() );
-			formData.append("docUrl", $('#docUrl').val() );
+			formData.append("storeId", $('#storeId').val() );
+			formData.append("storeNm", $('#storeNm').val() );
 
-			formData.append("befImgSrcNm", $('#befImgSrcNm').val() );
-			formData.append("befImgNailNm", $('#befImgNailNm').val() );
+			//formData.append("bisNum", $('#bisNum').val() );
+			formData.append("bisNum", bisNumRaw); // 하이픈 제거된 값으로 저장
+
+			formData.append("storePwd", $('#storePwd').val() );
+			formData.append("storeCeoNm", $('#storeCeoNm').val() );
+			formData.append("storeCellNum", $('#storeCellNum').val() );
+
+			formData.append("storeAddr", $('#storeAddr').val() );
+			formData.append("storeEmail", $('#storeEmail').val() );	
 
 			$.ajax({
-                url : '/adm/content/HotNewsUptProc'
+                url : '/adm/store/StoreInfoUptProc'
                 , type : 'POST'
                 , data:formData //보내는데이터 form
     			, contentType:false //보내는데이터타입 false->"multipart/form-data"로 선언됩니다.
@@ -88,7 +143,9 @@
                 , success : function(data, stauts, request) {
     				if (data.procInd == "S") {
     					alert("정상 처리 되었습니다.");
-    					location.href = "/adm/content/HotNewsMainList.do";
+    					location.href = "/adm/store/StoreInfoMainList.do";
+					} else if (data.procInd == "E" || (data.errorId == "dupCellNum" || data.errorId == "dupCellNum") ) {
+						alert(data.errorMsg);
     				} else {
     					alert("처리중 오류가 발생 했습니다.");
     				}
@@ -102,84 +159,32 @@
                 }    
             });
         });
-        
-		//게시버튼 클릭
-        $('#docView').on('click', function(event) {
-        	//alert("게시 클릭 docSeq= " + $('#docSeq').val());
-            var param = {
-                     "docSeq" : $('#docSeq').val() 
-               };        
-            
-            $.ajax({
-                url : '/adm/content/HotNewsViewProc'
-                , type : 'POST'
-                , dataType : 'JSON'
-                , cache : false
-                , data : param
-                , beforeSend : function( xhr, settings ) { 
-                    //loadingbar_show(); 
-                }
-                , success : function(data, stauts, request) {
-    				if (data.procInd == "S") {
-    					alert("정상 처리 되었습니다.");
-    					location.href = "/adm/content/HotNewsMainList.do";
-    				} else {
-    					alert("처리중 오류가 발생 했습니다.");
-    				}
-
-                }
-                , error : function(xhr, status) {
-                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
-                }
-                , complete : function(xhr, status) {
-                    //loadingbar_hide();
-                }    
-            });
-        });
-       
-		//게시취소버튼 클릭
-        $('#docCancelView').on('click', function(event) {
-        	
-            var param = {
-                     "docSeq" : $('#docSeq').val() 
-               };        
-            
-            $.ajax({
-                url : '/adm/content/HotNewsCancelProc'
-                , type : 'POST'
-                , dataType : 'JSON'
-                , cache : false
-                , data : param
-                , beforeSend : function( xhr, settings ) { 
-                    //loadingbar_show(); 
-                }
-                , success : function(data, stauts, request) {
-    				if (data.procInd == "S") {
-    					alert("정상 처리 되었습니다.");
-    					location.href = "/adm/content/HotNewsMainList.do";
-    				} else {
-    					alert("처리중 오류가 발생 했습니다.");
-    				}
-
-                }
-                , error : function(xhr, status) {
-                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
-                }
-                , complete : function(xhr, status) {
-                    //loadingbar_hide();
-                }    
-            });
-        });
-       
+		
+		
+		function formatBizNum(value) {
+		    value = value.replace(/[^0-9]/g, '').slice(0, 10);
+		    if (value.length > 3 && value.length <= 5) {
+		        return value.slice(0,3) + '-' + value.slice(3);
+		    } else if (value.length > 5) {
+		        return value.slice(0,3) + '-' + value.slice(3,5) + '-' + value.slice(5);
+		    }
+		    return value;
+		}
+				
+		// 사업자등록번호 숫자만 입력, 자동 하이픈
+		$('#bisNum').on('input', function() {
+		    $(this).val(formatBizNum($(this).val()));
+		});
+		
 		//삭제버튼 클릭
         $('#docDelete').on('click', function(event) {
         	
             var param = {
-                     "docSeq" : $('#docSeq').val() 
+                     "storeId" : $('#storeId').val() 
                };        
             
             $.ajax({
-                url : '/adm/content/HotNewsDelProc'
+                url : '/adm/store/StoreDelProc'
                 , type : 'POST'
                 , dataType : 'JSON'
                 , cache : false
@@ -190,7 +195,7 @@
                 , success : function(data, stauts, request) {
     				if (data.procInd == "S") {
     					alert("정상 처리 되었습니다.");
-    					location.href = "/adm/content/HotNewsMainList.do";
+    					location.href = "/adm/store/StoreInfoMainList.do";
     				} else {
     					alert("처리중 오류가 발생 했습니다.");
     				}
@@ -226,7 +231,7 @@
         </header>
 		
         <div class="adm-content">
-			<h2>기관 핫 뉴스</h2>
+			<h2>가맹점 관리</h2>
             <div class="board-write mT10">
 				<table>
 					<colgroup>
@@ -234,35 +239,62 @@
 						<col />
 					</colgroup>
 					<tbody>
-						<input id="docSeq" type="hidden" th:value="${ docview.docSeq }">
-						<input id="befImgSrcNm" type="hidden" th:value="${ docview.imgSrcNm }">
-						<input id="befImgNailNm" type="hidden" th:value="${ docview.imgNailNm }">
+						<!--<input id="storeId" type="hidden" th:value="${ docview.storeId }">-->
+						<input id="befstoreNoImg" type="hidden" th:value="${ docview.storeNoImg }">
+						<input id="befStoreImg" type="hidden" th:value="${ docview.storeImg }">
 						<tr>
-							<th>제목</th>
-							<td><input type="text" name="" id="docTitle" class="w90"  th:value="${ docview.docTitle }" /></td>
-						</tr>
-                        <tr>
-                            <th>기사 대표 이미지</th>
-                            <td>
-                                <div class="file-input">
-                                    <label>파일선택<input type="file" id="imgSrcFile" onchange="javascript:document.getElementById('file_route1').value=this.value" ></label>
-                                    <input type="text" readonly="readonly" title="File Route" id="file_route1" th:value="${ docview.imgSrcNm }" >
-                               </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>기사내용</th>
-                            <td>
-                                <textarea name="" placeholder="" id="docInfo"  th:text="${ docview.DocInfo }"></textarea>
-                            </td>
-                        </tr>
-						<tr>
-							<th>기사 출처</th>
-							<td><input type="text" name="" id="docFrom" class="w90"   th:value="${ docview.docFrom }" /></td>
+							<th>가맹점 아이디</th>
+							<td><input type="text" name="" id="storeId" class="w90"  th:value="${ docview.storeId }" readonly/></td>
 						</tr>
 						<tr>
-							<th>기사 url</th>
-							<td><input type="text" name="" id="docUrl" class="w90"  th:value="${ docview.docUrl }" /></td>
+							<th>상호</th>
+							<td><input type="text" name="" id="storeNm" class="w90"  th:value="${ docview.storeNm }" /></td>
+						</tr>
+
+						<tr>
+							<th>사업자 등록번호</th>
+							<td><input type="text" name="" id="bisNum" class="w90" th:value="${ docview.bisNum }"  maxlength="12" autocomplete="off" /></td>
+						</tr>						
+
+						<tr>
+							<th>비밀번호</th>
+							<td><input type="password" name="" id="storePwd" class="w90" th:value="${ docview.storePwd }"  /></td>
+						</tr>						
+						<tr>
+							<th>대표자 명</th>
+							<td><input type="text" name="" id="storeCeoNm" class="w90" th:value="${ docview.storeCeoNm }" /></td>
+						</tr>						
+						<tr>
+							<th>대표자 휴대폰 번호</th>
+							<td><input type="text" name="" id="storeCellNum" class="w90"  th:value="${ docview.storeCellNum }"/></td>
+						</tr>									
+						<tr>
+						    <th>사업자 등록증 이미지</th>
+						    <td>
+						        <div class="file-input">
+						            <label>파일선택<input type="file" id="storeNoImg" onchange="javascript:document.getElementById('file_route1').value=this.value" ></label>
+						            <input type="text" readonly="readonly" title="File Route" id="file_route1" th:value="${ docview.storeNoImg }" >
+						       </div>
+						    </td>
+						</tr>
+						<tr>
+						    <th>사업장 이미지</th>
+						    <td>
+						        <div class="file-input">
+						            <label>파일선택<input type="file" id="storeImg" onchange="javascript:document.getElementById('file_route2').value=this.value" ></label>
+						            <input type="text" readonly="readonly" title="File Route" id="file_route2" th:value="${ docview.storeImg }" >
+						       </div>
+						    </td>
+						</tr>
+						<!--
+                        -->
+						<tr>
+							<th>사업장 주소</th>
+							<td><input type="text" name="" id="storeAddr" class="w90"   th:value="${ docview.storeAddr }" /></td>
+						</tr>
+						<tr>
+							<th>대표 Email</th>
+							<td><input type="text" name="" id="storeEmail" class="w90"  th:value="${ docview.storeEmail }" /></td>
 						</tr>
 					</tbody>
 				</table>
@@ -270,8 +302,6 @@
 			
 			<div class="t-center mT40">
                 <button type="button" class="btn-grayfill" id="docSave">저장</button>
-                <button type="button" class="btn-blue" id="docView">게시</button>
-                <button type="button" class="btn-grayfill" id="docCancelView">게시취소</button>
                 <button type="button" class="btn-blue" id="docDelete">삭제</button>
 			</div>
 		</div><!-- //content -->

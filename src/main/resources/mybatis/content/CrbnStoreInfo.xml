@@ -4,6 +4,32 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ilmare.carbonbank.mapper.content.CrbnStoreInfoMapper">
+
+    <select id="countCellNum" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel" resultType="int">
+    <![CDATA[
+        select count(*)
+        from   CRBN_STORE_INFO
+        WHERE  STORE_CELL_NUM = #{storeCellNum}
+     ]]>
+    <if test="storeId != null and storeId != ''">
+        <![CDATA[
+            AND STORE_ID <> #{storeId}
+        ]]>
+    </if>
+    </select>
+    <select id="countBisNum" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel" resultType="int">
+    <![CDATA[
+        select count(*)
+        from   CRBN_STORE_INFO
+        WHERE  BIS_NUM = #{bisNum}
+     ]]>
+	    <if test="storeId != null and storeId != ''">
+	        <![CDATA[
+	            AND STORE_ID <> #{storeId}
+	        ]]>
+	    </if>
+    </select>
+    
     <select id="selectAdmDesc" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel" resultType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel">
     <![CDATA[
             /*
@@ -83,7 +109,7 @@
                         </if>
                     </if>
                 </if>
-                     ORDER BY chg_dtm DESC
+                     ORDER BY cre_dtm DESC
                    ) A
              LIMIT #{pageNo}, #{listSize}
     </select>
@@ -146,7 +172,7 @@
 			  ,chg_dtm
 			  
             ) VALUES (
-			    #{storeId}
+			    concat('S',carbonbankDB.NEXTVAL('STORE'))
 			  , #{partyCd}
 			  , #{bisNum}
 			  , #{storePwd}
