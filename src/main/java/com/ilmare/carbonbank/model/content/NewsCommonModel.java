@@ -48,6 +48,10 @@ public class NewsCommonModel {
 	private String auditId;   // 관리자 아이디
 	private String creDtm;
 	
+	private int totalCount;		//총 건수  
+	private int currentPage;
+	private int totalPages;
+	
     public String getBefImgSrcNme() {
         return befImgSrcNm;
     }
@@ -273,6 +277,24 @@ public class NewsCommonModel {
 	}
 	public void setCreDtm(String creDtm) {
 		this.creDtm = creDtm;
+	}
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+	public int getTotalPages() {
+		return totalPages;
+	}
+	public void setTotalPages(int totalPages) {
+		this.totalPages = totalPages;
 	}
 	
 }

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ilmare.carbonbank.mapper.content.CrbnStoreInfoMapper">
+    <select id="selectAdmDesc" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel" resultType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel">
+    <![CDATA[
+            /*
+            1. ID: selectDesc
+            2. 업무명: 관리자의 상세보기
+            3. 업무설명:
+            */
+        select			
+			   store_id
+			  ,party_cd
+			  ,bis_num
+			  ,store_pwd
+			  ,store_cell_num
+			  ,store_ceo_nm
+			  ,store_nm
+
+			  ,store_latitude
+			  ,store_longitude
+			  
+			  ,store_no_img
+			  ,store_img
+			  ,store_email
+			  ,store_addr
+			  ,store_event
+			  ,chg_pwd_dtm
+			  ,lst_lgn_dtm
+			  ,cre_dtm
+			  ,chg_dtm
+
+        from CRBN_STORE_INFO
+            WHERE STORE_ID = #{storeId}
+     ]]>
+    </select>
+    
+    <select id="selectAdmList" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel" resultType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel">
+    <![CDATA[
+            SELECT *
+              FROM (
+                    SELECT
+							
+							
+						   store_id
+						  ,party_cd
+						  ,bis_num
+						  ,store_pwd
+						  ,store_cell_num
+						  ,store_ceo_nm
+						  ,store_nm
+						  
+						  ,store_latitude
+						  ,store_longitude
+						  
+						  ,store_no_img
+						  ,store_img
+						  ,store_email
+						  ,store_addr
+						  ,store_event
+	
+	
+	                      ,IF(chg_pwd_dtm IS NOT NULL, DATE_FORMAT(chg_pwd_dtm, '%Y-%m-%d'), '') AS chg_pwd_dtm
+	                      ,IF(lst_lgn_dtm IS NOT NULL, DATE_FORMAT(lst_lgn_dtm, '%Y-%m-%d'), '') AS lst_lgn_dtm
+	                      ,IF(cre_dtm IS NOT NULL, DATE_FORMAT(cre_dtm, '%Y-%m-%d'), '') AS cre_dtm
+	                      ,IF(chg_dtm IS NOT NULL, DATE_FORMAT(chg_dtm, '%Y-%m-%d'), '') AS chg_dtm
+                    from CRBN_STORE_INFO
+         ]]>
+                <if test="searchValue != null and searchValue != '' " >
+                    <if test="searchType != null and searchType != '' " >
+                        <if test='searchType == "TITLE"'>
+                            <![CDATA[       
+                                where STORE_NM like CONCAT('%',#{searchValue},'%')
+                             ]]>
+                        </if>
+                        <if test='searchType == "INFO"'>
+                            <![CDATA[       
+                                where STORE_ADDR like CONCAT('%',#{searchValue},'%')
+                            ]]>
+                        </if>
+                    </if>
+                </if>
+                     ORDER BY chg_dtm DESC
+                   ) A
+             LIMIT #{pageNo}, #{listSize}
+    </select>
+ 
+    <select id="selectAdmListCount" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel" resultType="String">
+        <![CDATA[
+            /*
+                1. ID: selectAdmListCount
+                2. 업무명: 뉴스
+                3. 업무설명: 관리자 뉴스 리스트 총갯수
+            */
+        
+            SELECT
+                COUNT(1)
+            FROM CRBN_STORE_INFO
+        ]]>
+
+        <if test="searchValue != null and searchValue != '' " >
+            <if test="searchType != null and searchType != '' " >
+                        <if test='searchType == "TITLE"'>
+                            <![CDATA[       
+                                where STORE_NM like CONCAT('%',#{searchValue},'%')
+                             ]]>
+                        </if>
+                        <if test='searchType == "INFO"'>
+                            <![CDATA[       
+                                where STORE_ADDR like CONCAT('%',#{searchValue},'%')
+                            ]]>
+                        </if>
+            </if>
+        </if>
+    </select>
+
+    
+    <insert id="insert" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel">
+        <![CDATA[
+            /*
+                1. ID: insert
+                2. 업무명: 뉴스
+                3. 업무설명: 뉴스 등록
+            */
+            INSERT INTO CRBN_STORE_INFO (
+			   store_id
+			  ,party_cd
+			  ,bis_num
+			  ,store_pwd
+			  ,store_cell_num
+			  ,store_ceo_nm
+			  ,store_nm
+			  
+			  ,store_latitude
+			  ,store_longitude
+			  
+			  ,store_no_img
+			  ,store_img
+			  ,store_email
+			  ,store_addr
+			  ,store_event
+			  ,cre_dtm
+			  ,chg_dtm
+			  
+            ) VALUES (
+			    #{storeId}
+			  , #{partyCd}
+			  , #{bisNum}
+			  , #{storePwd}
+			  , #{storeCellNum}
+			  , #{storeCeoNm}
+			  , #{storeNm}
+			  
+			  , #{storeLatitude}
+			  , #{storeLongitude}
+			  
+			  , #{storeNoImg}
+			  , #{storeImg}
+			  , #{storeEmail}
+			  , #{storeAddr}
+			  , #{storeEvent}
+			  , now()
+			  , now()
+			  
+            )
+        ]]>
+    </insert>
+    
+    <update id="update" parameterType="com.ilmare.carbonbank.model.content.CrbnStoreInfoModel">
+        <![CDATA[
+            /*
+                1. ID: update
+                2. 업무명: 뉴스
+                3. 업무설명: 뉴스 변경
+            */
+            UPDATE CRBN_STORE_INFO
+               SET
+			    party_cd = #{partyCd}
+			  , bis_num = #{bisNum}
+			  , store_pwd = #{storePwd}
+			  , store_cell_num = #{storeCellNum}
+			  , store_ceo_nm = #{storeCeoNm}
+			  , store_nm = #{storeNm}
+			  , store_latitude = #{storeLatitude}
+			  , store_longitude = #{storeLongitude}
+
+			  , store_no_img = #{storeNoImg}
+			  , store_img = #{storeImg}
+			  , store_email = #{storeEmail}
+			  , store_addr = #{storeAddr}
+			  , store_event = #{storeEvent}
+			  , chg_dtm  = now()                 
+              WHERE STORE_ID = #{storeId}
+        ]]>
+    </update>
+    
+</mapper>
