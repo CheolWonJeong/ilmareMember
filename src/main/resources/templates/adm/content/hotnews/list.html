@@ -85,7 +85,7 @@
             location.href = "/adm/content/HotNewsIns.do";
         });
 		
-		
+		// 페이지 렌더링 시작
 		function renderPagination(totalPages, currentPage) {
 		    var $pagination = $('#pagination');
 		    $pagination.empty();
@@ -122,7 +122,9 @@
 		            searchNews(page);
 		        }
 		    });
-		}		
+		}
+		// 페이지 렌더링 끝
+		
         
     });
 </script>
