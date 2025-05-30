@@ -97,7 +97,7 @@ public class CrbnEventController {
 			) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("NoticeQueryList Start");
+		log.info("EventQueryList Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("NoticeQueryList 세션 없음 상태");
@@ -107,14 +107,14 @@ public class CrbnEventController {
 			return result;
 		}
 		
-		log.info("NoticeQueryList 로그인 상태");
+		log.info("EventQueryList 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("NoticeQueryList sessInfo=" + sessInfo.toString());
+		log.info("EventQueryList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("NoticeQueryList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("EventQueryList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("NoticeQueryList 권한 없음 상태");
+			log.info("EventQueryList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -125,7 +125,7 @@ public class CrbnEventController {
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("EventMainList {} ~ {}", sRowNum, pageSize);
+		log.info("EventQueryList {} ~ {}", sRowNum, pageSize);
 		
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
@@ -148,7 +148,7 @@ public class CrbnEventController {
 		///////////////////////////////
 		result.put("rows", dataList); // jquery는 이 데이터만 사용.
 		
-		log.info("NoticeQueryList End");
+		log.info("EventQueryList End");
 
 		return result;
 	}

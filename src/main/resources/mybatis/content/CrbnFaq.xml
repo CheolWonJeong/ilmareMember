@@ -74,12 +74,12 @@
                     <if test="searchType != null and searchType != '' " >
                         <if test='searchType == "TITLE"'>
                             <![CDATA[       
-                                where doc_title like CONCAT('%',#{searchValue},'%')
+                                where qna_sort like CONCAT('%',#{searchValue},'%')
                              ]]>
                         </if>
                         <if test='searchType == "INFO"'>
                             <![CDATA[       
-                                where doc_info like CONCAT('%',#{searchValue},'%')
+                                where qna_sort like CONCAT('%',#{searchValue},'%')
                             ]]>
                         </if>
                     </if>
@@ -106,12 +106,12 @@
             <if test="searchType != null and searchType != '' " >
                 <if test='searchType == "TITLE"'>
                     <![CDATA[       
-                        where doc_title like CONCAT('%',#{searchValue},'%')
+                        where qna_sort like CONCAT('%',#{searchValue},'%')
                      ]]>
                 </if>
                 <if test='searchType == "INFO"'>
                     <![CDATA[       
-                       where doc_info like CONCAT('%',#{searchValue},'%')
+                       where qna_sort like CONCAT('%',#{searchValue},'%')
                     ]]>
                 </if>
             </if>
