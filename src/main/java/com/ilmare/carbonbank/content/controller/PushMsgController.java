@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,12 +60,11 @@ public class PushMsgController {
 		log.info("PushMsgMainList Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-//		if ( !sessMgr.isSession(request) ) {
 			log.info("PushMsgMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
+				
 		
-//		SessInfo sessInfo = sessMgr.getSession(request);
 		SessInfo sessInfo = sessMgr.getSessInfo();
 		log.info("PushMsgMainList 로그인 상태");
 		log.info("PushMsgMainList sessInfo=" + sessInfo.toString());
@@ -74,28 +74,10 @@ public class PushMsgController {
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("PushMsgMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
-		}
+		}		
 		
-		//메뉴 조회
-		//List menuList = iUserInfoService.getMenu(userInfoVO);
-		
-		//알림 리스트 조회
-        int pageSize = conConst.pageSize;    //페이지당 row 건수
-        int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
-        int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("PushMsgMainList {} ~ {}", sRowNum, pageSize);
-		paramVo.setPageNo(sRowNum);
-		paramVo.setListSize(pageSize);
-		
-		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
-		log.info("PushMsgMainList ntsList.size()" + ntsList.toString());
-		
-
 		model.addAttribute("sessInfo", sessInfo);
-		model.addAttribute("ntsList", ntsList);
-		//model.addAttribute("menuList", menuList);
-		log.info("PushMsgMainList End");
-
+		
 		return "adm/content/pushmsg/list";
 		
 	}
@@ -104,7 +86,12 @@ public class PushMsgController {
 	 * 버튼 클릭조회
 	 */
 	@RequestMapping("/PushMsgQueryList")
-	public  @ResponseBody HashMap PushMsgQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	public  @ResponseBody HashMap PushMsgQueryList(
+			HttpServletRequest request, 
+			final NewsCommonModel paramVo, 
+			Model model,			
+		    @RequestParam(defaultValue = "1") int page
+			) throws Exception {
 		
 		HashMap result = new HashMap();
 		log.info("NoticeQueryList Start");
@@ -136,12 +123,27 @@ public class PushMsgController {
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
 		log.info("PushMsgMainList {} ~ {}", sRowNum, pageSize);
+		
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
-		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
+		
+		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 
-		result.put("ntsList", ntsList);
+		///////////////////////////////
+		String totalCountStr = svc.selectAdmListCount(paramVo);
+
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+
+	    result.put("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+	    result.put("totalCount", totalCountStr);
+	    result.put("totalPages", totalPages);
+		///////////////////////////////
+		result.put("rows", dataList); // jquery는 이 데이터만 사용.
+		
 		log.info("NoticeQueryList End");
 
 		return result;

@@ -10,71 +10,128 @@
 	});
 
 	$(document).ready(function(){
-    	
+		
+
+		// 최초 로딩 시 1페이지 검색
+		searchNews(1);
+
+		// 검색 버튼 클릭
+		$('#searchBtn').on('click', function() {
+		    searchNews(1);
+		});
+
+		// 엔터키로 검색
+		$('#searchValue').on('keydown', function(event) {
+		    if (event.keyCode === 13) {
+		        searchNews(1);
+		    }
+		});		
+
 		//조회버튼 클릭
-        $('#searchBtn').on('click', function(event, page) {
-        	
-            var pageIdx = (page == null ? "1" : page);
-            var rowPerPage = 10;
-            var pageBlock = 10;
-            
-            var param = {
-                     "searchType" : $('#searchType').val() 
-                     , "searchValue" : $('#searchValue').val() 
-                     , "pageNo" : pageIdx
-               };        
-            
-            $.ajax({
-                url : '/adm/content/NoticeQueryList'
-                , type : 'POST'
-                , dataType : 'JSON'
-                , cache : false
-                , data : param
-                , beforeSend : function( xhr, settings ) { 
-                    //loadingbar_show(); 
-                }
-                , success : function(data, stauts, request) {
-                    var values = data.rows;
-                    var strHtml = "";
-                    
-                    if (values.length > 0) {
-                        $.each(values, function(index, value){
-                            strHtml += '<tr id="' + value.docSeq + '">';
-                            strHtml += '    <td>' + ((pageIdx-1) * rowPerPage + index + 1) + '</td>';
-                            strHtml += '    <td class="left">' + value.docTitle + '</td>';
-                            strHtml += '    <td>' + value.docRead + '</td>';
-                            strHtml += '    <td>' + value.docStatText + '</td>';
-                            strHtml += '    <td>' + value.upDate + ' add </td>';
-                            strHtml += '</tr>';
-                        });
-                    } else {
-                        strHtml = '<tr><td colspan=5 class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
-                    }
-                    $('#boardTbody1').html(strHtml);
-                    
-                }
-                , error : function(xhr, status) {
-                    alert('서비스 장애발생 관리자에게 문의해 주십시요 we');
-                }
-                , complete : function(xhr, status) {
-                    //loadingbar_hide();
-                }    
-            });
-        });
-        
-        $("#searchBtn").trigger('click', 1);
-        
+		function searchNews(pageIdx) {
+			console.log("searchNews pageIdx " + pageIdx);
+		    var rowPerPage = 10;
+		    var param = {
+				"searchType" : "TITLE",
+		        "searchValue" : $('#searchValue').val(),
+		        "pageNo" : pageIdx
+		    };
+
+		    $.ajax({
+		        url : '/adm/content/NoticeQueryList',
+		        type : 'POST',
+		        dataType : 'JSON',
+		        cache : false,
+		        data : param,
+		        success : function(data) {
+		            var values = data.rows;
+		            var strHtml = "";
+
+		            if (values && values.length > 0) {
+		                $.each(values, function(index, value){
+
+							// 상태값 변환
+							var statText = '';
+							if (value.docStat === 'N') statText = '등록';
+							else if (value.docStat === 'V') statText = '게시';
+							else if (value.docStat === 'C') statText = '게시취소';
+							else if (value.docStat === 'D') statText = '삭제';
+							else statText = '';
+							
+							strHtml += '<tr id="' + value.docSeq + '">';
+							strHtml += '    <td>' + value.docSeq + '</td>';								
+							strHtml += '    <td><a href ="/adm/content/NoticeDesc.do?docSeq=' +value.docSeq+ '">' +value.docTitle+ '</a></td>';							
+							strHtml += '    <td>' + value.docRead + '</td>';
+							strHtml += '    <td>' + statText + '</td>';
+							strHtml += '    <td>' + value.creDtm + '</td>';
+							strHtml += '</tr>';							
+							
+		                });
+						
+
+												
+		            } else {
+		                strHtml = '<tr><td colspan="5" class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
+		            }
+		            $('#boardTbody1').html(strHtml);
+
+					// 페이징 UI 렌더링
+					renderPagination(data.totalPages, data.currentPage);
+
+					// 총 건수 표시
+					$('#totalCount').text(data.totalCount);					
+		        },
+		        error : function() {
+		            alert('서비스 장애발생 관리자에게 문의해 주십시요');
+		        }
+		    });
+		}	
+
+		//등록
         $('#insertBtn').on('click',function(){
             location.href = "/adm/content/NoticeIns.do";
         });
         
-        //엔터시 검색
-        $('#searchValue').on('keydown', function(event, page) {
-        	if (event.keyCode != 13) {
-        		return;
-        	}
-        	$("#searchBtn").trigger('click', 1);
-        });
+
+		// 페이지 렌더링 시작
+		function renderPagination(totalPages, currentPage) {
+		    var $pagination = $('#pagination');
+		    $pagination.empty();
+
+		    if (totalPages <= 1) return; // 1페이지 이하일 때는 표시 안함
+
+		    var html = '<div class="inner"><ul>';
+
+		    // 처음 페이지
+		    html += `<li><a href="#" class="page-link" data-page="1" ${currentPage==1?'disabled':''}><i class="iconfont">first_page</i></a></li>`;
+		    // 이전 페이지
+		    html += `<li><a href="#" class="page-link" data-page="${currentPage-1}" ${currentPage==1?'disabled':''}><i class="iconfont">chevron_left</i></a></li>`;
+
+		    // 페이지 번호 (최대 9개)
+		    var start = Math.max(1, currentPage-4);
+		    var end = Math.min(totalPages, currentPage+4);
+		    for (var i = start; i <= end; i++) {
+		        html += `<li><a href="#" class="page-link${i==currentPage?' active':''}" data-page="${i}">${i}</a></li>`;
+		    }
+
+		    // 다음 페이지
+		    html += `<li><a href="#" class="page-link" data-page="${currentPage+1}" ${currentPage==totalPages?'disabled':''}><i class="iconfont">chevron_right</i></a></li>`;
+		    // 마지막 페이지
+		    html += `<li><a href="#" class="page-link" data-page="${totalPages}" ${currentPage==totalPages?'disabled':''}><i class="iconfont">last_page</i></a></li>`;
+		    html += '</ul></div>';
+
+		    $pagination.html(html);
+
+		    // 페이지 클릭 이벤트
+		    $pagination.find('.page-link').not('[disabled]').on('click', function(e){
+		        e.preventDefault();
+		        var page = parseInt($(this).data('page'));
+		        if (!isNaN(page) && page >= 1 && page <= totalPages && page != currentPage) {
+		            searchNews(page);
+		        }
+		    });
+		}
+		// 페이지 렌더링 끝	
     });
 </script>
 
@@ -99,15 +156,23 @@
         <div class="adm-content">
             <h2>공지사항</h2>
 
-            <div class="grid-2">
-                <div class="t-13 mT10 gray">총 건수 : 300건</div>
-                <div class="t-right">
-                    <div class="search-type">
-                        <input type="text" name="" id="" class="input-type1" placeholder="Search" />
-                        <button type="button" class="btn-search">검색</button>
-                    </div>
-                </div>
-            </div>
+			<div class="grid-2">
+			    <!--<div class="t-13 mT10 gray">총 건수 : 300건</div>-->
+				<div class="t-13 mT10 gray">
+				    총 건수 : <span id="totalCount">0</span>건
+				    <!--총 건수 : <span th:text="${totalCount}">0</span> 건-->
+				</div>
+			    <div class="t-right">
+			        <div class="search-type">
+			            <!--<input type="text" name="" id="" class="input-type1" placeholder="Search" />
+			            <button type="button" class="btn-search">검색</button>-->
+						<!-- 검색 입력란과 버튼에 id, name 추가 -->
+						<input type="text" name="searchValue" id="searchValue" class="input-type1" placeholder="Search" />
+						<button type="button" class="btn-search" id="searchBtn">검색</button>						
+						
+			        </div>
+			    </div>
+			</div>
 
             <div class="board-type1 mT10">
                 <table>
@@ -125,24 +190,12 @@
 							<th>제목</th>
 							<th>읽음</th>
 							<th>상태</th>
-							<th>변경일 add2</th>
+							<th>변경일</th>
                         </tr>
                     </thead>
-                    <tbody>
-			            <tr th:each="docdesc : ${ntsList}">
-			                <td th:text="${ docdesc.docSeq }" ></td>
-			                <td > <a th:href="@{'/adm/content/NoticeDesc.do?docSeq=' + ${docdesc.docSeq}}" th:text="${docdesc.docTitle}"></a>
-			                </td>
-			                
-			                <td th:text="${ docdesc.docRead }"></td>
-			                <td th:if="${docdesc.docStat == 'N'}">등록</td>
-			                <td th:if="${docdesc.docStat == 'V'}">게시</td>
-			                <td th:if="${docdesc.docStat == 'C'}">게시취소</td>
-			                <td th:if="${docdesc.docStat == 'D'}">삭제</td>
-			                <td th:text="${ docdesc.creDtm }"></td>
-			            </tr>
-
-                    </tbody>
+					<!--<tbody>-->
+					<tbody id="boardTbody1">
+					</tbody>
                 </table>
             </div>
 
@@ -150,23 +203,12 @@
                 <button type="button" class="btn-blue" id="insertBtn">등록</button>
             </div>
 
-            <!-- page number
-            <div class="page-num mT30">
-                <div class="inner">
-                    <li><a href="#"><i class="iconfont">first_page</i></a></li>
-                    <li><a href="#"><i class="iconfont">chevron_left</i></a></li>
-                    <li>
-                        <a href="#" class="active">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#">4</a>
-                        <a href="#">5</a>
-                    </li>
-                    <li><a href="#"><i class="iconfont">chevron_right</i></a></li>
-                    <li><a href="#"><i class="iconfont">last_page</i></a></li>
-                </div>
-            </div> -->
-            <!--// page number -->
+			<!-- page number
+			<!--// page number -->
+			<!-- 페이징 UI 시작 -->
+			<!-- <div class="page-num mT30" ...> ... </div> -->
+			<div id="pagination" class="page-num mT30"></div>
+			<!-- 페이징 UI 끝 -->
 
         </div>
         <!---// content -->

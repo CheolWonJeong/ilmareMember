@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,14 +59,13 @@ public class CrbnEventController {
 	public String EventMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
 		log.info("EventMainList Start");
+		
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-//		if ( !sessMgr.isSession(request) ) {
 			log.info("EventMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-//		SessInfo sessInfo = sessMgr.getSession(request);
 		SessInfo sessInfo = sessMgr.getSessInfo();
 		log.info("EventMainList 로그인 상태");
 		log.info("EventMainList sessInfo=" + sessInfo.toString());
@@ -75,26 +75,10 @@ public class CrbnEventController {
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("EventMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
-		}
+		}		
 		
-		//메뉴 조회
-		//List menuList = iUserInfoService.getMenu(userInfoVO);
-		
-		//이벤트 리스트 조회
-        int pageSize = conConst.pageSize;    //페이지당 row 건수
-        int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
-        int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("EventMainList {} ~ {}", sRowNum, pageSize);
-		paramVo.setPageNo(sRowNum);
-		paramVo.setListSize(pageSize);
-		
-		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
-		log.info("EventMainList ntsList.size()" + ntsList.toString());
-		
+		model.addAttribute("sessInfo", sessInfo);		
 
-		model.addAttribute("sessInfo", sessInfo);
-		model.addAttribute("ntsList", ntsList);
-		//model.addAttribute("menuList", menuList);
 		log.info("EventMainList End");
 
 		return "adm/content/event/list";
@@ -105,10 +89,15 @@ public class CrbnEventController {
 	 * 버튼 클릭조회
 	 */
 	@RequestMapping("/EventQueryList")
-	public  @ResponseBody HashMap EventQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	public  @ResponseBody HashMap EventQueryList(
+			HttpServletRequest request, 
+			final NewsCommonModel paramVo, 
+			Model model,			
+		    @RequestParam(defaultValue = "1") int page
+			) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("NoticeQueryList Start");
+		log.info("EventQueryList Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("NoticeQueryList 세션 없음 상태");
@@ -118,14 +107,14 @@ public class CrbnEventController {
 			return result;
 		}
 		
-		log.info("NoticeQueryList 로그인 상태");
+		log.info("EventQueryList 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("NoticeQueryList sessInfo=" + sessInfo.toString());
+		log.info("EventQueryList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("NoticeQueryList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("EventQueryList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("NoticeQueryList 권한 없음 상태");
+			log.info("EventQueryList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -136,14 +125,30 @@ public class CrbnEventController {
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("EventMainList {} ~ {}", sRowNum, pageSize);
+		log.info("EventQueryList {} ~ {}", sRowNum, pageSize);
+		
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
-		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
+		
+		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 
-		result.put("ntsList", ntsList);
-		log.info("NoticeQueryList End");
+
+		///////////////////////////////
+		String totalCountStr = svc.selectAdmListCount(paramVo);
+
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+
+	    result.put("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+	    result.put("totalCount", totalCountStr);
+	    result.put("totalPages", totalPages);
+		///////////////////////////////
+		result.put("rows", dataList); // jquery는 이 데이터만 사용.
+		
+		log.info("EventQueryList End");
 
 		return result;
 	}
