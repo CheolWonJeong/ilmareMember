@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ilmare.carbonbank.admin.mgr.SessInfo;
@@ -15,6 +16,7 @@ import com.ilmare.carbonbank.cmn.controller.ConfigConstants;
 import com.ilmare.carbonbank.cmn.service.CommonService;
 import com.ilmare.carbonbank.cmn.vo.CommonVo;
 import com.ilmare.carbonbank.model.content.CrbnNoticeModel;
+import com.ilmare.carbonbank.model.content.NewsCommonModel;
 import com.ilmare.carbonbank.service.CrbnNoticeService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,14 +49,15 @@ public class CrbnNoticeController {
 	public String NoticeMainList(HttpServletRequest request, final CommonVo paramVo, Model model) throws Exception {
 		
 		log.info("NoticeMainList Start");
+
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("NoticeMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		log.info("NoticeMainList 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
+		log.info("NoticeMainList 로그인 상태");
 		log.info("NoticeMainList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
@@ -62,27 +65,10 @@ public class CrbnNoticeController {
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
 			log.info("NoticeMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
-		}
+		}		
 		
-		//메뉴 조회
-		//List menuList = iUserInfoService.getMenu(userInfoVO);
+		model.addAttribute("sessInfo", sessInfo);	
 		
-		//공지사항 리스트 조회
-        int pageSize = 20;    //페이지당 row 건수
-        int pageNo = (paramVo.getPageNo() == null? 1 : paramVo.getPageNo()); //조회할 페이지 번호
-        int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("NoticeMainList {} ~ {}", sRowNum, pageSize);
-		paramVo.setPageNo(sRowNum);
-		paramVo.setListSize(pageSize);
-		
-		List<CrbnNoticeModel> ntsList = svc.selectAdmList(paramVo);
-		log.info("NoticeMainList ntsList.size()" + ntsList.toString());
-
-//		model.addAttribute("hsDocStat", commSvc.hsDocStat);
-		model.addAttribute("sessInfo", sessInfo);
-		
-		model.addAttribute("ntsList", ntsList);
-		//model.addAttribute("menuList", menuList);
 		log.info("NoticeMainList End");
 
 		return "adm/content/notice/list";
@@ -92,7 +78,12 @@ public class CrbnNoticeController {
 	 * 공지사항버튼 클릭조회
 	 */
 	@RequestMapping("/NoticeQueryList")
-	public  @ResponseBody HashMap NoticeQueryList(HttpServletRequest request, final CommonVo paramVo, Model model) throws Exception {
+	public  @ResponseBody HashMap NoticeQueryList(
+			HttpServletRequest request, 
+			final CommonVo CommonVo, 
+			Model model,			
+		    @RequestParam(defaultValue = "1") int page
+			) throws Exception {
 		
 		HashMap result = new HashMap();
 		log.info("NoticeQueryList Start");
@@ -120,14 +111,31 @@ public class CrbnNoticeController {
 		}
 		
 		//공지사항 리스트 조회
-        int pageNo = (paramVo.getPageNo() == null? 1 : paramVo.getPageNo()); //조회할 페이지 번호
-        int sRowNum = ((pageNo - 1) * ConfigConstants.pageSize) ;    //조회할 row의 시작값
-		log.info("NoticeMainList {} ~ {}", sRowNum, ConfigConstants.pageSize);
-		paramVo.setPageNo(sRowNum);
-		paramVo.setListSize(ConfigConstants.pageSize);
-		List<CrbnNoticeModel> ntsList = svc.selectAdmList(paramVo);
+        int pageSize = conConst.pageSize;    //페이지당 row 건수
+        int pageNo = CommonVo.getPageNo(); //조회할 페이지 번호
+        int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
+		log.info("EventQueryList {} ~ {}", sRowNum, pageSize);
+		
+		CommonVo.setPageNo(sRowNum);
+		CommonVo.setListSize(pageSize);
+		CommonVo.setListSize(ConfigConstants.pageSize);
+		
+		List<CrbnNoticeModel> dataList = svc.selectAdmList(CommonVo);
 
-		result.put("ntsList", ntsList);
+		///////////////////////////////
+		String totalCountStr = svc.selectAdmListCount(CommonVo);
+
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+
+	    result.put("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+	    result.put("totalCount", totalCountStr);
+	    result.put("totalPages", totalPages);
+		///////////////////////////////
+		result.put("rows", dataList); // jquery는 이 데이터만 사용.
+		
 		log.info("NoticeQueryList End");
 
 		return result;

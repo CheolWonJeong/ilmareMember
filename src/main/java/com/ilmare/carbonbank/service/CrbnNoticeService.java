@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ilmare.carbonbank.cmn.vo.CommonVo;
 import com.ilmare.carbonbank.mapper.content.CrbnNoticeMapper;
 import com.ilmare.carbonbank.model.content.CrbnNoticeModel;
+import com.ilmare.carbonbank.model.content.NewsCommonModel;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +26,11 @@ public class CrbnNoticeService {
 	public List<CrbnNoticeModel> selectAdmList(CommonVo commVo){
 		return mapper.selectAdmList(commVo);
 	}
+	
+	public String  selectAdmListCount(CommonVo param){
+		return mapper.selectAdmListCount(param);
+	}
+
 	
 	/*
 	 * 관리자 상세 조회

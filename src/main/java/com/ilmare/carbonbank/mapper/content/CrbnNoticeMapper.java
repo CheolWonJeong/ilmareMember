@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ilmare.carbonbank.cmn.vo.CommonVo;
 import com.ilmare.carbonbank.model.content.CrbnNoticeModel;
+import com.ilmare.carbonbank.model.content.NewsCommonModel;
 
 @Repository
 @Mapper

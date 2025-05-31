@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,17 +57,22 @@ public class CrbnEnvNewsController {
 	 *  리스트 조회
 	 */
 	@RequestMapping("/EnvNewsMainList.do")
-	public String EnvNewsMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	public String EnvNewsMainList(
+			HttpServletRequest request, 
+			final NewsCommonModel paramVo, 
+			Model model,
+			@RequestParam(defaultValue = "1") int page
+			) throws Exception {
 		
 		log.info("EnvNewsMainList Start");
+		
+
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-//		if ( !sessMgr.isSession(request) ) {
-			log.info("EnvNewsMainList 세션 없음 상태");
+			log.info("HotNewsMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-//		SessInfo sessInfo = sessMgr.getSession(request);
 		SessInfo sessInfo = sessMgr.getSessInfo();
 		log.info("EnvNewsMainList 로그인 상태");
 		log.info("EnvNewsMainList sessInfo=" + sessInfo.toString());
@@ -74,28 +80,35 @@ public class CrbnEnvNewsController {
 		//권한 검사
 		log.info("EnvNewsMainList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EnvNewsMainList 권한 없음 상태");
+			log.info("HotNewsMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
-		//메뉴 조회
-		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
-		//공지사항 리스트 조회
+		//기관 핫뉴스 리스트 조회
         int pageSize = conConst.pageSize;    //페이지당 row 건수
-        int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
+        int pageNo   = page; //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
+        
 		log.info("EnvNewsMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
 		log.info("EnvNewsMainList ntsList.size()" + ntsList.toString());
-		
+		String totalCountStr = svc.selectAdmListCount(paramVo);
 
 		model.addAttribute("sessInfo", sessInfo);
 		model.addAttribute("ntsList", ntsList);
-		//model.addAttribute("menuList", menuList);
+		model.addAttribute("totalCount", totalCountStr);
+	    model.addAttribute("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+	    model.addAttribute("totalPages", totalPages);
+
 		log.info("EnvNewsMainList End");
 
 		return "adm/content/envnews/list";
@@ -105,27 +118,34 @@ public class CrbnEnvNewsController {
 	 * 버튼 클릭조회
 	 */
 	@RequestMapping("/EnvNewsQueryList")
-	public  @ResponseBody HashMap EnvNewsQueryList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
+	public  @ResponseBody HashMap EnvNewsQueryList(
+			HttpServletRequest request, 
+			final NewsCommonModel paramVo, 
+			Model model,			
+		    @RequestParam(defaultValue = "1") int page
+			) throws Exception {
+		
+		log.info("EnvNewsQueryList Start , page = " + page);
 		
 		HashMap result = new HashMap();
-		log.info("NoticeQueryList Start");
+
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("NoticeQueryList 세션 없음 상태");
+			log.info("EnvNewsQueryList 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("NoticeQueryList 로그인 상태");
+		log.info("EnvNewsQueryList 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("NoticeQueryList sessInfo=" + sessInfo.toString());
+		log.info("EnvNewsQueryList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("NoticeQueryList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("EnvNewsQueryList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("NoticeQueryList 권한 없음 상태");
+			log.info("EnvNewsQueryList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -136,13 +156,31 @@ public class CrbnEnvNewsController {
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("EnvNewsMainList {} ~ {}", sRowNum, pageSize);
+		log.info("EnvNewsQueryList {} ~ {}", sRowNum, pageSize);
+		
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
-		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
+		
+		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
+		
+		///////////////////////////////
+		
+		String totalCountStr = svc.selectAdmListCount(paramVo);
 
-		result.put("ntsList", ntsList);
+	    int totalCount = 0;
+	    try { totalCount = Integer.parseInt(totalCountStr); } catch(NumberFormatException e) { totalCount = 0; }
+	    
+	    int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+
+	    result.put("currentPage", pageNo);  // 타임리프에 돌려줄 페이지번호
+	    result.put("totalCount", totalCountStr);
+	    result.put("totalPages", totalPages);
+	    
+		///////////////////////////////
+
+		result.put("rows", dataList); // jquery는 이 데이터만 사용.		
+
 		log.info("NoticeQueryList End");
 
 		return result;
