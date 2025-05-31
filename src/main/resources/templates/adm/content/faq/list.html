@@ -52,11 +52,12 @@
 							strHtml += '    <td><a href ="/adm/content/FaqDesc.do?docSeq=' +value.docSeq+ '">' +value.qnaSort+ '</a></td>';							
 		                    strHtml += '    <td>' + value.qnContent + '</td>';
 		                    strHtml += '    <td>' + value.qaContent + '</td>';
+							strHtml += '    <td>' + value.docRead + '</td>';
 		                    strHtml += '    <td>' + value.creDtm + '</td>';
 		                    strHtml += '</tr>';
 		                });
 		            } else {
-		                strHtml = '<tr><td colspan="4" class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
+		                strHtml = '<tr><td colspan="5" class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
 		            }
 		            $('#boardTbody1').html(strHtml);
 
@@ -163,16 +164,18 @@
             <div class="board-type1 mT10">
                 <table>
                     <colgroup>
-						<col style="width:25%;" />
+						<col style="width:20%;" />
 						<col style="width:30%;" />
 						<col style="width:30%;" />
-						<col style="width:15%;" />
+						<col style="width:10%;" />
+						<col style="width:10%;" />
                     </colgroup>
                     <thead>
                         <tr>
 							<th>중분류</th>
 							<th>질문</th>
 							<th>답변</th>
+							<th>읽음</th>
 							<th>변경일</th>
                         </tr>
                     </thead>
