@@ -250,8 +250,9 @@ public class CrbnEnvNewsController {
 		}
 		
 		//파일 관련		
-		if ( imgFile != null && !imgFile.isEmpty()) {		
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+		if ( imgFile != null && !imgFile.isEmpty()) {
+			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());	//피씨용
+			String fileSavePath = FileUtil.getSaveFilePath("EnvNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 	
@@ -378,7 +379,8 @@ public class CrbnEnvNewsController {
 		
 		//파일 관련
 		if ( imgFile != null && !imgFile.isEmpty()) {
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			String fileSavePath = FileUtil.getSaveFilePath("EnvNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 

@@ -218,7 +218,8 @@ public class CrbnEventController {
 		
 		//파일 관련		
 		if ( imgFile != null && !imgFile.isEmpty()) {		
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			String fileSavePath = FileUtil.getSaveFilePath("Event", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 	
@@ -343,7 +344,8 @@ public class CrbnEventController {
 		
 		//파일 관련
 		if ( imgFile != null && !imgFile.isEmpty()) {
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			String fileSavePath = FileUtil.getSaveFilePath("Event", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 

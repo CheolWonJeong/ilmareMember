@@ -4,18 +4,28 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{adm/layout/admlayour}">
 	<th:block layout:fragment="head" th:insert="~{@{/adm/layout/admhead}}"></th:block>
-<script type="text/javascript">
-	$(function(){ 
-	});
 
-	$(document).ready(function(){
+<!-- // dury00 ckeditor
+	<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+-->
+	<script src="//cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+// dury00 ckediter
+			CKEDITOR.replace('docInfo', {width : '100%', height: 250 });
+// dury00 ckediter
+
     	
 		//조회버튼 클릭
         $('#docSave').on('click', function(event) {
         	
+// dury00 ckeditor
+			$('#docInfo').val(CKEDITOR.instances.docInfo.getData());
+			
             var param = {
-                     "docTitle" : $('#doc_title').val() 
-                     , "docInfo" : $('#doc_info').val() 
+                     "docTitle" : $('#docTitle').val() 
+                     , "docInfo" : $('#docInfo').val() 
                };        
             
             $.ajax({
@@ -76,12 +86,12 @@
 					<tbody>
 						<tr>
 							<th>제목</th>
-							<td><input type="text" name="" id="doc_title" class="w90" /></td>
+							<td><input type="text" name="" id="docTitle" class="w90" /></td>
 						</tr>
 						<tr>
 							<th>기사내용</th>
 							<td>
-								<textarea rows="15" style="width:100%" id="doc_info">  </textarea>
+								<textarea rows="15" style="width:100%" id="docInfo">  </textarea>
 							</td>
 						</tr>
 					</tbody>

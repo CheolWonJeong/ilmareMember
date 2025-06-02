@@ -4,9 +4,18 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{adm/layout/admlayour}">
 	<th:block layout:fragment="head" th:insert="~{@{/adm/layout/admhead}}"></th:block>
-<script type="text/javascript">
-	$(function(){ 
-	});
+
+<!-- // dury00 ckeditor
+	<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+-->
+	<script src="//cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+
+// dury00 ckeditor
+		CKEDITOR.replace('docInfo', {width : '100%', height: 250 });
+// dury00 ckeditor
+
 
 	//var updateInd = false;
 	var updateInd = true;
@@ -17,6 +26,10 @@
         $('#docSave').on('click', function(event) {
         	
 			console.log("start docSave");//순수한 태그
+			
+// dury00 ckeditor
+			$('#docInfo').val(CKEDITOR.instances.docInfo.getData());
+			
 			if ( !updateInd ) {
 				alert("변경된 내용이 없습니다.");
 				return;
