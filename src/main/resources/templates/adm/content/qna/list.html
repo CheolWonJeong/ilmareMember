@@ -37,7 +37,7 @@
 		    };
 
 		    $.ajax({
-		        url : '/adm/content/FaqQueryList',
+		        url : '/adm/content/QnaQueryList',
 		        type : 'POST',
 		        dataType : 'JSON',
 		        cache : false,
@@ -51,16 +51,15 @@
 							
 							// 상태값 변환
 							var statText = '';
-							if (value.docStat === 'N') statText = '등록';
-							else if (value.docStat === 'V') statText = '게시';
-							else if (value.docStat === 'C') statText = '게시취소';
-							else if (value.docStat === 'D') statText = '삭제';
+							if (value.docStat === 'Q') statText = '질문';
+							else if (value.docStat === 'A') statText = '답변';
 							else statText = '';
+
 														
 		                    strHtml += '<tr id="' + value.docSeq + '">';
-							strHtml += '    <td><a href ="/adm/content/FaqDesc.do?docSeq=' +value.docSeq+ '">' +value.qnaSort+ '</a></td>';							
-		                    strHtml += '    <td>' + value.qnContent + '</td>';
-		                    strHtml += '    <td>' + value.qaContent + '</td>';
+							strHtml += '    <td><a href ="/adm/content/QnaDesc.do?docSeq=' +value.docSeq+ '">' +value.docTitle+ '</a></td>';							
+							strHtml += '    <td>' + value.docInfo + '</td>';
+							strHtml += '    <td>' + value.ansContent + '</td>';
 							strHtml += '    <td>' + statText + '</td>';
 							strHtml += '    <td>' + value.docRead + '</td>';
 		                    strHtml += '    <td>' + value.creDtm + '</td>';
@@ -82,12 +81,7 @@
 		        }
 		    });
 		}	
-        
-		//등록
-        $('#insertBtn').on('click',function(){
-            location.href = "/adm/content/FaqIns.do";
-        });
-        
+
 
 		// 페이지 렌더링 시작
 		function renderPagination(totalPages, currentPage) {
@@ -151,7 +145,7 @@
 
         <!--- content -->
         <div class="adm-content">
-            <h2>자주하는 질문</h2>
+            <h2>문의 및 제안</h2>
 
 			<div class="grid-2">
 			    <!--<div class="t-13 mT10 gray">총 건수 : 300건</div>-->
@@ -183,9 +177,9 @@
                     </colgroup>
                     <thead>
                         <tr>
-							<th>중분류</th>
-							<th>질문</th>
-							<th>답변</th>
+							<th>질문 제목</th>
+							<th>질문 내용</th>
+							<th>답변 내용</th>
 							<th>상태</th>
 							<th>읽음</th>
 							<th>변경일</th>
@@ -195,10 +189,6 @@
 					<tbody id="boardTbody1">
                     </tbody>
                 </table>
-            </div>
-
-            <div class="f-right mT20">
-                <button type="button" class="btn-blue" id="insertBtn">등록</button>
             </div>
 
 			<!-- page number

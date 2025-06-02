@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/admlayour}">
+	<th:block layout:fragment="head" th:insert="~{@{/adm/layout/admhead}}"></th:block>
+<script type="text/javascript">
+	$(function(){ 
+				
+	});
+
+
+	$(document).ready(function(){
+		
+		//저장버튼 클릭
+		$('#docSave').on('click', function(event) {
+			
+		    var param = {
+				  "docSeq" : $('#docSeq').val()
+				, "ansContent" : $('#ansContent').val() 
+		       };        
+		    $.ajax({
+		        url : '/adm/content/QnaUptProc'
+		        , type : 'POST'
+		        , dataType : 'JSON'
+		        , cache : false
+		        , data : param
+		        , beforeSend : function( xhr, settings ) { 
+		            //loadingbar_show(); 
+		        }
+		        , success : function(data, stauts, request) {
+					if (data.procInd == "S") {
+						alert("정상 처리 되었습니다.");
+						location.href = "/adm/content/QnaMainList.do";
+					} else {
+						alert("처리중 오류가 발생 했습니다.");
+					}
+
+		        }
+		        , error : function(xhr, status) {
+		            alert('서비스 장애발생 관리자에게 문의해 주십시요');
+		        }
+		        , complete : function(xhr, status) {
+		            //loadingbar_hide();
+		        }    
+		    });
+		});
+		
+		//게시버튼 클릭
+        $('#docView').on('click', function(event) {
+        	//alert("게시 클릭 docSeq= " + $('#docSeq').val());
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/QnaViewProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/QnaMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+		//게시취소버튼 클릭
+        $('#docCancelView').on('click', function(event) {
+        	
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/QnaCancelProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/QnaMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+		//삭제버튼 클릭
+        $('#docDelete').on('click', function(event) {
+        	
+            var param = {
+                     "docSeq" : $('#docSeq').val() 
+               };        
+            
+            $.ajax({
+                url : '/adm/content/QnaDelProc'
+                , type : 'POST'
+                , dataType : 'JSON'
+                , cache : false
+                , data : param
+                , beforeSend : function( xhr, settings ) { 
+                    //loadingbar_show(); 
+                }
+                , success : function(data, stauts, request) {
+    				if (data.procInd == "S") {
+    					alert("정상 처리 되었습니다.");
+    					location.href = "/adm/content/QnaMainList.do";
+    				} else {
+    					alert("처리중 오류가 발생 했습니다.");
+    				}
+
+                }
+                , error : function(xhr, status) {
+                    alert('서비스 장애발생 관리자에게 문의해 주십시요');
+                }
+                , complete : function(xhr, status) {
+                    //loadingbar_hide();
+                }    
+            });
+        });
+       
+    });
+</script>
+
+<body>
+<div class="adm-wrap">
+	<th:block layout:fragment="header" th:insert="~{@{/adm/layout/admheader}}"></th:block>
+	
+<div layout:fragment="content">
+    <div class="adm-container">
+        <header>
+            <ul class="top-info">
+                <li>
+                    <i class="iconfont">account_circle</i><span th:text="${sessInfo.CrbnAdmNm}">홍길동님</span> 님 반갑습니다
+                </li>
+                <li>
+                    <a href="#"><i class="iconfontline">logout</i>로그아웃</a>
+                </li>
+            </ul>
+        </header>
+		
+        <div class="adm-content">
+			<h2>문의 및 제안</h2>
+            <div class="board-write mT10">
+				<table>
+					<colgroup>
+						<col style="width:20%;" />
+						<col />
+					</colgroup>
+					<tbody>
+						<input id="docSeq" type="hidden" th:value="${ docview.docSeq }">
+						<tr>
+							<th>제목</th>
+							<td><input type="text" name="" id="docTitle" class="w90"  th:value="${ docview.docTitle }" readonly/></td>
+						</tr>
+                        <tr>
+                            <th>질문 내용</th>
+							<td>
+							    <textarea name="" placeholder="" id="docInfo"  class="w90"  style="background-color: #f0f0f0;" 
+								th:text="${ docview.docInfo }" readonly></textarea>
+							</td>							
+                        </tr>
+                        <tr>
+                            <th>답변 내용</th>
+							<td>
+							    <textarea name="" placeholder="" id="ansContent"  th:text="${ docview.ansContent }"></textarea>
+							</td>														
+                        </tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="t-center mT40">
+                <button type="button" class="btn-grayfill" id="docSave">저장</button>
+                <button type="button" class="btn-blue" id="docView">답변 등록</button>
+                <button type="button" class="btn-grayfill" id="docCancelView">답변 취소</button>
+                <!--<button type="button" class="btn-blue" id="docDelete">삭제</button>-->
+			</div>
+		</div><!-- //content -->
+	
+    <script type="text/javascript" src="/adm/js/common/common.js"></script>
+	</div><!-- //container -->
+</div>
+</div><!-- //wrap -->
+</body>
+</html>

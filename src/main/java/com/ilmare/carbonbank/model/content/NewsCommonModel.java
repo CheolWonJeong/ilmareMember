@@ -47,6 +47,7 @@ public class NewsCommonModel {
 	private String qaContent; // FAQ 답변
 	private String auditId;   // 관리자 아이디
 	private String creDtm;
+	private String ansContent;
 	
 	private int totalCount;		//총 건수  
 	private int currentPage;
@@ -295,6 +296,12 @@ public class NewsCommonModel {
 	}
 	public void setTotalPages(int totalPages) {
 		this.totalPages = totalPages;
+	}
+	public String getAnsContent() {
+		return ansContent;
+	}
+	public void setAnsContent(String ansContent) {
+		this.ansContent = ansContent;
 	}
 	
 }

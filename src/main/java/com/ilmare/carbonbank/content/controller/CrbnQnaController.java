@@ -22,7 +22,7 @@ import com.ilmare.carbonbank.cmn.service.CommonService;
 import com.ilmare.carbonbank.cmn.util.DateUtil;
 import com.ilmare.carbonbank.cmn.util.FileUtil;
 import com.ilmare.carbonbank.model.content.NewsCommonModel;
-import com.ilmare.carbonbank.service.CrbnFaqService;
+import com.ilmare.carbonbank.service.CrbnQnaService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -34,12 +34,12 @@ import net.coobird.thumbnailator.Thumbnails;
 @Slf4j
 @Controller
 @RequestMapping("/adm/content")
-public class CrbnFaqController {
+public class CrbnQnaController {
 	@Autowired(required=true)
 	private SessionManager sessMgr;
 	
 	@Autowired
-	private CrbnFaqService svc;
+	private CrbnQnaService svc;
 
 	@Autowired
 	private CommonService commSvc;
@@ -55,25 +55,25 @@ public class CrbnFaqController {
 	 *  이벤트 리스트 조회
 	 *  
 	 */
-	@RequestMapping("/FaqMainList.do")
+	@RequestMapping("/QnaMainList.do")
 	public String EventMainList(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
-		log.info("FaqMainList Start");
+		log.info("QnaMainList Start");
 		
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("FaqMainList 세션 없음 상태");
+			log.info("QnaMainList 세션 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}
 		
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("FaqMainList 로그인 상태");
-		log.info("FaqMainList sessInfo=" + sessInfo.toString());
+		log.info("QnaMainList 로그인 상태");
+		log.info("QnaMainList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("FaqMainList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("QnaMainList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("FaqMainList 권한 없음 상태");
+			log.info("QnaMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
 		}		
 		
@@ -81,14 +81,14 @@ public class CrbnFaqController {
 		
 		log.info("EventMainList End");
 
-		return "adm/content/faq/list";
+		return "adm/content/qna/list";
 		
 	}
 
 	/*
 	 * 버튼 클릭조회
 	 */
-	@RequestMapping("/FaqQueryList")
+	@RequestMapping("/QnaQueryList")
 	public  @ResponseBody HashMap EventQueryList(
 			HttpServletRequest request, 
 			final NewsCommonModel paramVo, 
@@ -97,24 +97,24 @@ public class CrbnFaqController {
 			) throws Exception {
 		
 		HashMap result = new HashMap();
-		log.info("FaqQueryList Start");
+		log.info("QnaQueryList Start");
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
-			log.info("FaqQueryList 세션 없음 상태");
+			log.info("QnaQueryList 세션 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotLogin");  // 오류 종류
 			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
 			return result;
 		}
 		
-		log.info("FaqQueryList 로그인 상태");
+		log.info("QnaQueryList 로그인 상태");
 		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("FaqQueryList sessInfo=" + sessInfo.toString());
+		log.info("QnaQueryList sessInfo=" + sessInfo.toString());
 
 		//권한 검사
-		log.info("FaqQueryList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("QnaQueryList PartyGrp=" + sessInfo.getPartyGrp());
 		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("FaqQueryList 권한 없음 상태");
+			log.info("QnaQueryList 권한 없음 상태");
 			result.put("procInd", "E");  // 오류
 			result.put("errorId", "NotGrade");  // 오류 종류
 			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
@@ -125,7 +125,7 @@ public class CrbnFaqController {
         int pageSize = conConst.pageSize;    //페이지당 row 건수
         int pageNo = paramVo.getPageNo(); //조회할 페이지 번호
         int sRowNum = ((pageNo - 1) * pageSize) ;    //조회할 row의 시작값
-		log.info("FaqQueryList {} ~ {}", sRowNum, pageSize);
+		log.info("QnaQueryList {} ~ {}", sRowNum, pageSize);
 		
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
@@ -147,84 +147,7 @@ public class CrbnFaqController {
 		///////////////////////////////
 		result.put("rows", dataList); // jquery는 이 데이터만 사용.
 		
-		log.info("FaqQueryList End");
-
-		return result;
-	}
-
-	/*
-	 * 신규등록
-	 */
-	@RequestMapping("/FaqIns.do")
-	public String EventIns(HttpServletRequest request, Model model) throws Exception {
-		log.info("EventIns Start");
-		sessMgr.createSession(request, false);
-		if ( !sessMgr.isSession() ) {
-			log.info("AdmEventIns 세션 없음 상태");
-			return "redirect:" + conConst.lgnUrl;
-		}
-		
-		log.info("EventIns 로그인 상태");
-		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EventIns sessInfo=" + sessInfo.toString());
-
-		//권한 검사
-		log.info("EventIns PartyGrp=" + sessInfo.getPartyGrp());
-		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("EventIns 권한 없음 상태");
-			return "redirect:" + conConst.lgnUrl;
-		}
-
-		model.addAttribute("sessInfo", sessInfo);
-		return "adm/content/Faq/insert";
-	}
-
-	/*
-	 * 저장
-	 */
-	@PostMapping("/FaqInsProc")
-	public  @ResponseBody HashMap EventInsProc(
-			HttpServletRequest request, 
-			//@RequestPart("imgFile") MultipartFile imgFile,
-			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile,	
-			final NewsCommonModel paramModel, 
-			Model model) throws Exception {
-		
-		HashMap result = new HashMap();
-		log.info("EventInsProc Start");
-		sessMgr.createSession(request, false);
-		if ( !sessMgr.isSession() ) {
-			log.info("EventInsProc 세션 없음 상태");
-			result.put("procInd", "E");  // 오류
-			result.put("errorId", "NotLogin");  // 오류 종류
-			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
-			return result;
-		}
-		
-		log.info("EventInsProc 로그인 상태");
-		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EventInsProc sessInfo=" + sessInfo.toString());
-
-		//권한 검사
-		log.info("EventInsProc getPartyCd=" + sessInfo.getPartyCd());
-		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("AdmNoticeList 권한 없음 상태");
-			result.put("procInd", "E");  // 오류
-			result.put("errorId", "NotGrade");  // 오류 종류
-			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
-			return result;
-		}
-		
-		//파일 관련 내용 삭제
-
-		//저장
-		paramModel.setPartyCd(sessInfo.getPartyCd());
-//		paramModel.setRegId(sessInfo.getCrbnAdmId());
-		paramModel.setAuditId(sessInfo.getCrbnAdmId());
-		int rtn = svc.insert(paramModel);
-
-		result.put("procInd", "S");  // 정상
-		log.info("EventInsProc End");
+		log.info("QnaQueryList End");
 
 		return result;
 	}
@@ -233,7 +156,7 @@ public class CrbnFaqController {
 	/*
 	 * 이벤트 상세 조회
 	 */
-	@RequestMapping("/FaqDesc.do")
+	@RequestMapping("/QnaDesc.do")
 	public String EventDesc(HttpServletRequest request, final NewsCommonModel paramVo, Model model) throws Exception {
 		
 		log.info("EventDesc Start");
@@ -269,13 +192,13 @@ public class CrbnFaqController {
 		//model.addAttribute("menuList", menuList);
 		log.info("EventDesc End");
 
-		return "adm/content/Faq/update";
+		return "adm/content/qna/update";
 	}
 
 	/*
 	 * 이벤트 저장
 	 */
-	@PostMapping("/FaqUptProc")
+	@PostMapping("/QnaUptProc")
 	public  @ResponseBody HashMap EventUptProc(
 			HttpServletRequest request, 
 			//@RequestPart("imgFile") MultipartFile imgFile, 
@@ -308,14 +231,14 @@ public class CrbnFaqController {
 			return result;
 		}
 		
-		//파일 관련 내용 삭제
+		//파일 관련 삭제
 		
 		log.info("EventUptProc , paramModel.getDocSeq() : " + paramModel.getDocSeq());
-		log.info("EventUptProc , paramModel.getDocTitle() : " + paramModel.getDocTitle());
+		log.info("EventUptProc , paramModel.getAnsContent() : " + paramModel.getAnsContent());
 		
 		//이벤트 변경처리
 		paramModel.setPartyCd(sessInfo.getPartyCd());
-		paramModel.setRegId(sessInfo.getCrbnAdmId());
+		paramModel.setAuditId(sessInfo.getCrbnAdmId());
 		int rtn = svc.update(paramModel);
 
 		result.put("procInd", "S");  // 정상
@@ -328,7 +251,7 @@ public class CrbnFaqController {
 	/*
 	 * 이벤트 게시
 	 */
-	@RequestMapping("/FaqViewProc")
+	@RequestMapping("/QnaViewProc")
 	public  @ResponseBody HashMap EventViewProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
@@ -374,7 +297,7 @@ public class CrbnFaqController {
 	/*
 	 * 이벤트 게시 취소
 	 */
-	@RequestMapping("/FaqCancelProc")
+	@RequestMapping("/QnaCancelProc")
 	public  @ResponseBody HashMap EventCancelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
 		
 		HashMap result = new HashMap();
@@ -408,52 +331,12 @@ public class CrbnFaqController {
 		//이벤트 변경처리
 		paramModel.setPartyCd(sessInfo.getPartyCd());
 		paramModel.setAuditId(sessInfo.getCrbnAdmId());
+
 		
 		int rtn = svc.updateCancelStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
 		log.info("EventCancelProc End");
-
-		return result;
-	}
-
-	/*
-	 * 이벤트 삭제
-	 */
-	@RequestMapping("/FaqDelProc")
-	public  @ResponseBody HashMap EventDelProc(HttpServletRequest request, final NewsCommonModel paramModel, Model model) throws Exception {
-		
-		HashMap result = new HashMap();
-		log.info("EventDelProc Start");
-		sessMgr.createSession(request, false);
-		if ( !sessMgr.isSession() ) {
-			log.info("EventDelProc 세션 없음 상태");
-			result.put("procInd", "E");  // 오류
-			result.put("errorId", "NotLogin");  // 오류 종류
-			result.put("errorMsg", "로그인 후 이용 하세요");  // 오류 메시지
-			return result;
-		}
-		
-		log.info("EventDelProc 로그인 상태");
-		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("EventDelProc sessInfo=" + sessInfo.toString());
-
-		//권한 검사
-		log.info("EventDelProc getPartyCd=" + sessInfo.getPartyCd());
-		if ( !commSvc.checkContentUse(sessInfo.getPartyGrp()) ) {
-			log.info("NoticeCancelProc 권한 없음 상태");
-			result.put("procInd", "E");  // 오류
-			result.put("errorId", "NotGrade");  // 오류 종류
-			result.put("errorMsg", "조회 권한이 없습니다.");  // 오류 메시지
-			return result;
-		}
-		
-		paramModel.setDocStat("D");	//상태 D
-		paramModel.setRegId(sessInfo.getCrbnAdmId());
-		int rtn = svc.updateDelStat(paramModel);
-
-		result.put("procInd", "S");  // 정상
-		log.info("EventDelProc End");
 
 		return result;
 	}

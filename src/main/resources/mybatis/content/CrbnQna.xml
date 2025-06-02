@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ilmare.carbonbank.mapper.content.CrbnQnaMapper">
+    <select id="selectAdmDesc" parameterType="com.ilmare.carbonbank.model.content.NewsCommonModel" resultType="com.ilmare.carbonbank.model.content.NewsCommonModel">
+    <![CDATA[
+            /*
+            1. ID: selectDesc
+            2. 업무명: 관리자의 상세보기
+            3. 업무설명:
+            */
+        select
+			   doc_seq
+			 , party_cd
+			 , mbr_id
+			 , qna_sort
+			 , doc_title
+			 , doc_info
+			 , doc_ind
+			 , doc_stat
+			 , doc_read
+			 , IF(cre_dtm IS NOT NULL, DATE_FORMAT(cre_dtm, '%Y-%m-%d'), '') AS cre_dtm
+			 , audit_id
+			 , ans_content
+			 , IF(ans_dtm IS NOT NULL, DATE_FORMAT(ans_dtm, '%Y-%m-%d'), '') AS ans_dtm
+        from CRBN_QNA
+            WHERE doc_seq = #{docSeq}
+     ]]>
+    </select>
+    
+    <select id="selectAdmList" parameterType="com.ilmare.carbonbank.model.content.NewsCommonModel" resultType="com.ilmare.carbonbank.model.content.NewsCommonModel">
+    <![CDATA[
+            SELECT *
+              FROM (
+                    SELECT
+						   doc_seq
+						 , party_cd
+						 , mbr_id
+						 , qna_sort
+						 , doc_title
+						 , doc_info
+						 , doc_ind
+						 , doc_stat
+						 , doc_read
+						 , IF(cre_dtm IS NOT NULL, DATE_FORMAT(cre_dtm, '%Y-%m-%d'), '') AS cre_dtm
+						 , audit_id
+						 , ans_content
+						 , IF(ans_dtm IS NOT NULL, DATE_FORMAT(ans_dtm, '%Y-%m-%d'), '') AS ans_dtm			
+                    from CRBN_QNA
+         ]]>
+                <if test="searchValue != null and searchValue != '' " >
+                    <if test="searchType != null and searchType != '' " >
+                        <if test='searchType == "TITLE"'>
+                            <![CDATA[       
+                                where DOC_TITLE like CONCAT('%',#{searchValue},'%')
+                             ]]>
+                        </if>
+                        <if test='searchType == "INFO"'>
+                            <![CDATA[       
+                                where doc_info like CONCAT('%',#{searchValue},'%')
+                            ]]>
+                        </if>
+                    </if>
+                </if>
+                     ORDER BY doc_seq DESC
+                   ) A
+             LIMIT #{pageNo}, #{listSize}
+    </select>
+ 
+    <select id="selectAdmListCount" parameterType="com.ilmare.carbonbank.model.content.NewsCommonModel" resultType="String">
+        <![CDATA[
+            /*
+                1. ID: selectAdmListCount
+                2. 업무명: 뉴스
+                3. 업무설명: 관리자 뉴스 리스트 총갯수
+            */
+        
+            SELECT
+                COUNT(1)
+            FROM CRBN_QNA
+        ]]>
+
+        <if test="searchValue != null and searchValue != '' " >
+            <if test="searchType != null and searchType != '' " >
+                <if test='searchType == "TITLE"'>
+                    <![CDATA[       
+                        where DOC_TITLE like CONCAT('%',#{searchValue},'%')
+                     ]]>
+                </if>
+                <if test='searchType == "INFO"'>
+                    <![CDATA[       
+                       where doc_info like CONCAT('%',#{searchValue},'%')
+                    ]]>
+                </if>
+            </if>
+        </if>
+    </select>
+    
+  
+    <update id="update" parameterType="com.ilmare.carbonbank.model.content.NewsCommonModel">
+        <![CDATA[
+            /*
+                1. ID: update
+                2. 업무명: 뉴스
+                3. 업무설명: 뉴스 변경
+            */
+            UPDATE CRBN_QNA
+               SET
+                      AUDIT_ID = #{auditId}
+                    , ANS_CONTENT = #{ansContent}
+                    , ANS_DTM = now()
+              WHERE doc_seq = #{docSeq}
+        ]]>
+    </update>
+ 
+ 
+    <update id="updateShowStat" parameterType="com.ilmare.carbonbank.model.content.NewsCommonModel">
+        <![CDATA[
+            /*
+            1. ID: updateStat
+            2. 업무명: 상태를 답변상태 로 변경
+            3. 업무설명:
+               N : 등록상태
+               V : 게시상태
+               C : 게시취소
+               D : 삭제
+            */
+                UPDATE CRBN_QNA
+                   SET
+                        doc_stat = 'A'
+                        , AUDIT_ID = #{auditId}
+                        , ANS_DTM = now()
+                  WHERE doc_seq = #{docSeq}
+        ]]>
+    </update>
+ 
+    <update id="updateCancelStat" parameterType="com.ilmare.carbonbank.model.content.NewsCommonModel">
+        <![CDATA[
+            /*
+            1. ID: updateStat
+            2. 업무명: 상태를 질문상태 로 변경
+            3. 업무설명:
+               N : 등록상태
+               V : 게시상태
+               C : 게시취소
+               D : 삭제
+            */
+                UPDATE CRBN_QNA
+                   SET
+                        doc_stat = 'Q'
+                        , AUDIT_ID = #{auditId}
+                        , ANS_DTM = now()
+                  WHERE doc_seq = #{docSeq}
+        ]]>
+    </update>
+
+</mapper>

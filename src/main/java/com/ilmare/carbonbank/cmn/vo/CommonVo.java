@@ -52,6 +52,8 @@ public class CommonVo {
 	private String storeImg;
 	private String storeEmail;
 	private String storeAddr;
-	private String storeEvent;	
+	private String storeEvent;
+	
+	private String ansContent;	
 
 }
