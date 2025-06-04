@@ -46,10 +46,12 @@ public class CrbnFaqController {
 	
 	@Autowired
 	private ConfigConstants conConst;
-	
 
-    @Value("${comm.pcUploadTemp}")
-    private static String pcTmp;		//이벤트
+	@Autowired
+	private FileUtil fileUtil;
+	
+    //@Value("${comm.pcUploadTemp}")
+    //private static String pcTmp;		//이벤트
 	
 	/*
 	 *  이벤트 리스트 조회
@@ -308,7 +310,41 @@ public class CrbnFaqController {
 			return result;
 		}
 		
-		//파일 관련 내용 삭제
+		//파일 관련
+		if ( imgFile != null && !imgFile.isEmpty()) {
+			String fileSavePath = fileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			log.info("파일 이름: " + imgFile.getOriginalFilename());
+			log.info("fileSavePath: {} " ,fileSavePath);
+
+	        String fileExt = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
+			String originalFilename = imgFile.getOriginalFilename();
+			//String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime()+"." + fileExt;
+			String imgNailNm = fileSavePath +File.separator + "640"+DateUtil.getCurrDateTime() + fileExt;  // 중간에 점 제거
+			//String tmpFileNm = FileUtil.uploadTemp + originalFilename;
+			String tmpFileNm =  fileSavePath+File.separator +originalFilename;
+
+			log.info("파라머터: {}| {} | {} |  {}  " ,originalFilename, fileExt, imgNailNm,  tmpFileNm);
+
+			FileUtil.createDirectory(fileSavePath);
+			File savedFile = new File(tmpFileNm);
+			imgFile.transferTo(savedFile); // 업로드된 파일 저장
+			log.info("TEST {} | {} | {} | {}", paramModel.getDocStat(), paramModel.getDocFrom(),  paramModel.getDocTitle());
+
+	        // 썸네일 생성
+	        File thumbnailFile = new File(imgNailNm);
+	        Thumbnails.of(savedFile)
+	                  .size(700, 400)
+	                  .toFile(thumbnailFile);		
+			//file upload
+			
+			paramModel.setImgSrcNm(imgFile.getOriginalFilename());
+			paramModel.setImgNailNm(fileSavePath + DateUtil.getCurrDateTime() + fileExt);
+
+		} else {
+			log.info("imgFile is null ");
+			paramModel.setImgSrcNm(paramModel.getBefImgSrcNme());
+			paramModel.setImgNailNm(paramModel.getBefImgNailNme());
+		}
 		
 		log.info("EventUptProc , paramModel.getDocSeq() : " + paramModel.getDocSeq());
 		log.info("EventUptProc , paramModel.getDocTitle() : " + paramModel.getDocTitle());
@@ -356,13 +392,8 @@ public class CrbnFaqController {
 			return result;
 		}
 		
-		//paramModel.setDocStat("V");	//상태 'V
-		//paramModel.setRegId(sessInfo.getCrbnAdmId());
-		
-		//이벤트 변경처리
-		paramModel.setPartyCd(sessInfo.getPartyCd());
-		paramModel.setAuditId(sessInfo.getCrbnAdmId());
-		
+		paramModel.setDocStat("V");	//상태 'V
+		paramModel.setRegId(sessInfo.getCrbnAdmId());
 		int rtn = svc.updateShowStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
@@ -402,13 +433,8 @@ public class CrbnFaqController {
 			return result;
 		}
 		
-		//paramModel.setDocStat("C");	//취소 C
-		//paramModel.setRegId(sessInfo.getCrbnAdmId());
-		
-		//이벤트 변경처리
-		paramModel.setPartyCd(sessInfo.getPartyCd());
-		paramModel.setAuditId(sessInfo.getCrbnAdmId());
-		
+		paramModel.setDocStat("C");	//취소 C
+		paramModel.setRegId(sessInfo.getCrbnAdmId());
 		int rtn = svc.updateCancelStat(paramModel);
 
 		result.put("procInd", "S");  // 정상
