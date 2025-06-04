@@ -1,0 +1,5 @@
+
+spring:
+  saveRootForDev: C:/sts_work/ilmareMember/ilmareMember/src/main/resources/static/upload/
+
+#각자의 실제 드라이브 위치

@@ -47,9 +47,11 @@ public class CrbnHotNewsController {
 	@Autowired
 	private ConfigConstants conConst;
 	
+	@Autowired
+	private FileUtil fileUtil;	
 
-    @Value("${comm.pcUploadTemp}")
-    private static String pcTmp;		//기관 핫뉴스
+    //@Value("${comm.pcUploadTemp}")
+    //private static String pcTmp;		//기관 핫뉴스
 	
 	/*
 	 *  기관 핫뉴스 리스트 조회
@@ -249,7 +251,8 @@ public class CrbnHotNewsController {
 		
 		//파일 관련		
 		if ( imgFile != null && !imgFile.isEmpty()) {		
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("HotNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 	
@@ -376,7 +379,8 @@ public class CrbnHotNewsController {
 		
 		//파일 관련
 		if ( imgFile != null && !imgFile.isEmpty()) {
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("HotNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 

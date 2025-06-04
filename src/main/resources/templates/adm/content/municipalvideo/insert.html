@@ -4,8 +4,18 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{adm/layout/admlayour}">
 	<th:block layout:fragment="head" th:insert="~{@{/adm/layout/admhead}}"></th:block>
+
+<!-- // dury00 ckeditor
+	<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+-->
+	<script src="//cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
+
+// dury00 ckediter
+			CKEDITOR.replace('docInfo', {width : '100%', height: 250 });
+// dury00 ckediter
+
 	
 			//조회버튼 클릭
 	        $('#docSave').on('click', function(event) {
@@ -26,6 +36,9 @@
 	    			formData.append("imgFile", files[i]);
 	    		}
 	
+// dury00 ckeditor
+				$('#docInfo').val(CKEDITOR.instances.docInfo.getData());
+				
 				formData.append("docTitle", $('#docTitle').val() );
 				formData.append("docInfo", $('#docInfo').val() );
 				formData.append("docFrom", $('#docFrom').val() );

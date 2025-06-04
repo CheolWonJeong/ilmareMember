@@ -47,9 +47,11 @@ public class MunicipalNewsController {
 	@Autowired
 	private ConfigConstants conConst;
 	
-
-    @Value("${comm.pcUploadTemp}")
-    private static String pcTmp;		//시정뉴스
+	@Autowired
+	private FileUtil fileUtil;
+	
+    //@Value("${comm.pcUploadTemp}")
+    //private static String pcTmp;		//시정뉴스
 	
 	/*
 	 *  시정뉴스 리스트 조회
@@ -247,7 +249,8 @@ public class MunicipalNewsController {
 		
 		//파일 관련		
 		if ( imgFile != null && !imgFile.isEmpty()) {		
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("MunicipalNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 	
@@ -372,7 +375,8 @@ public class MunicipalNewsController {
 		
 		//파일 관련
 		if ( imgFile != null && !imgFile.isEmpty()) {
-			String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("MunicipalNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 

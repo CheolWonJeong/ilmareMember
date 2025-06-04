@@ -10,11 +10,16 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -28,70 +33,60 @@ import org.springframework.beans.factory.annotation.Value;
 @Component
 public class FileUtil {
 	
-    @Value("${comm.UploadTemp}")
-    public static String uploadTemp;	//임시
+	//private static String saveRootForDev = ""; // 운영일 경우.
+	//private static String saveRootForDev = "C:\\sts_work\\ilmareMember\\ilmareMember\\src\\main\\resources\\static\\upload\\"; // 로컬일 경우
+    
+    @Value("${spring.saveRootForDev:defaultValue}")
+    private String saveRootForDev;	
+	
+    /*
+	private static HashMap<String, String> hsImgPath = new HashMap<String, String>() {{
+		put("StoreBis"      , saveRootForDev+"store_bis/");    //#가맹점 사업자등록증
+		put("Store"         , saveRootForDev+"uploadFiles/store/");    //#가맹점 매장
+		put("EnvNews"       , saveRootForDev+"uploadFiles/env_news/");    //#환경뉴스
+		put("MunicipalNews" , saveRootForDev+"uploadFiles/municipal_news/");    // #시정뉴스
+		put("VideoNews"     , saveRootForDev+"uploadFiles/video_news/");    //#영상뉴스
+		put("HotNews"       , saveRootForDev+"uploadFiles/hot_news/");    //#기관 핫뉴스
+		put("Event"         , saveRootForDev+"uploadFiles/event/");    //#이벤트
+		put("Temp"          , saveRootForDev+"temp/");    //#업로드된 파일의 임시 저장 공간
+		put("pcTemp"        , saveRootForDev);    //PC 테스트용(분인 PC에 맞는 경로를 설정 해야 함)
+       }};
+   */
 
-    public static String updTemp = "/app/data/upload/temp/";	//임시
+    private Map<String, String> hsImgPath;
 
-    @Value("${comm.UpPathStoreBis}")
-    private static String upPathStoreBis;	//가맹점 사업자등록증
+    @PostConstruct
+    private void init() {
+    	 hsImgPath = new HashMap<>();
+         hsImgPath.put("StoreBis"      , saveRootForDev+"store_bis/");    //#가맹점 사업자등록증
+         hsImgPath.put("Store"         , saveRootForDev+"uploadFiles/store/");    //#가맹점 매장
+         hsImgPath.put("EnvNews"       , saveRootForDev+"uploadFiles/env_news/");    //#환경뉴스
+         hsImgPath.put("MunicipalNews" , saveRootForDev+"uploadFiles/municipal_news/");    // #시정뉴스
+         hsImgPath.put("VideoNews"     , saveRootForDev+"uploadFiles/video_news/");    //#영상뉴스
+         hsImgPath.put("HotNews"       , saveRootForDev+"uploadFiles/hot_news/");    //#기관 핫뉴스
+         hsImgPath.put("Event"         , saveRootForDev+"uploadFiles/event/");    //#이벤트
+         hsImgPath.put("Temp"          , saveRootForDev+"temp/");    //#업로드된 파일의 임시 저장 공간
+         hsImgPath.put("pcTemp"        , saveRootForDev);    //PC 테스트용(분인 PC에 맞는 경로를 설정 해야 함)
+    	          
+    }
 
-    @Value("${comm.UpPathStore}")
-    private static String upPathStore;			//가맹점 매장
-
-    @Value("${comm.UpPathEnvNews}")
-    private static String upPathEnvNews;	//환경뉴스
-
-    @Value("${comm.UpPathMunicipalNews}")
-    private static String upPathMunicipalNews;		//시정뉴스
-
-    @Value("${comm.UpPathVideoNews}")
-    private static String upPathVideoNews;		//영상뉴스
-
-    @Value("${comm.UpPathHotNews}")
-    private static String upPathHotNews;		//기관 핫뉴스
-
-    //private static String pcTemp = "D:\\myProject\\workspace\\sts_4-4.29.1\\ilmareMember\\src\\main\\resources\\static\\upload\\";		//기관 핫뉴스
-    private static String pcTemp = "C:\\sts_work\\ilmareMember\\ilmareMember\\src\\main\\resources\\static\\upload\\";
+    // 안쓰는 듯?       
+   	public static String imgServerBasePath = "/app/data/upload/";    //서버 저장 기본경로      예) /app/data/upload/uploadFiles/env_news/20250604/파일명
+   	public static String imgUriBasePath = "/img/";					//db에 저장할떄 기본 경로   예) /img/uploadFiles/env_news/20250604/파일명
     
 	private static final String DEFAULT_ENCODING = "euc-kr";
+	
     /**
      * Logger for this class
      */
 
-	private FileUtil () {
-		
-	}
+//	private FileUtil () {
+//		
+//	}
 	
-	public static String getSaveFilePath(String upcd, String currDt) throws IOException {
-		String rtn = "";
-		switch(upcd) {
-	        case "StoreBis" :
-	        	rtn = upPathStoreBis;	//가맹점 사업자등록증
-	            break;
-	        case "Store" :
-			  rtn = upPathStore;			//가맹점 매장
-	            break;
-	        case "EnvNews" :
-				rtn = upPathEnvNews;	//환경뉴스
-	            break;
-	        case "MunicipalNews" :
-				rtn =  upPathMunicipalNews;		//시정뉴스  
-	            break;
-	        case "VideoNews" :
-				rtn = upPathVideoNews;		//영상뉴스
-	            break;
-	        case "HotNews" :
-				rtn = upPathHotNews;		//기관 핫뉴스
-	            break;
-	        case "pcTemp" :
-				rtn = pcTemp;		//기관 핫뉴스
-	            break;
-	        default :
-				rtn = upcd;		//임시
-	            break;
-	    }		
-		return rtn + currDt;
+	//public static String getSaveFilePath(String upcd, String currDt) throws IOException {
+	public String getSaveFilePath(String upcd, String currDt) {		
+		return hsImgPath.get(upcd) + currDt;
 	}
 	
 	/**
