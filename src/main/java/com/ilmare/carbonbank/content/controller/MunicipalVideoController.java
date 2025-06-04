@@ -47,9 +47,11 @@ public class MunicipalVideoController {
 	@Autowired
 	private ConfigConstants conConst;
 	
-
-    @Value("${comm.pcUploadTemp}")
-    private static String pcTmp;		//시정영상
+	@Autowired
+	private FileUtil fileUtil;
+	
+    //@Value("${comm.pcUploadTemp}")
+    //private static String pcTmp;		//시정영상
 	
 	/*
 	 *  시정영상 리스트 조회
@@ -245,7 +247,7 @@ public class MunicipalVideoController {
 		//파일 관련		
 		if ( imgFile != null && !imgFile.isEmpty()) {		
 			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.getSaveFilePath("VideoNews", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("VideoNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 	
@@ -371,7 +373,7 @@ public class MunicipalVideoController {
 		//파일 관련
 		if ( imgFile != null && !imgFile.isEmpty()) {
 			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.getSaveFilePath("VideoNews", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("VideoNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 

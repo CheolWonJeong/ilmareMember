@@ -1,0 +1,5 @@
+
+spring:
+  saveRootForDev:
+
+#운영에서 빈 문자열을 반환함.

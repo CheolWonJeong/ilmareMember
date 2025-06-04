@@ -48,9 +48,11 @@ public class CrbnStoreInfoController {
 	@Autowired
 	private ConfigConstants conConst;
 	
-
-    @Value("${comm.pcUploadTemp}")
-    private static String pcTmp;		//가맹점 정보
+	@Autowired
+	private FileUtil fileUtil;
+	
+    //@Value("${comm.pcUploadTemp}")
+    //private static String pcTmp;		//가맹점 정보
 	
 	/*
 	 *  가맹점 정보 리스트 조회
@@ -265,7 +267,7 @@ public class CrbnStoreInfoController {
 		//파일 관련		
 		if ( storeNoImgFile != null && !storeNoImgFile.isEmpty()) {
 			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.getSaveFilePath("StoreBis", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("StoreBis", DateUtil.getCurrDate());
 			
 			log.info("파일 이름: " + storeNoImgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
@@ -293,7 +295,7 @@ public class CrbnStoreInfoController {
 		//파일 관련
 		if ( storeImgFile != null && !storeImgFile.isEmpty()) {
 			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.getSaveFilePath("Store", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("Store", DateUtil.getCurrDate());
 			
 			log.info("파일 이름: " + storeImgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
@@ -430,7 +432,7 @@ public class CrbnStoreInfoController {
 		//파일 관련
 		if ( storeNoImgFile != null && !storeNoImgFile.isEmpty()) {
 			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.getSaveFilePath("StoreBis", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("StoreBis", DateUtil.getCurrDate());
 			
 			log.info("파일 이름: " + storeNoImgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
@@ -458,7 +460,7 @@ public class CrbnStoreInfoController {
 		//파일 관련
 		if ( storeImgFile != null && !storeImgFile.isEmpty()) {
 			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.getSaveFilePath("Store", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("Store", DateUtil.getCurrDate());
 			
 			log.info("파일 이름: " + storeImgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);

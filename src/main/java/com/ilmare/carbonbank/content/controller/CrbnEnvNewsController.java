@@ -48,10 +48,12 @@ public class CrbnEnvNewsController {
 	
 	@Autowired
 	private ConfigConstants conConst;
-	
 
-    @Value("${comm.pcUploadTemp}")
-    private static String pcTmp;		//기관 핫뉴스
+	@Autowired
+	private FileUtil fileUtil;
+	
+    //@Value("${comm.pcUploadTemp}")
+    //private static String pcTmp;		//기관 핫뉴스
 	
 	/*
 	 *  리스트 조회
@@ -252,7 +254,7 @@ public class CrbnEnvNewsController {
 		//파일 관련		
 		if ( imgFile != null && !imgFile.isEmpty()) {
 			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());	//피씨용
-			String fileSavePath = FileUtil.getSaveFilePath("EnvNews", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("EnvNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 	
@@ -354,6 +356,13 @@ public class CrbnEnvNewsController {
 		
 		HashMap result = new HashMap();
 		log.info("EnvNewsUptProc Start");
+		
+		log.info("EnvNewsUptProc Start, paramModel.getDocSeq() : " + paramModel.getDocSeq());
+		log.info("EnvNewsUptProc Start, paramModel.getDocSeq() : " + paramModel.getDocSeq());
+		log.info("EnvNewsUptProc Start, paramModel.getDocSeq() : " + paramModel.getDocSeq());
+		log.info("EnvNewsUptProc Start, paramModel.getDocSeq() : " + paramModel.getDocSeq());
+		log.info("EnvNewsUptProc Start, paramModel.getDocSeq() : " + paramModel.getDocSeq());
+		
 		sessMgr.createSession(request, false);
 		if ( !sessMgr.isSession() ) {
 			log.info("EnvNewsUptProc 세션 없음 상태");
@@ -380,7 +389,7 @@ public class CrbnEnvNewsController {
 		//파일 관련
 		if ( imgFile != null && !imgFile.isEmpty()) {
 			//String fileSavePath = FileUtil.getSaveFilePath("pcTemp", DateUtil.getCurrDate());
-			String fileSavePath = FileUtil.getSaveFilePath("EnvNews", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.getSaveFilePath("EnvNews", DateUtil.getCurrDate());
 			log.info("파일 이름: " + imgFile.getOriginalFilename());
 			log.info("fileSavePath: {} " ,fileSavePath);
 

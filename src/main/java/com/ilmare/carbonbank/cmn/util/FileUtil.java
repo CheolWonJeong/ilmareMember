@@ -17,6 +17,9 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -30,31 +33,59 @@ import org.springframework.beans.factory.annotation.Value;
 @Component
 public class FileUtil {
 	
+	//private static String saveRootForDev = ""; // 운영일 경우.
+	//private static String saveRootForDev = "C:\\sts_work\\ilmareMember\\ilmareMember\\src\\main\\resources\\static\\upload\\"; // 로컬일 경우
+    
+    @Value("${spring.saveRootForDev:defaultValue}")
+    private String saveRootForDev;	
+	
+    /*
 	private static HashMap<String, String> hsImgPath = new HashMap<String, String>() {{
-		put("StoreBis", "store_bis/");    //#가맹점 사업자등록증
-		put("Store", "uploadFiles/store/");    //#가맹점 매장
-		put("EnvNews", "uploadFiles/env_news/");    //#환경뉴스
-		put("MunicipalNews", "uploadFiles/municipal_news/");    // #시정뉴스
-		put("VideoNews", "uploadFiles/video_news/");    //#영상뉴스
-		put("HotNews", "uploadFiles/hot_news/");    //#기관 핫뉴스
-		put("Event", "uploadFiles/event/");    //#이벤트
-		put("Temp", "temp/");    //#업로드된 파일의 임시 저장 공간
-		put("pcTemp", "C:\\sts_work\\ilmareMember\\ilmareMember\\src\\main\\resources\\static\\upload\\");    //PC 테스트용(분인 PC에 맞는 경로를 설정 해야 함
+		put("StoreBis"      , saveRootForDev+"store_bis/");    //#가맹점 사업자등록증
+		put("Store"         , saveRootForDev+"uploadFiles/store/");    //#가맹점 매장
+		put("EnvNews"       , saveRootForDev+"uploadFiles/env_news/");    //#환경뉴스
+		put("MunicipalNews" , saveRootForDev+"uploadFiles/municipal_news/");    // #시정뉴스
+		put("VideoNews"     , saveRootForDev+"uploadFiles/video_news/");    //#영상뉴스
+		put("HotNews"       , saveRootForDev+"uploadFiles/hot_news/");    //#기관 핫뉴스
+		put("Event"         , saveRootForDev+"uploadFiles/event/");    //#이벤트
+		put("Temp"          , saveRootForDev+"temp/");    //#업로드된 파일의 임시 저장 공간
+		put("pcTemp"        , saveRootForDev);    //PC 테스트용(분인 PC에 맞는 경로를 설정 해야 함)
        }};
+   */
 
+    private Map<String, String> hsImgPath;
+
+    @PostConstruct
+    private void init() {
+    	 hsImgPath = new HashMap<>();
+         hsImgPath.put("StoreBis"      , saveRootForDev+"store_bis/");    //#가맹점 사업자등록증
+         hsImgPath.put("Store"         , saveRootForDev+"uploadFiles/store/");    //#가맹점 매장
+         hsImgPath.put("EnvNews"       , saveRootForDev+"uploadFiles/env_news/");    //#환경뉴스
+         hsImgPath.put("MunicipalNews" , saveRootForDev+"uploadFiles/municipal_news/");    // #시정뉴스
+         hsImgPath.put("VideoNews"     , saveRootForDev+"uploadFiles/video_news/");    //#영상뉴스
+         hsImgPath.put("HotNews"       , saveRootForDev+"uploadFiles/hot_news/");    //#기관 핫뉴스
+         hsImgPath.put("Event"         , saveRootForDev+"uploadFiles/event/");    //#이벤트
+         hsImgPath.put("Temp"          , saveRootForDev+"temp/");    //#업로드된 파일의 임시 저장 공간
+         hsImgPath.put("pcTemp"        , saveRootForDev);    //PC 테스트용(분인 PC에 맞는 경로를 설정 해야 함)
+    	          
+    }
+
+    // 안쓰는 듯?       
    	public static String imgServerBasePath = "/app/data/upload/";    //서버 저장 기본경로      예) /app/data/upload/uploadFiles/env_news/20250604/파일명
    	public static String imgUriBasePath = "/img/";					//db에 저장할떄 기본 경로   예) /img/uploadFiles/env_news/20250604/파일명
     
 	private static final String DEFAULT_ENCODING = "euc-kr";
+	
     /**
      * Logger for this class
      */
 
-	private FileUtil () {
-		
-	}
+//	private FileUtil () {
+//		
+//	}
 	
-	public static String getSaveFilePath(String upcd, String currDt) throws IOException {
+	//public static String getSaveFilePath(String upcd, String currDt) throws IOException {
+	public String getSaveFilePath(String upcd, String currDt) {		
 		return hsImgPath.get(upcd) + currDt;
 	}
 	
