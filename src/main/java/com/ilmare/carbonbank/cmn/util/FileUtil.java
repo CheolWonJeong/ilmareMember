@@ -42,7 +42,8 @@ public class FileUtil {
 		put("pcTemp", "C:\\sts_work\\ilmareMember\\ilmareMember\\src\\main\\resources\\static\\upload\\");    //PC 테스트용(분인 PC에 맞는 경로를 설정 해야 함
        }};
 
-   	public static String imgServerBasePath = "/app/data/upload/";
+   	public static String imgServerBasePath = "/app/data/upload/";    //서버 저장 기본경로      예) /app/data/upload/uploadFiles/env_news/20250604/파일명
+   	public static String imgUriBasePath = "/img/";					//db에 저장할떄 기본 경로   예) /img/uploadFiles/env_news/20250604/파일명
     
 	private static final String DEFAULT_ENCODING = "euc-kr";
     /**
@@ -54,7 +55,7 @@ public class FileUtil {
 	}
 	
 	public static String getSaveFilePath(String upcd, String currDt) throws IOException {
-		return imgServerBasePath + hsImgPath.get(upcd) + currDt;
+		return hsImgPath.get(upcd) + currDt;
 	}
 	
 	/**
