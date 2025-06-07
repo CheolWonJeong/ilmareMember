@@ -395,7 +395,8 @@ public class CrbnStoreInfoController {
 
 		// 파일 관련
 		if (storeNoImgFile != null && !storeNoImgFile.isEmpty()) {
-			String fileSavePath = fileUtil.getSaveFilePath("StoreBis", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.imgServerBasePath
+					+ fileUtil.getSaveFilePath("StoreBis", DateUtil.getCurrDate());
 
 			log.info("파일 이름: " + storeNoImgFile.getOriginalFilename());
 			log.info("fileSavePath: {} ", fileSavePath);
@@ -420,7 +421,8 @@ public class CrbnStoreInfoController {
 
 		// 파일 관련
 		if (storeImgFile != null && !storeImgFile.isEmpty()) {
-			String fileSavePath = fileUtil.getSaveFilePath("Store", DateUtil.getCurrDate());
+			String fileSavePath = fileUtil.imgServerBasePath
+					+ fileUtil.getSaveFilePath("Store", DateUtil.getCurrDate());
 			String fileUriPath = fileUtil.imgUriBasePath + fileUtil.getSaveFilePath("Store", DateUtil.getCurrDate());
 
 			log.info("파일 이름: " + storeImgFile.getOriginalFilename());
@@ -439,6 +441,9 @@ public class CrbnStoreInfoController {
 			File savedFile = new File(tmpFileNm);
 			storeImgFile.transferTo(savedFile); // 업로드된 파일 저장
 
+			// 썸네일 생성
+			File thumbnailFile = new File(imgNailNm);
+			Thumbnails.of(savedFile).size(700, 400).toFile(thumbnailFile);
 			paramModel.setStoreImg(urlNailNm);
 
 		} else {
