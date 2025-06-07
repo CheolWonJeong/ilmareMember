@@ -26,33 +26,19 @@ public class MainController {
 	public String main(HttpServletRequest request, Model model) throws Exception {
 		
 		log.info("main Start");
-		if ( !sessMgr.isSession() ) {
+		if ( !sessMgr.isSession(request) ) {
 			return "redirect:/adm/login.do";
 		}
-		
-		log.info("main 로그인 상태");
-		SessInfo sessInfo = sessMgr.getSessInfo();
-		log.info("main sessInfo=" + sessInfo.toString());
+		SessInfo sessInfo = sessMgr.getSession(request);
 
 		log.info("main ID=" + sessInfo.getCrbnAdmId());
-		//메뉴 조회
-		//List menuList = iUserInfoService.getMenu(userInfoVO);
 		
 		model.addAttribute("sessInfo", sessInfo);
-		//model.addAttribute("menuList", menuList);
 		
-		log.info("main ID=" + sessInfo.getCrbnAdmId());
-		return "adm/main/admmain";
+		log.info("main ID=" + sessInfo.getPartyCd());
+		return "adm/main/main_" + sessInfo.getPartyCd();
 	}
 
-	@RequestMapping("/admReg.do")
-	public String admReg(HttpServletRequest request) {
-		log.info("admReg Start");
-
-		//세션 삭제
-		sessMgr.deleteSession(request);
-		return "adm/main/admRegister";
-	}
 
 	
 }

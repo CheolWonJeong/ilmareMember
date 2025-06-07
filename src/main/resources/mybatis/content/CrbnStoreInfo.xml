@@ -41,7 +41,6 @@
 			   store_id
 			  ,party_cd
 			  ,bis_num
-			  ,store_pwd
 			  ,store_cell_num
 			  ,store_ceo_nm
 			  ,store_nm
@@ -74,7 +73,6 @@
 						   store_id
 						  ,party_cd
 						  ,bis_num
-						  ,store_pwd
 						  ,store_cell_num
 						  ,store_ceo_nm
 						  ,store_nm
@@ -175,7 +173,7 @@
 			    concat('S',carbonbankDB.NEXTVAL('STORE'))
 			  , #{partyCd}
 			  , #{bisNum}
-			  , #{storePwd}
+			  , ' '
 			  , #{storeCellNum}
 			  , #{storeCeoNm}
 			  , #{storeNm}
@@ -206,7 +204,6 @@
                SET
 			    party_cd = #{partyCd}
 			  , bis_num = #{bisNum}
-			  , store_pwd = #{storePwd}
 			  , store_cell_num = #{storeCellNum}
 			  , store_ceo_nm = #{storeCeoNm}
 			  , store_nm = #{storeNm}

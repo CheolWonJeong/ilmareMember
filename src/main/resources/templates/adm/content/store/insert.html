@@ -23,9 +23,6 @@
 				var storeNm = $('#storeNm').val().trim();
 				if (storeNm === "") { alert("상호를 입력하세요."); $('#storeNm').focus(); return false; }
 				
-				var storePwd = $('#storePwd').val().trim();
-				if (storePwd === "") { alert("비밀번호를 입력하세요."); $('#storePwd').focus(); return false; }
-				
 				var storeCeoNm = $('#storeCeoNm').val().trim();
 				if (storeCeoNm === "") { alert("대표자 성명을 입력하세요."); $('#storeCeoNm').focus(); return false; }
 				
@@ -67,7 +64,6 @@
 				//formData.append("bisNum", $('#bisNum').val() );
 				formData.append("bisNum", bisNumRaw); // 하이픈 제거된 값으로 저장
 				
-				formData.append("storePwd", $('#storePwd').val() );
 				formData.append("storeCeoNm", $('#storeCeoNm').val() );
 				formData.append("storeCellNum", $('#storeCellNum').val() );
 				
@@ -167,7 +163,7 @@
                         
 						<tr>
 							<th>비밀번호</th>
-							<td><input type="password" name="" id="storePwd" class="w90"  /></td>
+							<td>&#8251; 비밀번호는 앱 가입시 생성 가능 합니다다.</td>
 						</tr>						
 						<tr>
 							<th>대표자 명</th>

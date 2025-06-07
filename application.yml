@@ -44,12 +44,6 @@ spring:
     url: jdbc:mysql://52.78.180.119:32698/carbonbankDB?characterEncoding=UTF-8&serverTimezone=UTC
     username: carbonbank
     password: Bank2504!@
-# HikariCP 설정 (선택사항)
-    hikari:
-      maximum-pool-size: 10
-      idle-timeout: 600000
-      pool-name: MyHikariCP
-      max-lifetime: 1800000	
 
 mybatis:
   configuration:
@@ -68,5 +62,17 @@ logging:
     root: info
   config: classpath:log/logback-spring.xml 
 
+# 파일업로드 경로
+comm:
+  UpPathStoreBis: store_bis/    #가맹점 사업자등록증
+  UpPathStore: uploadFiles/store/     #가맹점 매장
+  UpPathEnvNews: uploadFiles/env_news/   #환경뉴스
+  UpPathMunicipalNews: uploadFiles/municipal_news/   #시정뉴스
+  UpPathVideoNews: uploadFiles/video_news/  #영상뉴스
+  UpPathHotNews: uploadFiles/hot_news/    #기관 핫뉴스
+  UpPathEvent: uploadFiles/event/    #이벤트
+  UploadTemp: temp/ #업로드된 파일의 임시 저장 공간
+  imgSaveBasePath: /app/data/upload/ #서버에 파일 저장시 베이스
+  imgUriBasePath: /img/ #DB 저장시 베이스
 
  

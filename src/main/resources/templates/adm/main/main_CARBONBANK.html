@@ -26,6 +26,7 @@
 		    }
 		});		
     	
+		//조회버튼 클릭
 		function searchNews(pageIdx) {
 			console.log("searchNews pageIdx " + pageIdx);
 		    var rowPerPage = 10;
@@ -36,7 +37,7 @@
 		    };
 
 		    $.ajax({
-				url : '/adm/store/StoreInfoQueryList',
+		        url : '/adm/content/EnvNewsQueryList',
 		        type : 'POST',
 		        dataType : 'JSON',
 		        cache : false,
@@ -47,15 +48,22 @@
 
 		            if (values && values.length > 0) {
 		                $.each(values, function(index, value){
+							
+							// 상태값 변환
+							var statText = '';
+							if (value.docStat === 'N') statText = '등록';
+							else if (value.docStat === 'V') statText = '게시';
+							else if (value.docStat === 'C') statText = '게시취소';
+							else if (value.docStat === 'D') statText = '삭제';
+							else statText = '';
 
-		                    strHtml += '<tr id="' + value.storeId + '">';
-							strHtml += '    <td>' + value.storeId + '</td>';
-		                    strHtml += '    <td><a href ="/adm/store/StoreInfoDesc.do?storeId=' +value.storeId+ '">' +value.storeNm+ '</a></td>';
-		                    strHtml += '    <td>' + safeHtml(value.storeAddr) + '</td>';
-		                    //strHtml += '    <td>' + safeHtml(value.storeEmail) + '</td>';
-		                    strHtml += '    <td>' + value.creDtm + '</td>';
+		                    strHtml += '<tr id="' + value.docSeq + '">';
+		                    strHtml += '    <td><a href ="/adm/content/EnvNewsDesc.do?docSeq=' +value.docSeq+ '">' +value.docTitle+ '</a></td>';
+		                    strHtml += '    <td>' + value.docFrom + '</td>';
+		                    strHtml += '    <td>' + statText + '</td>';
+		                    strHtml += '    <td>' + value.docRead + '</td>';
+		                    strHtml += '    <td>' + value.regDtm + '</td>';
 		                    strHtml += '</tr>';
-
 		                });
 		            } else {
 		                strHtml = '<tr><td colspan="4" class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
@@ -72,20 +80,14 @@
 		            alert('서비스 장애발생 관리자에게 문의해 주십시요');
 		        }
 		    });
-		}		
-        $('#insertBtn').on('click',function(){
-            location.href = "/adm/store/StoreInfoIns.do";
-        });
-        
-        //엔터시 검색
-        $('#searchValue').on('keydown', function(event, page) {
-        	if (event.keyCode != 13) {
-        		return;
-        	}
-        	$("#searchBtn").trigger('click', 1);
-        });
+		}
 		
+		// 등록
+        $('#insertBtn').on('click',function(){
+            location.href = "/adm/content/EnvNewsIns.do";
+        });
 
+		// 페이지 렌더링 시작
 		function renderPagination(totalPages, currentPage) {
 		    var $pagination = $('#pagination');
 		    $pagination.empty();
@@ -123,13 +125,7 @@
 		        }
 		    });
 		}
-		
-		function safeHtml(value, defaultValue) {
-		    if (value === null || value === undefined || value === "null") {
-		        return defaultValue !== undefined ? defaultValue : '';
-		    }
-		    return value;
-		}		
+		// 페이지 렌더링 끝
 		
     });
 </script>
@@ -139,73 +135,41 @@
 	<th:block layout:fragment="header" th:insert="~{@{/adm/layout/admheader}}"></th:block>
 	
 	<div layout:fragment="content">
-    <div class="adm-container">
-        <header>
-            <ul class="top-info">
-                <li>
-                    <i class="iconfont">account_circle</i><span th:text="${sessInfo.CrbnAdmNm}">홍길동님</span> 님 반갑습니다
-                </li>
-                <li>
-                    <a href="#"><i class="iconfontline">logout</i>로그아웃</a>
-                </li>
-            </ul>
-        </header>
-
         <!--- content -->
         <div class="adm-content">
-            <h2>가맹점 관리</h2>
-
-            <div class="grid-2">
-				<div class="t-13 mT10 gray">
-				    총 건수 : <span id="totalCount">0</span>건
-				    <!--총 건수 : <span th:text="${totalCount}">0</span> 건-->
-				</div>
-                <div class="t-right">
-                    <div class="search-type">
-						<input type="text" name="searchValue" id="searchValue" class="input-type1" placeholder="Search" />
-						<button type="button" class="btn-search" id="searchBtn">검색</button>						
+            <div class="store-title">
+                <img src="../resources/images/adm_storelogo.png">
+                <span>인천광역시</span> 탄소중립실천 현황
+                </div>
+            <section class="adm-main">
+                <div class="main-01">
+                    인천광역시는 탄소중립 녹색 실천운동에<br>
+                    현재 <span>1,000명</span>의 시민이 함께 참여하고 있습니다.
+                </div>
+                <div class="main-02-all">
+                    <div class="main-02 bg1">
+                        <span class="title">탄소중립 가맹점</span>
+                        <div class="state">현재 <span>389</span> 가맹점</div>
+                        (인천시 탄소중립 가맹점)
+                    </div>
+                    <div class="main-02 bg2">
+                        <span class="title">절감된 일회용 컵</span>
+                        <div class="state">현재 <span>389</span> 가맹점</div>
+                        (텀블러 사용으로 줄여진 일회용 컵)
                     </div>
                 </div>
-            </div>
-
-            <div class="board-type1 mT10">
-                <table>
-                    <colgroup>
-						<col style="width:15%;" />
-						<col style="width:30%;" />
-                        <col style="width:40%;" />
-                        <!-- <col style="width:15%;" /> -->
-                        <col style="width:15%;" />
-                    </colgroup>
-                    <thead>
-                        <tr>
-						  <th>아이디</th>
-						  <th>상호</th>
-			              <th>사업장 주소</th>
-			              <!-- <th>이메일</th> -->
-			              <th>생성일</th>
-                        </tr>
-                    </thead>
-					<tbody id="boardTbody1">
-					</tbody>
-                </table>
-            </div>
-
-            <div class="f-right mT20">
-                <button type="button" class="btn-blue" id="insertBtn">등록</button>
-            </div>
-
-			<!-- 페이징 UI 시작 -->
-			<div id="pagination" class="page-num mT30"></div>
-			<!-- 페이징 UI 끝 -->				
+                <div class="main-03">
+                    <div>
+                        <span class="title"> 탄소 저감량</span>
+                        현재 <span class="green">308Kg</span> Co2
+                    </div>
+                    <p>인천시 민이 텀블러 사용하여 일회용품 및 플라스틱 이용 절감 실천은<br>
+                    6.6 kgCo2 당 30년 소나무 한 그루 심는 효과의 탄소 발자국 운동 입니다.</p>
+                </div>
+            </section>
 
         </div>
-        <!---// content -->
-
-        <footer>
-            Copyright ⓒ CarbonBank. All Rights Reserved
-        </footer>
-    </div>
+        <!---// adm-content -->
 
 	</div>
 </div><!-- //wrap -->

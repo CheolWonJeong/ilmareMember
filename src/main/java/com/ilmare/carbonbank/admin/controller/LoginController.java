@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,9 @@ public class LoginController {
 
 	@Autowired
 	private AES256Util aceUtil;
+
+    @Value("${spring.saveRootForDev:defaultValue}")
+	private String saveBase; //서버의 파일저장 기본 경로
 
 
 	@RequestMapping("/login.do")
@@ -108,10 +112,10 @@ public class LoginController {
 		sessInfo.setCrbnDept(info.getCrbnDept());
 		sessInfo.setCrbnPstn(info.getCrbnPstn());
 		sessInfo.setLoginDtm(dateUtil.getCurrentTime());
-		sessMgr.createSessionInfo(request, sessInfo);
+		sessMgr.createSession(request, sessInfo);
 
-		SessInfo sessInfoAfter = sessMgr.getSessInfo();
-		log.info("loginProc SessInfo=" + sessInfoAfter.toString());
+		sessInfo = sessMgr.getSession(request);
+		log.info("loginProc SessInfo=" + sessInfo.toString());
 
 		log.info("loginProc End");
 		result.put("procInd", "S");  // 정상
@@ -124,13 +128,12 @@ public class LoginController {
 	public @ResponseBody SessInfo sessionView(final HttpServletRequest request) throws Exception {
 
 		log.info("sessionView Start");
-		sessMgr.createSession(request,false);
-		SessInfo sessInfo = sessMgr.getSessInfo();
+		SessInfo sessInfo = sessMgr.getSession(request);
 		if ( sessInfo != null)
 			log.info("loginProc SessInfo=" + sessInfo.toString());
 		else 
 			log.info("sessionView 세션 미존재");
-		log.info("sessionView End");
+		log.info("sessionView End {}", saveBase);
 		return sessInfo;
 	}
 

@@ -1,40 +1,43 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{adm/layout/admlayour}">
-	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
-		<meta content=" user-scalable=1" name="viewport"/>
-		<title>관리자</title>
-		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="/adm/css/admstyle.css">
-<!-- 		<script src="https://code.jquery.com/jquery-latest.min.js"></script> -->
-		<script src="/adm/js/common/jquery-3.6.1.min.js"></script>
-	</head>
+<html lang="ko">
+<head>
+	<title>탄소뱅크 Admin</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width" />
+	<meta name="description" content="탄소뱅크 Admin" />
+    <meta property="og:image" content="/resources/images/opengraph.png" />
+    <link rel="icon" href="/resources/images/favicon.png">
+	<link rel="stylesheet" href="/resources/css/common.css" >
+    <script type="text/javascript" src="/resources/js/jquery-3.6.0.min.js"></script>
+</head>
 <body>
-<div layout:fragment="content">
-<div class="wrap">
 
-	<div class="logintitle"><!-- <img src="images/login_ci.png" /> --></div>
-	<div class="login">
-		<div class="welcome">
-			<span class="t01">Member Login</span>
-			아이디와 비밀번호를 입력하세요.
-		</div>
+    <div class="login-wrap">
+        <div class="login-content">
+            <h1>탄소뱅크</h1>
+            <h2>ADMIN</h2>
+            <ul class="adm-login">
+                <li>
+                    <label for="">아이디</label>
+                    <input type="text" name="" id="crbnAdmId" >
+                </li>
+                <li>
+                    <label for="">비밀번호</label>
+                    <input type="password" name="" id="crbnAdmPwd" >
+                </li>
+                <li>
+                    <button type="button" id="loginBtn" class="btn-blue mT10">로 그 인</button>
+                </li>
+            </ul>
+        </div>
+        <!---// login-content -->
+    </div>
+ <script src="/resources/js/login.js"></script>
 
-		<dl class="myinput">
-			<dt>아이디</dt>
-			<dd><input type="text"  id="crbnAdmId" /> </dd>
-			<dt>비밀번호</dt>
-			<dd><input type="password"  id="crbnAdmPwd"/> </dd>
-		</dl>
-		<button id="loginBtn">로그인</button>
-	</div>
- <script src="/adm/js/login.js"></script>
-</div><!-- //wrap -->
-</div>
+<!-- <script type="text/javascript" src="../resources/js/lnb.js"></script> -->
+
 </body>
 </html>

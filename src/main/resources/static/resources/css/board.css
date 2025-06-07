@@ -20,7 +20,7 @@
 .board-type1 tbody th	{padding:10px; text-align:center; border-bottom:1px solid #E8EDF2; border-right:1px solid #E8EDF2; font-weight:500; background: #F4F6F8;}
 .board-type1 tr.last td, .board-type1 .last { border-bottom:1px solid #BDCBDA!important; }
 .board-type1.t-13 {font-size: 0.82rem!important; line-height: 1.4;}
-.board-type1.other thead th{color: #22415F; font-weight: 500; }
+.board-type1.other thead th{color: #22415f; font-weight: 500; }
 .board-type1.other tbody th{color: #22415F; font-weight: 500; text-align: left; padding-left: 24px;}
 
 
