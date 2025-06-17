@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{adm/layout/admlayour}">
+	<th:block layout:fragment="head" th:insert="~{@{/adm/layout/admhead}}"></th:block>
+
+<script type="text/javascript">
+	$(function(){ 
+	});
+
+	$(document).ready(function(){
+		
+		// 최초 로딩 시 1페이지 검색
+		searchNews(1);
+
+		// 검색 버튼 클릭
+		$('#searchBtn').on('click', function() {
+		    searchNews(1);
+		});
+
+		// 엔터키로 검색
+		$('#searchValue').on('keydown', function(event) {
+		    if (event.keyCode === 13) {
+		        searchNews(1);
+		    }
+		});		
+    	
+		//조회버튼 클릭
+		function searchNews(pageIdx) {
+			console.log("searchNews pageIdx " + pageIdx);
+		    var rowPerPage = 10;
+		    var param = {
+				"searchType" : "TITLE",
+		        "searchValue" : $('#searchValue').val(),
+		        "pageNo" : pageIdx
+		    };
+
+		    $.ajax({
+		        url : '/adm/content/EnvNewsQueryList',
+		        type : 'POST',
+		        dataType : 'JSON',
+		        cache : false,
+		        data : param,
+		        success : function(data) {
+		            var values = data.rows;
+		            var strHtml = "";
+
+		            if (values && values.length > 0) {
+		                $.each(values, function(index, value){
+							
+							// 상태값 변환
+							var statText = '';
+							if (value.docStat === 'N') statText = '등록';
+							else if (value.docStat === 'V') statText = '게시';
+							else if (value.docStat === 'C') statText = '게시취소';
+							else if (value.docStat === 'D') statText = '삭제';
+							else statText = '';
+
+		                    strHtml += '<tr id="' + value.docSeq + '">';
+		                    strHtml += '    <td><a href ="/adm/content/EnvNewsDesc.do?docSeq=' +value.docSeq+ '">' +value.docTitle+ '</a></td>';
+		                    strHtml += '    <td>' + value.docFrom + '</td>';
+		                    strHtml += '    <td>' + statText + '</td>';
+		                    strHtml += '    <td>' + value.docRead + '</td>';
+		                    strHtml += '    <td>' + value.regDtm + '</td>';
+		                    strHtml += '</tr>';
+		                });
+		            } else {
+		                strHtml = '<tr><td colspan="4" class="no_result"><span>검색 결과가 없습니다.</span></td></tr>';
+		            }
+		            $('#boardTbody1').html(strHtml);
+
+					// 페이징 UI 렌더링
+					renderPagination(data.totalPages, data.currentPage);
+
+					// 총 건수 표시
+					$('#totalCount').text(data.totalCount);					
+		        },
+		        error : function() {
+		            alert('서비스 장애발생 관리자에게 문의해 주십시요');
+		        }
+		    });
+		}
+		
+		// 등록
+        $('#insertBtn').on('click',function(){
+            location.href = "/adm/content/EnvNewsIns.do";
+        });
+
+		// 페이지 렌더링 시작
+		function renderPagination(totalPages, currentPage) {
+		    var $pagination = $('#pagination');
+		    $pagination.empty();
+
+		    if (totalPages <= 1) return; // 1페이지 이하일 때는 표시 안함
+
+		    var html = '<div class="inner"><ul>';
+
+		    // 처음 페이지
+		    html += `<li><a href="#" class="page-link" data-page="1" ${currentPage==1?'disabled':''}><i class="iconfont">first_page</i></a></li>`;
+		    // 이전 페이지
+		    html += `<li><a href="#" class="page-link" data-page="${currentPage-1}" ${currentPage==1?'disabled':''}><i class="iconfont">chevron_left</i></a></li>`;
+
+		    // 페이지 번호 (최대 9개)
+		    var start = Math.max(1, currentPage-4);
+		    var end = Math.min(totalPages, currentPage+4);
+		    for (var i = start; i <= end; i++) {
+		        html += `<li><a href="#" class="page-link${i==currentPage?' active':''}" data-page="${i}">${i}</a></li>`;
+		    }
+
+		    // 다음 페이지
+		    html += `<li><a href="#" class="page-link" data-page="${currentPage+1}" ${currentPage==totalPages?'disabled':''}><i class="iconfont">chevron_right</i></a></li>`;
+		    // 마지막 페이지
+		    html += `<li><a href="#" class="page-link" data-page="${totalPages}" ${currentPage==totalPages?'disabled':''}><i class="iconfont">last_page</i></a></li>`;
+		    html += '</ul></div>';
+
+		    $pagination.html(html);
+
+		    // 페이지 클릭 이벤트
+		    $pagination.find('.page-link').not('[disabled]').on('click', function(e){
+		        e.preventDefault();
+		        var page = parseInt($(this).data('page'));
+		        if (!isNaN(page) && page >= 1 && page <= totalPages && page != currentPage) {
+		            searchNews(page);
+		        }
+		    });
+		}
+		// 페이지 렌더링 끝
+		
+    });
+</script>
+
+<body>
+<div class="adm-wrap">
+	<th:block layout:fragment="header" th:insert="~{@{/adm/layout/admheader}}"></th:block>
+	
+	<div layout:fragment="content">
+        <!--- content -->
+        <div class="adm-content">
+            <div class="store-title">
+                <img src="../resources/images/adm_storelogo.png">
+                <span>인천광역시</span> 탄소중립실천 현황
+                </div>
+            <section class="adm-main">
+                <div class="main-01">
+                    인천광역시는 탄소중립 녹색 실천운동에<br>
+                    현재 <span>1,000명</span>의 시민이 함께 참여하고 있습니다.
+                </div>
+                <div class="main-02-all">
+                    <div class="main-02 bg1">
+                        <span class="title">탄소중립 가맹점</span>
+                        <div class="state">현재 <span>389</span> 가맹점</div>
+                        (인천시 탄소중립 가맹점)
+                    </div>
+                    <div class="main-02 bg2">
+                        <span class="title">절감된 일회용 컵</span>
+                        <div class="state">현재 <span>389</span> 가맹점</div>
+                        (텀블러 사용으로 줄여진 일회용 컵)
+                    </div>
+                </div>
+                <div class="main-03">
+                    <div>
+                        <span class="title"> 탄소 저감량</span>
+                        현재 <span class="green">308Kg</span> Co2
+                    </div>
+                    <p>인천시 민이 텀블러 사용하여 일회용품 및 플라스틱 이용 절감 실천은<br>
+                    6.6 kgCo2 당 30년 소나무 한 그루 심는 효과의 탄소 발자국 운동 입니다.</p>
+                </div>
+            </section>
+
+        </div>
+        <!---// adm-content -->
+
+	</div>
+</div><!-- //wrap -->
+</body>
+</html>

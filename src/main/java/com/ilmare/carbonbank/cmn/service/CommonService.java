@@ -23,9 +23,9 @@ public class CommonService {
 
     //소속그룹
 	public static Hashtable <String, Boolean>  hsPartyGrp = new Hashtable<String, Boolean>() {{
-        put("SYSTEM", true);
-        put("CARBONBANK", true);
-        put("GVRNMT", true);
+        put("system", true);
+        put("carbonbank", true);
+        put("gvrnmt", true);
     }};
 	
     //문서상태
