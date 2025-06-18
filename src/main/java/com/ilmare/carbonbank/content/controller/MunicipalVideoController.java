@@ -80,6 +80,7 @@ public class MunicipalVideoController {
 		log.info("MunicipalVideoMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
 		log.info("MunicipalVideoMainList ntsList.size()" + ntsList.toString());
@@ -144,6 +145,7 @@ public class MunicipalVideoController {
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 

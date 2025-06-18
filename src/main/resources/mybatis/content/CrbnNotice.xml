@@ -70,17 +70,18 @@
 						,del_id
 						,IF(del_dtm IS NOT NULL, DATE_FORMAT(del_dtm, '%Y-%m-%d'), '') AS del_dtm
                     from CRBN_NOTICE
+           		where party_cd = #{partyCd}
          ]]>
                 <if test="searchValue != null and searchValue != '' " >
                     <if test="searchType != null and searchType != '' " >
                         <if test='searchType == "TITLE"'>
                             <![CDATA[       
-                                where doc_title like CONCAT('%',#{searchValue},'%')
+                                and doc_title like CONCAT('%',#{searchValue},'%')
                              ]]>
                         </if>
                         <if test='searchType == "INFO"'>
                             <![CDATA[       
-                                where doc_info like CONCAT('%',#{searchValue},'%')
+                                and doc_info like CONCAT('%',#{searchValue},'%')
                             ]]>
                         </if>
                     </if>
@@ -101,18 +102,19 @@
             SELECT
                 COUNT(1)
             FROM CRBN_NOTICE
+           where party_cd = #{partyCd}
         ]]>
 
         <if test="searchValue != null and searchValue != '' " >
             <if test="searchType != null and searchType != '' " >
                 <if test='searchType == "TITLE"'>
                     <![CDATA[       
-                        where doc_title like CONCAT('%',#{searchValue},'%')
+                        and doc_title like CONCAT('%',#{searchValue},'%')
                      ]]>
                 </if>
                 <if test='searchType == "INFO"'>
                     <![CDATA[       
-                       where doc_info like CONCAT('%',#{searchValue},'%')
+                       and doc_info like CONCAT('%',#{searchValue},'%')
                     ]]>
                 </if>
             </if>
@@ -127,7 +129,7 @@
     */
 	         select 
 	           doc_seq, doc_title, DATE_FORMAT(show_dtm,'%Y-%m-%d %H:%i:%s') AS show_dtm
-	          from CRBN_NOTICE  WHERE doc_stat = 'V'
+	          from CRBN_NOTICE  WHERE party_cd = #{partyCd} and doc_stat = 'V'
 	          order by show_dtm desc
         	  LIMIT #{pageNo} , #{listSize}
 	          
@@ -158,7 +160,7 @@
             SELECT
                 COUNT(1)
             FROM CRBN_NOTICE
-              WHERE doc_stat = 'V'
+              WHERE party_cd = #{partyCd} and doc_stat = 'V'
 	          LIMIT 0 , 10
         ]]>
     </select>
@@ -281,7 +283,7 @@
 		    */
 	        select 
 	           doc_seq, doc_title, DATE_FORMAT(show_dtm,'%Y-%m-%d %H:%i:%s') AS show_dtm
-	         from CRBN_NOTICE  WHERE doc_stat = 'V'
+	         from CRBN_NOTICE  WHERE party_cd = #{partyCd} and doc_stat = 'V'
 	         order by show_dtm desc limit 0, 5
         ]]>
     </select>

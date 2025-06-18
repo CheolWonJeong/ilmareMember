@@ -92,17 +92,18 @@
 	                      ,IF(cre_dtm IS NOT NULL, DATE_FORMAT(cre_dtm, '%Y-%m-%d'), '') AS cre_dtm
 	                      ,IF(chg_dtm IS NOT NULL, DATE_FORMAT(chg_dtm, '%Y-%m-%d'), '') AS chg_dtm
                     from CRBN_STORE_INFO
+                   where party_cd = #{partyCd}
          ]]>
                 <if test="searchValue != null and searchValue != '' " >
                     <if test="searchType != null and searchType != '' " >
                         <if test='searchType == "TITLE"'>
                             <![CDATA[       
-                                where STORE_NM like CONCAT('%',#{searchValue},'%')
+                                and STORE_NM like CONCAT('%',#{searchValue},'%')
                              ]]>
                         </if>
                         <if test='searchType == "INFO"'>
                             <![CDATA[       
-                                where STORE_ADDR like CONCAT('%',#{searchValue},'%')
+                                and STORE_ADDR like CONCAT('%',#{searchValue},'%')
                             ]]>
                         </if>
                     </if>
@@ -123,18 +124,19 @@
             SELECT
                 COUNT(1)
             FROM CRBN_STORE_INFO
+           where party_cd = #{partyCd}
         ]]>
 
         <if test="searchValue != null and searchValue != '' " >
             <if test="searchType != null and searchType != '' " >
                         <if test='searchType == "TITLE"'>
                             <![CDATA[       
-                                where STORE_NM like CONCAT('%',#{searchValue},'%')
+                                and STORE_NM like CONCAT('%',#{searchValue},'%')
                              ]]>
                         </if>
                         <if test='searchType == "INFO"'>
                             <![CDATA[       
-                                where STORE_ADDR like CONCAT('%',#{searchValue},'%')
+                                and STORE_ADDR like CONCAT('%',#{searchValue},'%')
                             ]]>
                         </if>
             </if>

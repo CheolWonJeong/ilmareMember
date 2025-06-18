@@ -80,6 +80,7 @@ public class CrbnHotNewsController {
 		log.info("HotNewsMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
 		log.info("HotNewsMainList ntsList.size()" + ntsList.toString());
@@ -145,6 +146,7 @@ public class CrbnHotNewsController {
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 
@@ -202,7 +204,6 @@ public class CrbnHotNewsController {
 	 */
 	@PostMapping("/HotNewsInsProc")
 	public @ResponseBody HashMap HotNewsInsProc(HttpServletRequest request,
-			// @RequestPart("imgFile") MultipartFile imgFile,
 			@RequestPart(value = "imgFile", required = false) MultipartFile imgFile, final NewsCommonModel paramModel,
 			Model model) throws Exception {
 

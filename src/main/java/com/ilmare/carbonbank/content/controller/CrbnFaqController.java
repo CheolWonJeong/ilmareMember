@@ -115,6 +115,7 @@ public class CrbnFaqController {
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 
@@ -197,7 +198,6 @@ public class CrbnFaqController {
 
 		// 저장
 		paramModel.setPartyCd(sessInfo.getPartyCd());
-//		paramModel.setRegId(sessInfo.getCrbnAdmId());
 		paramModel.setAuditId(sessInfo.getCrbnAdmId());
 		int rtn = svc.insert(paramModel);
 
@@ -313,9 +313,6 @@ public class CrbnFaqController {
 			result.put("errorMsg", "조회 권한이 없습니다."); // 오류 메시지
 			return result;
 		}
-
-		// paramModel.setDocStat("V"); //상태 'V
-		// paramModel.setRegId(sessInfo.getCrbnAdmId());
 
 		// 이벤트 변경처리
 		paramModel.setPartyCd(sessInfo.getPartyCd());

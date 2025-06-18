@@ -120,6 +120,7 @@ public class CrbnEventController {
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 

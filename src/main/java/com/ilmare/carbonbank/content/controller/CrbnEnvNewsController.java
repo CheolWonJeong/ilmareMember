@@ -68,7 +68,7 @@ public class CrbnEnvNewsController {
 		SessInfo sessInfo = sessMgr.getSession(request);
 
 		// 권한 검사
-		log.info("EnvNewsMainList PartyGrp=" + sessInfo.getPartyGrp());
+		log.info("EnvNewsMainList PartyGrp={}, partyCd={}", sessInfo.getPartyGrp(), sessInfo.getPartyCd());
 		if (!commSvc.checkContentUse(sessInfo.getPartyGrp())) {
 			log.info("HotNewsMainList 권한 없음 상태");
 			return "redirect:" + conConst.lgnUrl;
@@ -82,6 +82,7 @@ public class CrbnEnvNewsController {
 		log.info("EnvNewsMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> ntsList = svc.selectAdmList(paramVo);
 		log.info("EnvNewsMainList ntsList.size()" + ntsList.toString());
@@ -146,6 +147,7 @@ public class CrbnEnvNewsController {
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 

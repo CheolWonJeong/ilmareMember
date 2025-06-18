@@ -116,6 +116,7 @@ public class CrbnQnaController {
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<NewsCommonModel> dataList = svc.selectAdmList(paramVo);
 
@@ -291,9 +292,6 @@ public class CrbnQnaController {
 			result.put("errorMsg", "조회 권한이 없습니다."); // 오류 메시지
 			return result;
 		}
-
-		// paramModel.setDocStat("C"); //취소 C
-		// paramModel.setRegId(sessInfo.getCrbnAdmId());
 
 		// 이벤트 변경처리
 		paramModel.setPartyCd(sessInfo.getPartyCd());

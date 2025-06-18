@@ -101,11 +101,12 @@ public class CrbnNoticeController {
 		int pageSize = conConst.pageSize; // 페이지당 row 건수
 		int pageNo = CommonVo.getPageNo(); // 조회할 페이지 번호
 		int sRowNum = ((pageNo - 1) * pageSize); // 조회할 row의 시작값
-		log.info("EventQueryList {} ~ {}", sRowNum, pageSize);
+		log.info("EventQueryList {} ~ {}, partycd{}", sRowNum, pageSize, sessInfo.getPartyCd());
 
 		CommonVo.setPageNo(sRowNum);
 		CommonVo.setListSize(pageSize);
 		CommonVo.setListSize(ConfigConstants.pageSize);
+		CommonVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<CrbnNoticeModel> dataList = svc.selectAdmList(CommonVo);
 

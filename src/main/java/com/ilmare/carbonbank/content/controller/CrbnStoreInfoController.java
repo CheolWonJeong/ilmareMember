@@ -80,6 +80,7 @@ public class CrbnStoreInfoController {
 		log.info("StoreInfoMainList {} ~ {}", sRowNum, pageSize);
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<CrbnStoreInfoModel> ntsList = svc.selectAdmList(paramVo);
 		log.info("HotNewsMainList ntsList.size()" + ntsList.toString());
@@ -143,6 +144,7 @@ public class CrbnStoreInfoController {
 		paramVo.setPageNo(sRowNum);
 		paramVo.setListSize(pageSize);
 		paramVo.setListSize(ConfigConstants.pageSize);
+		paramVo.setPartyCd(sessInfo.getPartyCd());
 
 		List<CrbnStoreInfoModel> dataList = svc.selectAdmList(paramVo);
 

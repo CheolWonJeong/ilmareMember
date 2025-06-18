@@ -66,17 +66,18 @@
 						,del_id
 						,IF(del_dtm IS NOT NULL, DATE_FORMAT(del_dtm, '%Y-%m-%d'), '') AS del_dtm
                     from CRBN_ENV_NEWS
+               		where party_cd = #{partyCd}
          ]]>
                 <if test="searchValue != null and searchValue != '' " >
                     <if test="searchType != null and searchType != '' " >
                         <if test='searchType == "TITLE"'>
                             <![CDATA[       
-                                where doc_title like CONCAT('%',#{searchValue},'%')
+                                and doc_title like CONCAT('%',#{searchValue},'%')
                              ]]>
                         </if>
                         <if test='searchType == "INFO"'>
                             <![CDATA[       
-                                where doc_info like CONCAT('%',#{searchValue},'%')
+                                and doc_info like CONCAT('%',#{searchValue},'%')
                             ]]>
                         </if>
                     </if>
@@ -96,7 +97,9 @@
         
             SELECT
                 COUNT(1)
-            FROM CRBN_ENV_NEWS
+            FROM CRBN_ENV_NEWS  
+           where party_cd = #{partyCd}
+            
         ]]>
 
         <if test="searchValue != null and searchValue != '' " >
@@ -125,7 +128,7 @@
 	           doc_seq, doc_title
 	           ,img_src_nm, img_nail_nm, doc_from, doc_url
 	           , DATE_FORMAT(show_dtm,'%Y-%m-%d %H:%i:%s') AS show_dtm
-	          from CRBN_ENV_NEWS  WHERE doc_stat = 'V'
+	          from CRBN_ENV_NEWS  WHERE party_cd = #{partyCd} and doc_stat = 'V'
 	          order by show_dtm desc
         	  LIMIT #{pageNo} , #{listSize}
 	          
@@ -142,7 +145,7 @@
             SELECT
                 COUNT(1)
             FROM CRBN_ENV_NEWS
-              WHERE doc_stat = 'V'
+              WHERE party_cd = #{partyCd} and doc_stat = 'V'
         ]]>
     </select>
  
@@ -346,7 +349,7 @@
 	           doc_seq, doc_title
 	           ,img_src_nm, img_nail_nm, doc_from, doc_url
 	           , DATE_FORMAT(show_dtm,'%Y-%m-%d %H:%i:%s') AS show_dtm
-	         from CRBN_ENV_NEWS  WHERE doc_stat = 'V'
+	         from CRBN_ENV_NEWS  WHERE party_cd = #{partyCd} and doc_stat = 'V'
 	         order by show_dtm desc limit 0, 5
         ]]>
     </select>
